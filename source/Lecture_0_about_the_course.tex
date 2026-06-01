@@ -1,0 +1,152 @@
+
+\documentclass[12pt,aspectratio=169,notheorems]{beamer}
+
+\input{style.tex}
+
+\begin{document}
+
+{\usebackgroundtemplate{\tikz\node[opacity=0.4,inner sep=0]{\includegraphics[width=\paperwidth,height=\paperheight]{images/header}};}%
+\begin{frame}[plain]
+	\vspace{0.5cm}
+	\title{\large \begin{spacing}{1.0}Neural Networks for Data Science\end{spacing}\vspace{0.25em}
+		\normalsize \begin{spacing}{1.0}\textbf{Master's Degree in Data Science}\end{spacing}\vspace{0.5em}}
+	\subtitle{\Large \textbf{Lecture 0: About the course}}
+	\date{
+		{\includegraphics[scale=0.8]{images/Uniroma1}}
+	}
+	\author{
+		\setlength{\tabcolsep}{2pt}
+		\begin{tabular}{rl}
+			\textbf{Lecturer}: & S. Scardapane \\
+		\end{tabular}
+	}\titlepage
+\end{frame}
+}
+
+\part{1}
+
+\begin{frame}{Timetable and organization}
+
+	\begin{itemize}
+		\item \textbf{Master's Degree in Data Science}, code 10589627, 2nd year, optional group D.
+		\item \textbf{Timetable}: TBD
+		\item \textbf{Office hours}: by appointment, remotely or in-person (Via Eudossiana 18, DIET Department, 1st floor, room 122).
+	\end{itemize}
+
+	\begin{tcolorbox}
+		Official course website: \newline
+		\url{https://www.sscardapane.it/teaching/nnds-2026/}.
+	\end{tcolorbox}
+
+	Register to the \textbf{Google Classroom} from the website for all updates (\underline{mandatory}).
+
+\end{frame}
+
+\begin{frame}{Exam dates (TBD)}
+
+	\begin{enumerate}
+		\item \textbf{Sessions 1-2}: TBD
+		\item \textbf{Sessions 3-4}: TBD
+		\item \textbf{Session 5}: TBD
+		\item \textbf{Session E1}: TBD (\textbf{reserved}, see regulations).
+		\item \textbf{Session E2}: TBD (\textbf{reserved}, see regulations).
+	\end{enumerate}
+
+\end{frame}
+
+\begin{frame}{Exam}
+
+	\begin{enumerate}
+		\item One \textbf{end-of-term} project (5 points).
+		\item One \textbf{oral examination} on the program (25 points).
+	\end{enumerate}
+
+	The EoT project can be sent before \textit{any} exam date. The mark can be kept during the academic year, irrespective of the oral. \textit{Lode} will be given only to exceptional (top 5\%) projects and orals.
+
+\end{frame}
+
+\begin{frame}{Learning objectives}
+
+
+	\begin{itemize}
+		\item Broad historical overview of the last 15 years.
+		\item Fundamental tools underlying neural networks: optimization, gradient descent, automatic differentiation.
+		\item Basic blocks to build modern neural networks (convolution, attention, normalization, ...).
+		\item Proficiency in a real-world deep learning library (\textbf{JAX}, \textbf{PyTorch}).
+		\item Capability of navigating the current literature and ecosystem in autonomy.
+	\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Lectures (methodological)}
+
+	\begin{enumerate}
+		\item \textbf{Historical overview}.
+		\item \textbf{Preliminaries} (tensors, linear algebra, optimization).
+		\item \textbf{Supervised learning} as numerical optimization.
+		\item Linear models and \textbf{fully-connected} models.
+		\item \textbf{Convolutional models} (for sequential, spatial, and temporal data).
+		\item Blocks to train \textbf{deeper models} (dropout, batch normalization, ...).
+		\item \textbf{Attention} models for sets.
+		\item \textbf{LLM} building blocks: autoregression, tokenization, pre- and post-training.
+		\item \textbf{Graph} models (e.g., graph convolutional networks).
+		\item Optional topics depending on time and material.
+	\end{enumerate}
+
+\end{frame}
+
+\begin{frame}{Lectures (practical)}
+
+	\begin{enumerate}
+		\item Several practical lectures with \textbf{JAX} and \textbf{PyTorch} (hands-on coding from scratch).
+		\item When possible, a showcase of other libraries (e.g., HuggingFace Datasets).
+		\item Optional topics depending on time and material.
+	\end{enumerate}
+
+\end{frame}
+
+\begin{whiteframe}{Textbook}
+
+
+	Slides are self-contained, but the material is expanded in a textbook:
+
+	\vspace{1em}
+	\begin{columns}
+		\begin{column}{0.25\textwidth}
+			\begin{center}
+				{%
+					\setlength{\fboxsep}{0pt}%
+					\setlength{\fboxrule}{1pt}%
+					\fbox{\includegraphics[width=0.2\pagewidth]{images/Alice.png} }%
+				}%
+			\end{center}
+		\end{column}
+		\begin{column}{0.75\textwidth}
+			The book is available for free as a PDF or via Amazon for a printed copy:
+
+			\begin{center}\footnotesize\url{https://sscardapane.it/alice-book/}\end{center}
+
+			The book was recently published -- would be happy for feedback or ideas for completed exercises or additional sections!
+		\end{column}
+	\end{columns}
+
+
+
+\end{whiteframe}
+
+\begin{frame}{Additional textbooks}
+
+	Additional useful textbooks:
+
+	\begin{itemize}
+		\item \textbf{Dive into Deep Learning}, online, much more practical.
+		\item \textbf{Understanding Deep Learning}, high-quality illustrations and descriptions.
+		\item \textbf{Patterns, Predictions, and Actions}, slightly broader on the machine learning side.
+		\item \textbf{Deep Learning - Foundations and Concepts}, for a beginner Bayesian treatment.
+	\end{itemize}
+
+	From mobile, you can also check out \textbf{The Little Book of Deep Learning}.
+
+\end{frame}
+
+\end{document}

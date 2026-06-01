@@ -1,0 +1,6 @@
+# Auxiliary files
+aux/
+
+# Other
+*.synctex.gz
+.DS_Store
