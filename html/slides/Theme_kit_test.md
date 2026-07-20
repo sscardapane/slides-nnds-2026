@@ -86,7 +86,48 @@ console.log(softmax([2.0, 1.0, 0.1]))
 ```
 
 <div class="text-sm mt-4 opacity-70">
-This example runs JS in-browser (Monaco + built into Slidev). A real pipeline for JAX/PyTorch snippets would need a Python runtime (e.g. Pyodide) — worth a separate feasibility check, not attempted here.
+This example runs JS in-browser (Monaco + built into Slidev). See the next slide for real Python.
+</div>
+
+---
+
+# Extreme: real Python, running in the browser
+
+<script setup>
+import PyRunner from '../components/PyRunner.vue'
+
+const pySample = [
+  'import numpy as np',
+  '',
+  'logits = np.array([2.0, 1.0, 0.1])',
+  'probs = np.exp(logits) / np.exp(logits).sum()',
+  "print('softmax:', probs)",
+  "print('sum:', probs.sum())",
+].join('\n')
+</script>
+
+Not JS pretending to be Python — actual CPython + numpy compiled to WASM (Pyodide), loaded from a CDN on first click. Edit and re-run:
+
+<PyRunner :initial-code="pySample" />
+
+<div class="text-sm mt-4 opacity-70">
+First run downloads ~10-15MB of WASM runtime (cached after that). A real deployment would want to self-host the runtime instead of hitting jsdelivr live in a lecture room — flagging, not solving, here.
+</div>
+
+---
+
+# Extreme: live attention pattern
+
+<script setup>
+import AttentionHeatmap from '../components/AttentionHeatmap.vue'
+</script>
+
+Toy self-attention (synthetic Q/K, not a trained model) — drag temperature, toggle the causal mask, watch every row's softmax update live:
+
+<AttentionHeatmap />
+
+<div class="text-sm mt-4 opacity-70">
+This is the exact "attention patterns, masking" experiment type already called out in the course recipe — normally a separate generated static figure, here it's explorable during the lecture instead.
 </div>
 
 ---
