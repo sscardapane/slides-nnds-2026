@@ -11,6 +11,7 @@ fonts:
   sans: 'Fira Sans'
   mono: 'Fira Mono'
 colorSchema: light
+routerMode: hash
 ---
 
 # Theme-kit test: highlight & theorem box

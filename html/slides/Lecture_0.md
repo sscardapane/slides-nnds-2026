@@ -10,6 +10,7 @@ fonts:
   sans: 'Fira Sans'
   mono: 'Fira Mono'
 colorSchema: light
+routerMode: hash
 ---
 
 <style>
