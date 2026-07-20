@@ -42,7 +42,7 @@ jobs:
           } > dist/index.html
           for f in slides/*.md; do
             name=$(basename "$f" .md)
-            npx slidev build "$f" --base "/slides-nnds-2026/$name/" --out "dist/$name"
+            npx slidev build "$f" --base "/slides-nnds-2026/$name/" --out "$PWD/dist/$name"
             echo "<li><a href=\"./$name/\">$name</a></li>" >> dist/index.html
           done
           echo "</ul></body></html>" >> dist/index.html
