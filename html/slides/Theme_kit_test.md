@@ -132,6 +132,50 @@ This is the exact "attention patterns, masking" experiment type already called o
 
 ---
 
+# Extreme: live decision-boundary training
+
+<script setup>
+import DecisionBoundary from '../components/DecisionBoundary.vue'
+</script>
+
+Real backprop (hand-rolled 2-layer MLP, tanh + sigmoid, live in JS — not pre-recorded). Click the canvas to add points, hit "Train live":
+
+<DecisionBoundary />
+
+<div class="text-sm mt-4 opacity-70">
+Click to place points for class A or B, then train and watch the boundary fold to fit them. Pyodide could back this instead (real numpy autograd), but the async round-trip per frame makes live dragging/training visibly less smooth than plain JS — noted, not solved, here.
+</div>
+
+---
+
+# Extreme: debug-the-run
+
+<script setup>
+import DebugRunDemo from '../components/DebugRunDemo.vue'
+</script>
+
+Matches the course's own opening frame — "supervised learning reframed around debugging neural networks" — as an interactive scenario picker instead of four separate static plots:
+
+<DebugRunDemo />
+
+<div class="text-sm mt-4 opacity-70">
+Curves are hand-crafted to be representative, not from real training runs — the point is the interaction pattern (pick a failure mode, see the diagnostic signature), which a real pipeline would back with actual runs.
+</div>
+
+---
+
+# Extreme: KV-cache cost calculator
+
+<script setup>
+import KVCacheCalculator from '../components/KVCacheCalculator.vue'
+</script>
+
+No training, no visuals to render — just formulas that update live. The "KV-cache cost" experiment type from the course recipe, as a calculator instead of a static number:
+
+<KVCacheCalculator />
+
+---
+
 # Click-to-reveal (native, no extra work)
 
 Beamer's `\pause`/overlays, built into the markdown source with `v-click`:
