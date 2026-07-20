@@ -53,3 +53,52 @@ import EqAnnotate from '../components/EqAnnotate.vue'
 <div class="text-sm mt-8 opacity-70">
 Hover the underlined terms. Reserved for the one or two equations per unit where the annotation is the actual teaching moment — most equations use the SVG-embed path above.
 </div>
+
+---
+
+# Interactive demo — gradient descent
+
+<script setup>
+import GradientDescentDemo from '../components/GradientDescentDemo.vue'
+</script>
+
+None of this exists in Beamer: drag the learning rate, watch convergence turn into divergence live, during the lecture, on the actual slide.
+
+<GradientDescentDemo />
+
+<span class="text-sm mt-4 opacity-70 inline-block">Toy example: $f(x) = x^2$, gradient step $x \leftarrow x - \eta \cdot f'(x)$. Try $\eta > 1$ to show divergence.</span>
+
+---
+
+# Live, editable code cell
+
+Slides can embed runnable code, not just syntax-highlighted text — students edit and re-run during class:
+
+```js {monaco-run}
+function softmax(logits) {
+  const m = Math.max(...logits)
+  const exps = logits.map(x => Math.exp(x - m))
+  const sum = exps.reduce((a, b) => a + b, 0)
+  return exps.map(x => x / sum)
+}
+
+console.log(softmax([2.0, 1.0, 0.1]))
+```
+
+<div class="text-sm mt-4 opacity-70">
+This example runs JS in-browser (Monaco + built into Slidev). A real pipeline for JAX/PyTorch snippets would need a Python runtime (e.g. Pyodide) — worth a separate feasibility check, not attempted here.
+</div>
+
+---
+
+# Click-to-reveal (native, no extra work)
+
+Beamer's `\pause`/overlays, built into the markdown source with `v-click`:
+
+<v-clicks>
+
+- First point appears immediately
+- Second point appears on next click
+- Third point appears after that
+
+</v-clicks>
