@@ -1,6 +1,16 @@
 # Auxiliary files
 aux/
 
+# HTML pilot (Slidev)
+html/node_modules/
+html/slides/node_modules/
+html/dist/
+html/pdf-html-preview/
+html/assets/src/*.aux
+html/assets/src/*.log
+html/assets/src/*.fls
+html/assets/src/*.fdb_latexmk
+
 # Other
 *.synctex.gz
 .DS_Store

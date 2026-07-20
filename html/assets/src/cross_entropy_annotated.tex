@@ -1,0 +1,21 @@
+% Standalone annotated-equation test for the NNDS HTML pilot.
+% Compiles to SVG and gets embedded in the Slidev deck as a figure,
+% preserving the same visual style used in the Beamer decks.
+\documentclass[preview,border=8pt]{standalone}
+\usepackage{amsmath}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{annotate-equations}
+
+\begin{document}
+\vspace{1.5em}
+\begin{equation*}
+	\mathcal{L}
+	= -\sum_{i=1}^{n}
+	\eqnmark[red]{yi}{y_i}
+	\log
+	\eqnmark[blue]{yhat}{\hat{y}_i}
+\end{equation*}
+\annotate[yshift=1.5em]{above}{yi}{true label}
+\annotate[yshift=-1.5em]{below}{yhat}{predicted probability}
+\vspace{1.5em}
+\end{document}

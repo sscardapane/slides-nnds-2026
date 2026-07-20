@@ -1,0 +1,17 @@
+{
+  "name": "nnds-2026-slides-html-pilot",
+  "version": "0.0.1",
+  "description": "Slidev HTML pilot for NNDS 2026: Lecture 0 fidelity port + theme/equation capability tests, evaluated before deciding on the rest of the course.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev:lecture0": "slidev slides/Lecture_0.md",
+    "dev:theme-kit": "slidev slides/Theme_kit_test.md",
+    "dev": "npm run dev:lecture0"
+  },
+  "devDependencies": {
+    "@slidev/cli": "^52.18.0",
+    "@slidev/theme-default": "^0.25.0",
+    "playwright-chromium": "^1.61.1"
+  }
+}

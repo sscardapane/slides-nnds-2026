@@ -9,7 +9,7 @@ my $root = $ENV{PROJECT_ROOT} || dirname(abs_path(__FILE__));
 $root = abs_path($root);
 
 $aux_dir = "$root/aux";
-$out_dir = "$root/slides";
+$out_dir = "$root/pdf";
 
 # LuaLaTeX configuration
 $pdf_mode = 4;
@@ -19,8 +19,8 @@ $postscript_mode = $dvi_mode = 0;
 $lualatex = "lualatex -interaction=nonstopmode -shell-escape -synctex=1 %O %S";
 
 # Ensure the auxiliary and output directories are found
-$ENV{TEXINPUTS} = ".:$root/source//:" . ($ENV{TEXINPUTS} || "");
+$ENV{TEXINPUTS} = ".:$root/latex//:" . ($ENV{TEXINPUTS} || "");
 
 # Default files to compile (exclude style.tex and other non-document packages)
-my @all_tex = glob("$root/source/*.tex");
+my @all_tex = glob("$root/latex/*.tex");
 @default_files = grep { basename($_) ne 'style.tex' } @all_tex;
