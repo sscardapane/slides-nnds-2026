@@ -1,7 +1,8 @@
 
-\documentclass[12pt,aspectratio=169,notheorems]{beamer}
+\documentclass[14pt,aspectratio=169,notheorems]{beamer}
 
 \input{style.tex}
+\setbeamerfont{frametitle}{size=\large}
 
 \begin{document}
 
@@ -25,90 +26,54 @@
 
 \part{1}
 
-\begin{frame}{Timetable and organization}
+\begin{frame}{Before we start}
 
 	\begin{itemize}
 		\item \textbf{Master's Degree in Data Science}, code 10589627, 2nd year, optional group D.
-		\item \textbf{Timetable}: TBD
-		\item \textbf{Office hours}: by appointment, remotely or in-person (Via Eudossiana 18, DIET Department, 1st floor, room 122).
+		\item \textbf{Timetable and exam dates}: announced in September.
+		\item \textbf{Office hours}: by appointment, remotely or in person.
 	\end{itemize}
 
 	\begin{tcolorbox}
-		Official course website: \newline
-		\url{https://www.sscardapane.it/teaching/nnds-2026/}.
+		\href{https://www.sscardapane.it/teaching/nnds-2026/}{https://www.sscardapane.it/teaching/nnds-2026/}
 	\end{tcolorbox}
 
-	Register to the \textbf{Google Classroom} from the website for all updates (\underline{mandatory}).
+	Register for \textbf{Google Classroom} from the website: it is mandatory for receiving announcements.
 
 \end{frame}
 
-\begin{frame}{Exam dates (TBD)}
+\begin{frame}{Exam ({\color{yellow}new this year})}
 
-	\begin{enumerate}
-		\item \textbf{Sessions 1-2}: TBD
-		\item \textbf{Sessions 3-4}: TBD
-		\item \textbf{Session 5}: TBD
-		\item \textbf{Session E1}: TBD (\textbf{reserved}, see regulations).
-		\item \textbf{Session E2}: TBD (\textbf{reserved}, see regulations).
-	\end{enumerate}
+	Default exam is an \textbf{oral examination} on the course material (2 questions).
 
-\end{frame}
-
-\begin{frame}{Exam}
-
-	\begin{enumerate}
-		\item One \textbf{end-of-term} project (5 points).
-		\item One \textbf{oral examination} on the program (25 points).
-	\end{enumerate}
-
-	The EoT project can be sent before \textit{any} exam date. The mark can be kept during the academic year, irrespective of the oral. \textit{Lode} will be given only to exceptional (top 5\%) projects and orals.
-
-\end{frame}
-
-\begin{frame}{Learning objectives}
-
+	A \myalert{research project} can replace the oral only when it is agreed in advance and it serves one of two purposes:
 
 	\begin{itemize}
-		\item Broad historical overview of the last 15 years.
-		\item Fundamental tools underlying neural networks: optimization, gradient descent, automatic differentiation.
-		\item Basic blocks to build modern neural networks (convolution, attention, normalization, ...).
-		\item Proficiency in a real-world deep learning library (\textbf{JAX}, \textbf{PyTorch}).
-		\item Capability of navigating the current literature and ecosystem in autonomy.
+		\item pursuing a mark of \textbf{30 e lode};
+		\item preparing for a follow-up \textbf{thesis}.
 	\end{itemize}
 
+	It is intended for interested students and is generally \textbf{more demanding} than the oral examination.
+
 \end{frame}
 
-\begin{frame}{Lectures (methodological)}
+\begin{frame}{The course in one slide}
 
 	\begin{enumerate}
-		\item \textbf{Historical overview}.
-		\item \textbf{Preliminaries} (tensors, linear algebra, optimization).
-		\item \textbf{Supervised learning} as numerical optimization.
-		\item Linear models and \textbf{fully-connected} models.
-		\item \textbf{Convolutional models} (for sequential, spatial, and temporal data).
-		\item Blocks to train \textbf{deeper models} (dropout, batch normalization, ...).
-		\item \textbf{Attention} models for sets.
-		\item \textbf{LLM} building blocks: autoregression, tokenization, pre- and post-training.
-		\item \textbf{Graph} models (e.g., graph convolutional networks).
-		\item Optional topics depending on time and material.
+		\item \textbf{Fundamentals}\\
+		      Arrays, optimization, supervised learning, MLPs, automatic differentiation, and PyTorch (maybe JAX).
+		\item \textbf{Architectures}\\
+		      Images, sequences, text, and graphs; convolutions, recurrence, attention, and message passing.
+		\item \textbf{Applications}\\
+		      Tokenization, pre- and post-training, self-supervised learning, possibly agents.
 	\end{enumerate}
 
 \end{frame}
 
-\begin{frame}{Lectures (practical)}
-
-	\begin{enumerate}
-		\item Several practical lectures with \textbf{JAX} and \textbf{PyTorch} (hands-on coding from scratch).
-		\item When possible, a showcase of other libraries (e.g., HuggingFace Datasets).
-		\item Optional topics depending on time and material.
-	\end{enumerate}
-
-\end{frame}
-
-\begin{whiteframe}{Textbook}
+\begin{whiteframe}{Alice in a {\color{yellow}differentiable} wonderland}
 
 
-	Slides are self-contained, but the material is expanded in a textbook:
+	Slides are self-contained, but most of the material is expanded in a textbook:
 
 	\vspace{1em}
 	\begin{columns}
@@ -122,11 +87,11 @@
 			\end{center}
 		\end{column}
 		\begin{column}{0.75\textwidth}
-			The book is available for free as a PDF or via Amazon for a printed copy:
+			The book is available for free as a PDF or as a printed copy:
 
 			\begin{center}\footnotesize\url{https://sscardapane.it/alice-book/}\end{center}
 
-			The book was recently published -- would be happy for feedback or ideas for completed exercises or additional sections!
+			You can also find additional lab sessions and chapters (e.g., more on post-training of models and automatic differentiation).
 		\end{column}
 	\end{columns}
 
@@ -134,19 +99,14 @@
 
 \end{whiteframe}
 
-\begin{frame}{Additional textbooks}
-
-	Additional useful textbooks:
-
-	\begin{itemize}
-		\item \textbf{Dive into Deep Learning}, online, much more practical.
-		\item \textbf{Understanding Deep Learning}, high-quality illustrations and descriptions.
-		\item \textbf{Patterns, Predictions, and Actions}, slightly broader on the machine learning side.
-		\item \textbf{Deep Learning - Foundations and Concepts}, for a beginner Bayesian treatment.
-	\end{itemize}
-
-	From mobile, you can also check out \textbf{The Little Book of Deep Learning}.
-
+{\setbeamercolor{background canvas}{bg=light-gray}
+\begin{frame}{Structured Neural Intelligence Lab}
+	\begin{center}
+		{\setlength{\fboxsep}{0pt}\setlength{\fboxrule}{1.25pt}%
+			\color{darkcerulean}\href{https://www.sscardapane.it/snail/}{\fbox{\includegraphics[width=0.70\paperwidth]{images/SNAIL_homepage.png}}}}\\[0.4em]
+		\small Explore the group: \href{https://www.sscardapane.it/snail/}{www.sscardapane.it/snail}
+	\end{center}
 \end{frame}
+}
 
 \end{document}
