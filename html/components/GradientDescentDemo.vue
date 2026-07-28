@@ -11,14 +11,14 @@
       <line :x1="0" :y1="toY(0)" :x2="width" :y2="toY(0)" stroke="#ccc" />
       <line :x1="toX(0)" :y1="0" :x2="toX(0)" :y2="height" stroke="#ccc" />
       <!-- descent path -->
-      <polyline :points="pathPoints" fill="none" stroke="#2980b9" stroke-width="2" stroke-dasharray="4 3" />
+      <polyline :points="pathPoints" fill="none" stroke="#8c0000" stroke-width="3" stroke-dasharray="4 3" />
       <circle
         v-for="(p, i) in history"
         :key="i"
         :cx="toX(p)"
         :cy="toY(p * p)"
         r="4"
-        :fill="i === history.length - 1 ? '#c0392b' : '#2980b9'"
+        :fill="i === history.length - 1 ? '#d79b00' : '#8c0000'"
       />
     </svg>
 
@@ -44,8 +44,8 @@
 <script setup>
 import { ref } from 'vue'
 
-const width = 420
-const height = 260
+const width = 520
+const height = 320
 const xRange = 3.2
 
 const lr = ref(0.1)
@@ -87,24 +87,29 @@ function reset() {
 <style scoped>
 .gd-demo {
   display: flex;
-  gap: 2em;
+  gap: 2.2em;
   align-items: center;
+  justify-content: center;
+  margin: 8px auto 2px;
 }
+.gd-demo svg { border: 1px solid #9ba8aa; background: #fff; }
 .gd-controls {
   display: flex;
   flex-direction: column;
   gap: 0.75em;
   font-size: 0.85em;
 }
+.gd-controls input { accent-color: #8c0000; }
 .gd-buttons button {
   margin-right: 0.5em;
   padding: 0.25em 0.75em;
-  border: 1px solid #ccc;
-  background: #f7f7f7;
+  border: 1px solid #8c0000;
+  background: #fff;
+  color: #8c0000;
   cursor: pointer;
 }
 .gd-buttons button:hover {
-  background: #eee;
+  background: #f7eeee;
 }
 .gd-diverging {
   color: #c0392b;

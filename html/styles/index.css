@@ -21,3 +21,23 @@
 code {
   font-family: 'Fira Mono', monospace;
 }
+
+.legacy-port {
+  font-size: 0.82em;
+  line-height: 1.28;
+}
+
+.legacy-port pre {
+  margin: 0.55em 0 0.85em;
+  padding: 0.35em 0;
+  border-top: 1px solid #243c40;
+  border-bottom: 1px solid #243c40;
+  border-radius: 0;
+  background: transparent;
+  font-family: 'Fira Mono', monospace;
+  font-size: 0.78em;
+  line-height: 1.32;
+}
+
+.legacy-port .kw { color: #0000cc; }
+.legacy-port .comment { color: #009900; }

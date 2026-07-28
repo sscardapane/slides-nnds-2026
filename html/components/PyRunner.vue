@@ -5,7 +5,7 @@
      would want to self-host the runtime, evaluated separately. -->
 <template>
   <div class="py-runner">
-    <textarea v-model="code" class="py-code" spellcheck="false" rows="7" />
+    <textarea v-model="code" class="py-code" spellcheck="false" :rows="codeRows" />
     <div class="py-controls">
       <button @click="run" :disabled="status === 'loading' || status === 'running'">
         {{ buttonLabel }}
@@ -21,10 +21,12 @@ import { ref, computed } from 'vue'
 
 const props = defineProps({
   initialCode: { type: String, default: 'print("hello from real Python")' },
+  initialOutput: { type: String, default: null },
+  codeRows: { type: Number, default: 7 },
 })
 
 const code = ref(props.initialCode)
-const output = ref(null)
+const output = ref(props.initialOutput)
 const status = ref('idle') // idle | loading | ready | running | error
 let pyodide = null
 
@@ -97,9 +99,13 @@ async function run() {
 }
 .py-controls button {
   padding: 0.3em 1em;
-  border: 1px solid #ccc;
-  background: #f7f7f7;
+  border: 1px solid #8c0000;
+  background: #fff;
+  color: #8c0000;
   cursor: pointer;
+}
+.py-controls button:hover {
+  background: #f7eeee;
 }
 .py-controls button:disabled {
   opacity: 0.6;
@@ -111,6 +117,7 @@ async function run() {
 .py-output {
   margin-top: 0.5em;
   background: #f5f5f5;
+  border-left: 4px solid #8c0000;
   padding: 0.6em;
   border-radius: 4px;
   white-space: pre-wrap;
