@@ -17,7 +17,7 @@
       <div class="batch-readout">
         <span>gradient-noise scale ∝ 1/√B: <strong>{{ noiseScale.toFixed(3) }}</strong></span>
         <span>examples used in 60 updates: <strong>{{ samplesProcessed }}</strong></span>
-        <span>final-run spread: <strong>{{ finalSpread.toFixed(2) }}</strong> log units</span>
+        <span>final log-loss spread (std., 6 runs): <strong>{{ finalSpread.toFixed(2) }}</strong></span>
       </div>
 
       <svg class="loss-chart" viewBox="0 0 900 350" role="img" aria-label="Loss curves for stochastic gradient descent">
@@ -75,7 +75,11 @@
       </div>
 
       <div class="schedule-readout">
-        <span>fixed-step stability boundary η &lt; 2/κ ≈ <strong>{{ stabilityLimit.toFixed(3) }}</strong></span>
+        <span>fixed-step limit: <strong>η &lt; 2/κ ≈ {{ stabilityLimit.toFixed(3) }}</strong></span>
+        <span :class="['stability-comparison', { exceeds: peakExceedsFixedStepLimit }]">
+          peak η: <strong>{{ peakLearningRate.toFixed(3) }}</strong>
+          <b>{{ peakExceedsFixedStepLimit ? '> limit' : '< limit' }}</b>
+        </span>
         <span>selected final loss: <strong>{{ selectedFinalLoss.toExponential(1) }}</strong></span>
         <span>best at this setting: <strong>{{ scheduleLabels[bestSchedule] }}</strong></span>
       </div>
@@ -237,6 +241,7 @@ const scheduleLosses = computed(() =>
   Object.fromEntries(scheduleNames.map(name => [name, scheduledLosses(name)])),
 )
 const stabilityLimit = computed(() => 2 / conditioning.value)
+const peakExceedsFixedStepLimit = computed(() => peakLearningRate.value >= stabilityLimit.value)
 const selectedFinalLoss = computed(() => {
   const values = scheduleLosses.value[schedule.value]
   return values[values.length - 1]
@@ -316,19 +321,37 @@ button {
   padding: 6px 8px;
   cursor: pointer;
 }
-.batch-readout,
-.schedule-readout {
+.batch-readout {
   display: flex;
   justify-content: center;
   gap: 28px;
+}
+.schedule-readout {
+  display: grid;
+  grid-template-columns: 1.25fr .8fr 1fr 1fr;
+  gap: 18px;
+}
+.batch-readout,
+.schedule-readout {
   color: #667678;
   font-size: .66em;
   line-height: 1.3;
+}
+.schedule-readout span {
+  white-space: nowrap;
 }
 .batch-readout strong,
 .schedule-readout strong {
   color: #8c0000;
   font-weight: 600;
+}
+.stability-comparison b {
+  margin-left: .35em;
+  color: #617b67;
+  font-weight: 600;
+}
+.stability-comparison.exceeds b {
+  color: #8c0000;
 }
 .loss-chart {
   display: block;

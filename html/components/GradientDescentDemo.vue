@@ -17,8 +17,16 @@
 
     <div class="gd-controls">
       <div class="gd-recurrence">
-        <span>x<sub>t+1</sub> = (1 − 2η)x<sub>t</sub></span>
-        <strong>multiplier: {{ multiplier.toFixed(2) }}</strong>
+        <div class="gd-equation">
+          <i>x</i><sub>t+1</sub>
+          <span>=</span>
+          <span class="gd-factor">(1 − 2<i>η</i>)</span>
+          <i>x</i><sub>t</sub>
+        </div>
+        <div class="gd-multiplier">
+          <span>multiplier</span>
+          <strong>1 − 2<i>η</i> = {{ multiplier.toFixed(2) }}</strong>
+        </div>
       </div>
 
       <label class="gd-slider">
@@ -131,16 +139,41 @@ function setLearningRate(value) {
   font-size: 0.78em;
 }
 .gd-recurrence {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1.15em;
+  align-items: center;
   padding-bottom: 0.35em;
   border-bottom: 1px solid #9ba8aa;
-  font-family: 'Fira Mono', monospace;
 }
-.gd-recurrence strong {
+.gd-equation {
+  display: flex;
+  align-items: baseline;
+  gap: 0.18em;
+  white-space: nowrap;
+  font-family: KaTeX_Main, 'Times New Roman', serif;
+  font-size: 1.35em;
+}
+.gd-equation sub {
+  font-size: 0.62em;
+}
+.gd-factor {
+  color: #8c0000;
+}
+.gd-multiplier {
+  display: flex;
+  flex-direction: column;
+  gap: 0.05em;
+  padding-left: 0.8em;
+  border-left: 2px solid #d7b2b2;
+  color: #667678;
+  font-size: 0.72em;
+  line-height: 1.2;
+}
+.gd-multiplier strong {
   color: #8c0000;
   font-weight: 600;
+  white-space: nowrap;
 }
 .gd-slider {
   display: grid;
