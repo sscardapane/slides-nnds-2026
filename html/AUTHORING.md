@@ -28,11 +28,11 @@ lecture, set one offset in the deck headmatter:
 
 ```yaml
 themeConfig:
-  pageOffset: 38
+  pageOffset: 37
 ```
 
 With that example, the title remains unnumbered and the first ordinary frame
-is page 40 (`2 + 38`). The optional `page` property is retained only as an
+is page 39 (`2 + 37`). The optional `page` property is retained only as an
 escape hatch for exceptional exports.
 
 ## Mathematics
@@ -63,6 +63,70 @@ which is auto-imported from `html/slides/components`:
 
 Use the `tex` property for short formulas. Keep long aligned derivations in
 ordinary `$$ ... $$` Markdown blocks, where they remain easier to edit.
+
+## Interactive equation inspection
+
+Keep equations monochrome by default. A persistent multi-color grammar is not
+self-explanatory and should not be used merely for decoration. For a difficult
+equation, use the reusable `EquationInspector` only when selecting a symbol,
+index, or subexpression either:
+
+1. links several separated occurrences; or
+2. reveals a non-obvious grouping inside the equation.
+
+The inspector is deliberately small. Hover previews a group, click pins it,
+and clicking the selected item again clears it. Do not add explanatory cards
+or prose panels when the highlighted correspondence is already visible in the
+equation. The unselected equation and its PDF export must remain complete.
+
+Inside the TeX source, mark linked occurrences with KaTeX's `\htmlData`:
+
+```md
+<script setup>
+import EquationInspector from '../components/EquationInspector.vue'
+
+const equation = String.raw`
+  Y_{
+    \htmlData{inspect=b}{b},
+    \htmlData{inspect=h}{h}
+  }
+  =
+  \sum_{\htmlData{inspect=d}{d}=1}^{D}
+  X_{
+    \htmlData{inspect=b}{b},
+    \htmlData{inspect=d}{d}
+  }
+  W_{
+    \htmlData{inspect=d}{d},
+    \htmlData{inspect=h}{h}
+  }
+`
+
+const items = [
+  { id: 'b', tex: 'b' },
+  { id: 'd', tex: 'd' },
+  { id: 'h', tex: 'h' },
+]
+</script>
+
+<EquationInspector
+  :tex="equation"
+  :items="items"
+  label="highlight index"
+/>
+```
+
+The identifiers are local to one equation: they do not imply a course-wide
+color legend. The same component can inspect complete terms by wrapping a
+subexpression, for example
+`\htmlData{inspect=read}{(\mathbf U_k^\top\mathbf x)}` and listing a
+corresponding `read` item. Use `inline` when the small selector can sit beside
+the equation and the slide is vertically dense.
+
+Do not add an inspector to simple definitions, one-step identities, or
+equations where each selectable item occurs only once and its grouping is
+already obvious. In those cases, ordinary LaTeX, a static annotation, or no
+annotation is clearer.
 
 ## Semantic CSS classes
 

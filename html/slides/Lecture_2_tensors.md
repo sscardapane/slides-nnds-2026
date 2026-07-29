@@ -174,6 +174,29 @@ layout: full
 
 <script setup>
 import BeamerFrame from '../components/BeamerFrame.vue'
+import EquationInspector from '../components/EquationInspector.vue'
+
+const matrixProductEquation = String.raw`
+  [\mathbf X\mathbf W]_{
+    \htmlData{inspect=b}{b},
+    \htmlData{inspect=h}{h}
+  }
+  =
+  \left\langle
+    [\mathbf X]_{\htmlData{inspect=b}{b},:},
+    [\mathbf W]_{:,\htmlData{inspect=h}{h}}
+  \right\rangle
+  =
+  \sum_{\htmlData{inspect=d}{d}=1}^{D}
+    X_{\htmlData{inspect=b}{b},\htmlData{inspect=d}{d}}
+    W_{\htmlData{inspect=d}{d},\htmlData{inspect=h}{h}}
+`
+
+const matrixProductItems = [
+  { id: 'b', tex: 'b' },
+  { id: 'd', tex: 'd' },
+  { id: 'h', tex: 'h' },
+]
 </script>
 
 <BeamerFrame title="Matrices and batches">
@@ -195,11 +218,12 @@ $$
 
 For $\mathbf{X}\sim(B,D)$ and $\mathbf{W}\sim(D,H)$, matrix multiplication is defined by:
 
-$$
-[\mathbf{X}\mathbf{W}]_{b,h}
-=\langle[\mathbf{X}]_{b,:},[\mathbf{W}]_{:,h}\rangle
-=\sum_{d=1}^{D}X_{b,d}W_{d,h}.
-$$
+<EquationInspector
+  :tex="matrixProductEquation"
+  :items="matrixProductItems"
+  label="highlight index"
+  compact
+/>
 
 </div>
 
@@ -243,6 +267,25 @@ layout: full
 
 <script setup>
 import BeamerFrame from '../components/BeamerFrame.vue'
+import EquationInspector from '../components/EquationInspector.vue'
+
+const lowRankComponentEquation = String.raw`
+  \mathbf{x}^{\top}\mathbf{W}
+  \approx
+  \sum_{\htmlData{inspect=k}{k}=1}^{r}
+  \htmlData{inspect=read}{
+    (\mathbf{U}_{\htmlData{inspect=k}{k}}^{\top}\mathbf{x})
+  }
+  \htmlData{inspect=write}{
+    \mathbf{V}_{\htmlData{inspect=k}{k}}^{\top}
+  }
+`
+
+const lowRankComponentItems = [
+  { id: 'k', tex: 'k' },
+  { id: 'read', tex: '\\mathbf{U}_k^{\\top}\\mathbf{x}' },
+  { id: 'write', tex: '\\mathbf{V}_k^{\\top}' },
+]
 </script>
 
 <BeamerFrame title="Low-rank factorization">
@@ -259,11 +302,12 @@ $$
 
 For a row vector $\mathbf{x}^{\top}$:
 
-$$
-\mathbf{x}^{\top}\mathbf{W}\approx
-\sum_{k=1}^{r}
-(\mathbf{U}_k^{\top}\mathbf{x})\mathbf{V}_k^{\top}.
-$$
+<EquationInspector
+  :tex="lowRankComponentEquation"
+  :items="lowRankComponentItems"
+  label="highlight term"
+  inline
+/>
 
 All linear maps can be decomposed into a sum of rank-1 operations operating on 1D subspaces.
 
@@ -281,6 +325,33 @@ layout: full
 
 <script setup>
 import BeamerFrame from '../components/BeamerFrame.vue'
+import EquationInspector from '../components/EquationInspector.vue'
+
+const batchedProductEquation = String.raw`
+  Y_{
+    \htmlData{inspect=b}{b},
+    \htmlData{inspect=t}{t},
+    \htmlData{inspect=h}{h}
+  }
+  =
+  \sum_{\htmlData{inspect=d}{d}=1}^{D}
+  X_{
+    \htmlData{inspect=b}{b},
+    \htmlData{inspect=t}{t},
+    \htmlData{inspect=d}{d}
+  }
+  W_{
+    \htmlData{inspect=d}{d},
+    \htmlData{inspect=h}{h}
+  }
+`
+
+const batchedProductItems = [
+  { id: 'b', tex: 'b' },
+  { id: 't', tex: 't' },
+  { id: 'd', tex: 'd' },
+  { id: 'h', tex: 'h' },
+]
 </script>
 
 <BeamerFrame title="More array operations">
@@ -304,9 +375,12 @@ X\sim(B,T,D),\qquad
 \mathbf{W}\sim(D,H),\qquad
 Y\sim(B,T,H)$$
 
-$$
-Y_{b,t,h}=\sum_{d=1}^{D}X_{b,t,d}W_{d,h}.
-$$
+<EquationInspector
+  :tex="batchedProductEquation"
+  :items="batchedProductItems"
+  label="highlight index"
+  inline
+/>
 
 </BeamerFrame>
 

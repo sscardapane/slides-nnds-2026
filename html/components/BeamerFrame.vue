@@ -26,18 +26,20 @@ const displayedPage = computed(() => props.page || $page.value + pageOffset.valu
   position: absolute;
   inset: 0;
   overflow: hidden;
-  background: #fff;
-  color: #24383c;
+  background: var(--nnds-paper, #fdfdfc);
+  color: var(--nnds-ink, #24383c);
   font-family: 'Fira Sans', sans-serif;
   font-size: 23px;
   font-weight: 300;
   line-height: 1.44;
+  text-rendering: optimizeLegibility;
 }
 .beamer-frame > header {
   height: 58px;
   box-sizing: border-box;
   padding: 13px 34px 0;
-  background: #23393c;
+  background: var(--nnds-header, #23393c);
+  box-shadow: inset 0 -3px var(--nnds-accent, #8c0000);
   color: #fff;
   font-size: 27px;
   font-weight: 300;
@@ -45,26 +47,34 @@ const displayedPage = computed(() => props.page || $page.value + pageOffset.valu
   text-align: right;
 }
 .beamer-frame > main {
+  box-sizing: border-box;
+  height: calc(100% - 58px);
   padding: 20px 61px 34px;
 }
 .beamer-frame > footer {
   position: absolute;
   right: 22px;
   bottom: 11px;
-  color: #42575a;
+  color: var(--nnds-ink-soft, #5f7073);
   font-size: 13px;
+  font-weight: 400;
 }
 .beamer-frame p { margin: 0 0 19px; }
 .beamer-frame strong { font-weight: 600; }
-.beamer-frame .accent { color: #8c0000; font-weight: 600; }
+.beamer-frame .accent {
+  color: var(--nnds-accent, #8c0000);
+  font-weight: 600;
+}
 .beamer-frame .definition-box {
   margin: 0 0 22px;
-  padding: 14px 28px;
-  border: 3px solid #4b4b4b;
-  border-radius: 10px;
-  background: #fafafa;
+  padding: 14px 24px;
+  border: 1px solid #667779;
+  border-left: 5px solid var(--nnds-accent, #8c0000);
+  border-radius: 6px;
+  background: var(--nnds-panel, #f4f6f5);
+  box-shadow: 0 2px 0 rgba(35, 57, 60, .08);
 }
-.beamer-frame .muted { color: #929292; }
+.beamer-frame .muted { color: var(--nnds-ink-soft, #5f7073); }
 .beamer-frame .small { font-size: .78em; line-height: 1.45; }
 .beamer-frame .compact { margin-bottom: 9px; }
 .beamer-frame .axis-key {
@@ -103,15 +113,18 @@ const displayedPage = computed(() => props.page || $page.value + pageOffset.valu
 }
 .beamer-frame .rule-line {
   margin: 14px 0;
-  padding: 10px 0;
-  border-top: 1px solid #24383c;
-  border-bottom: 1px solid #24383c;
+  padding: 10px 14px;
+  border-top: 1px solid var(--nnds-rule, #cfd8d8);
+  border-bottom: 1px solid var(--nnds-rule, #cfd8d8);
+  border-left: 4px solid var(--nnds-accent, #8c0000);
+  background: rgba(244, 246, 245, .65);
 }
 .beamer-frame .research-note {
   margin-top: 16px;
-  padding-left: 14px;
-  border-left: 4px solid #8c0000;
-  color: #666;
+  padding: 8px 14px;
+  border-left: 4px solid var(--nnds-accent, #8c0000);
+  background: rgba(244, 246, 245, .72);
+  color: var(--nnds-ink-soft, #5f7073);
   font-size: .76em;
 }
 .beamer-frame .katex-display { margin: .6em 0 1em; }
@@ -119,11 +132,14 @@ const displayedPage = computed(() => props.page || $page.value + pageOffset.valu
 .beamer-frame ul,
 .beamer-frame ol { margin: 9px 0 0 24px; }
 .beamer-frame li { margin: 9px 0; }
+.beamer-frame li::marker { color: var(--nnds-accent, #8c0000); }
 .beamer-frame .legacy-code {
   margin: 0 0 24px;
-  padding: 8px 0 7px;
-  border-top: 1px solid #24383c;
-  border-bottom: 1px solid #24383c;
+  padding: 10px 14px 9px 6px;
+  border: 1px solid var(--nnds-rule, #cfd8d8);
+  border-left: 4px solid var(--nnds-accent, #8c0000);
+  border-radius: 5px;
+  background: var(--nnds-panel, #f4f6f5);
   font-family: 'Fira Mono', monospace;
   font-size: 19px;
   font-weight: 400;

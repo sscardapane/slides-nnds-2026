@@ -4,6 +4,13 @@
 
 :root {
   --slidev-theme-primary: #8c0000;
+  --nnds-ink: #24383c;
+  --nnds-ink-soft: #5f7073;
+  --nnds-header: #23393c;
+  --nnds-accent: #8c0000;
+  --nnds-paper: #fdfdfc;
+  --nnds-panel: #f4f6f5;
+  --nnds-rule: #cfd8d8;
 }
 
 .slidev-layout {
