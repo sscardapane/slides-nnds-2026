@@ -1,18 +1,91 @@
 \frametitle{Descent direction}
 
-	Without loss of generality, we restrict to unit directions ($\lVert \vc{p}_t \rVert = 1$). The rate of change is given by the directional derivative:\blfootnote{We rely on the identity $\langle \vc{a}, \vc{b} \rangle = \lVert \vc{a} \rVert \lVert \vc{b} \rVert \cos(\theta)$ for vectors $\vc{a}, \vc{b}$ and angle $\theta$ between them.}
-	%
-	\begin{equation*}
-		\mathrm{D}_{\vc{p}_t} \mathcal{L}(\boldsymbol{\theta}_{t-1}) = \langle \nabla \mathcal{L}(\boldsymbol{\theta}_{t-1}), \vc{p}_t \rangle = \lVert \nabla \mathcal{L}(\boldsymbol{\theta}_{t-1}) \rVert \underbrace{\lVert \vc{p}_t \rVert}_{=1} \cos(\theta) = \lVert \nabla \mathcal{L}(\boldsymbol{\theta}_{t-1}) \rVert \cos(\theta).
-	\end{equation*}
-	%
-	The above quantity is minimized when $\cos(\theta) = -1$, which happens if $\theta=\pi$, i.e.,
-	%
-	\begin{equation*}
-		\vc{p}_t =
-		-\frac{\nabla \mathcal{L}(\boldsymbol{\theta}_{t-1})}
-		{\lVert\nabla \mathcal{L}(\boldsymbol{\theta}_{t-1})\rVert}\,.
-	\end{equation*}
-	%
-	This is the unit \myalert{steepest descent direction}; its scale is absorbed into $\eta_t$. In general, anything with $\cos(\theta) < 0$ is a descent direction.
-	
+	We restrict to unit directions, $\lVert\vc{p}_t\rVert=1$.
+
+	\begin{tcolorbox}[
+		colback=drawgray_l,
+		colframe=drawgray,
+		boxrule=0.55pt,
+		arc=1.5pt,
+		left=5pt,
+		right=5pt,
+		top=3pt,
+		bottom=3pt
+	]
+		\small
+		Recall:
+		$\langle\vc{a},\vc{b}\rangle
+		=\lVert\vc{a}\rVert\lVert\vc{b}\rVert\cos(\theta)$,
+		where $\theta$ is the angle between the vectors.
+	\end{tcolorbox}
+
+	\begin{columns}[T,onlytextwidth]
+		\begin{column}{0.64\textwidth}
+			The rate of change along $\vc{p}_t$ is:
+			%
+			\small
+			\begin{align*}
+				\mathrm{D}_{\vc{p}_t}\mathcal{L}(\boldsymbol{\theta}_{t-1})
+				&=
+				\left\langle
+					{\color{darkred}\nabla\mathcal{L}(\boldsymbol{\theta}_{t-1})},
+					{\color{darkpastelblue}\vc{p}_t}
+				\right\rangle
+				\\[0.15em]
+				&=
+				\left\lVert\nabla\mathcal{L}(\boldsymbol{\theta}_{t-1})\right\rVert
+				\underbrace{\lVert\vc{p}_t\rVert}_{=1}
+				{\color{draworange}\cos(\theta)}
+				\\[0.15em]
+				&=
+				\left\lVert\nabla\mathcal{L}(\boldsymbol{\theta}_{t-1})\right\rVert
+				{\color{draworange}\cos(\theta)}.
+			\end{align*}
+		\end{column}
+
+		\begin{column}{0.32\textwidth}
+			\vspace{0.05cm}
+			\centering
+			\begin{tikzpicture}[>=stealth, line cap=round]
+				\coordinate (origin) at (0,0);
+				\draw[
+					->,
+					darkred,
+					line width=1.3pt
+				]
+					(origin) -- (1.7,0)
+					node[below=3pt, text=darkred]
+					{$\nabla\mathcal{L}$};
+				\draw[
+					->,
+					darkpastelblue,
+					line width=1.3pt
+				]
+					(origin) -- (-1.7,0)
+					node[below=3pt, text=darkpastelblue]
+					{$\vc{p}_t$};
+				\draw[
+					->,
+					draworange,
+					line width=0.8pt
+				]
+					(0.70,0.02) arc[start angle=0,end angle=180,radius=0.70];
+				\node[text=draworange] at (0,0.88) {$\theta=\pi$};
+				\fill[drawgray] (origin) circle (1.2pt);
+			\end{tikzpicture}
+
+			\vspace{0.18cm}
+
+			{\small Minimum at ${\color{draworange}\cos(\theta)}=-1$:}
+
+			\vspace{0.12cm}
+
+			$\displaystyle
+				\vc{p}_t\propto
+				-\nabla\mathcal{L}(\boldsymbol{\theta}_{t-1})$.
+		\end{column}
+	\end{columns}
+
+	This is the \myalert{steepest descent direction}. More generally,
+	anything with $\cos(\theta)<0$ is a descent direction.
+
