@@ -70,7 +70,7 @@ A tensor is described both by its <span class="accent">shape</span> and by the t
 - <strong>integers</strong>: token IDs, class labels, and indices;
 - <strong>booleans</strong>: masks.
 
-For text, tokenization produces integer IDs with shape $(B,T)$; an embedding layer maps them to floating-point vectors with shape $(B,T,D)$.
+For example, text tokenization produces integer IDs with shape $(B,T)$; an embedding layer maps them to floating-point vectors with shape $(B,T,D)$.
 
 </BeamerFrame>
 
@@ -130,12 +130,6 @@ For $X\sim(B,T,D)$, consider a concrete tensor with $B=32$, $T=20$, and $D=128$:
 
 <PyRunner :code-rows="5" :initial-code="indexingCode" :initial-output="indexingOutput" />
 
-<div class="rule-line small">
-
-An integer index removes an axis; <code>:</code> retains it. In math, use $X_{b,t,d}$ for a scalar entry and $[X]_{b,t,:}$ for a slice.
-
-</div>
-
 </BeamerFrame>
 
 ---
@@ -164,7 +158,7 @@ x_1 & x_2 & \cdots & x_D
 \end{pmatrix}.
 $$
 
-The Euclidean norm and the standard inner product are:
+Vectors are either <span class="accent">feature vectors</span> (tabular datasets) or <span class="accent">embeddings</span> (of, e.g., pixels or text tokens). The Euclidean norm and the standard inner product are:
 
 $$
 \lVert\mathbf{x}\rVert_2=\sqrt{\sum_d x_d^2},
@@ -237,7 +231,9 @@ $$
 [\mathbf{H}]_{b,:}=\mathbf{x}_b^{\top}\mathbf{W}.
 $$
 
-Therefore $\mathbf{X}\mathbf{W}\sim(B,H)$ transforms a batch of vectors in $\mathbb{R}^D$ into a batch of vectors in $\mathbb{R}^H$. Importantly, any operation applied to a batch should not introduce any dependency between the elements of the batch.
+Therefore $\mathbf{X}\mathbf{W}\sim(B,H)$ transforms a batch of vectors in $\mathbb{R}^D$ (e.g., a sequence of embeddings) into a transformed batch of vectors in $\mathbb{R}^H$. 
+
+Importantly, any operation applied to a batch <strong>should not introduce</strong> any dependency between the elements of the batch.
 
 </BeamerFrame>
 
@@ -269,7 +265,7 @@ $$
 (\mathbf{U}_k^{\top}\mathbf{x})\mathbf{V}_k^{\top}.
 $$
 
-Each rank-1 component uses $\mathbf{U}_k$ to <em>read</em> one scalar from the input and $\mathbf{V}_k$ to <em>write</em> one output direction.
+All linear maps can be decomposed into a sum of rank-1 operations operating on 1D subspaces.
 
 <div class="definition-box small">
 
@@ -287,29 +283,30 @@ layout: full
 import BeamerFrame from '../components/BeamerFrame.vue'
 </script>
 
-<BeamerFrame title="Tensor contractions">
+<BeamerFrame title="More array operations">
 
-Matrix multiplication sums over one shared axis. The same idea applies to tensors with more axes, e.g., a <strong>batched matrix multiplication</strong>:
+Matrix multiplication combines element-wise products and summation over a matched axis. 
+
+Many operations we care about have a similar form. For example, summing over <em>two axes</em> with 2D arrays is a <strong>matrix inner product</strong>:
+
+$$
+h = \sum_i \sum_j X_{i,j}Y_{i,j}
+$$
+
+
+
+
+
+Matrix multiplication with an additional batching axis is <strong>batched matrix multiplication</strong>:
 
 $$
 X\sim(B,T,D),\qquad
 \mathbf{W}\sim(D,H),\qquad
-Y\sim(B,T,H),
-$$
+Y\sim(B,T,H)$$
 
 $$
 Y_{b,t,h}=\sum_{d=1}^{D}X_{b,t,d}W_{d,h}.
 $$
-
-<div class="definition-box">
-Mathematically, this is a <em>contraction</em>: sum over matched indices and retain all the other axes.
-</div>
-
-In NumPy and PyTorch, a very common way to express tensor contractions is through ``einsum'' (Einstein summation):
-
-<div class="legacy-code">
-  <div class="code-line"><span class="ln">1</span><span class="code-text">Y = torch.einsum(<span class="comment">"btd,dh-&gt;bth"</span>, X, W)</span></div>
-</div>
 
 </BeamerFrame>
 
@@ -321,23 +318,26 @@ layout: full
 import BeamerFrame from '../components/BeamerFrame.vue'
 </script>
 
-<BeamerFrame title="Element-wise operations">
+<BeamerFrame title="Tensor contractions">
 
-Some scalar operations extend to tensors by applying them independently to every element:
-
-$$
-[\exp(X)]_{i,j}=\exp(X_{i,j}),
-\qquad
-[X\odot Y]_{i,j}=X_{i,j}Y_{i,j}.
-$$
-
-<div class="legacy-code">
-  <div class="code-line"><span class="ln">1</span><span class="code-text">X * Y          <span class="comment"># element-wise product</span></span></div>
-  <div class="code-line"><span class="ln">2</span><span class="code-text">X @ W          <span class="comment"># matrix multiplication</span></span></div>
-  <div class="code-line"><span class="ln">3</span><span class="code-text">torch.exp(X)   <span class="comment"># element-wise exponential</span></span></div>
+<div class="definition-box">
+Mathematically, the operations above are examples of <em>tensor contractions</em>: summing over matched indices and retaining all the other axes (although not all arrays we manipulate are tensors in the proper sense).
 </div>
 
-The element-wise product of two matrices is also called their <a href="https://en.wikipedia.org/wiki/Hadamard_product_(matrices)">Hadamard product</a>. In neural networks, element-wise non-linear functions are called <span class="accent">activation functions</span>.
+Some operations extend to tensors by applying them independently to every element (<strong>element-wise operations</strong>):
+
+$$
+[\exp(X)]_{i,j}=\exp(X_{i,j})
+$$
+$$
+[X\odot Y]_{i,j}=X_{i,j}Y_{i,j} \qquad \text{Hadamard product}
+$$
+
+In NumPy and PyTorch, a very common way to express all these operations abstractly is through ``einsum'' (Einstein summation):
+
+<div class="legacy-code">
+  <div class="code-line"><span class="ln">1</span><span class="code-text">Y = torch.einsum(<span class="comment">"btd,dh-&gt;bth"</span>, X, W)</span></div>
+</div>
 
 </BeamerFrame>
 

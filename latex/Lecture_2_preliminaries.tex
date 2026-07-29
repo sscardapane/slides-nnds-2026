@@ -26,30 +26,30 @@
 
 \begin{document}
 
-	{\usebackgroundtemplate{\tikz\node[opacity=0.4,inner sep=0]{\includegraphics[width=\paperwidth,height=\paperheight]{images/header}};}%
-	\begin{frame}[plain]
-		\vspace{0.5cm}
-		\title{\large \begin{spacing}{1.0}Neural Networks for Data Science\end{spacing}\vspace{0.25em}
-			\normalsize \begin{spacing}{1.0}\textbf{Master's Degree in Data Science}\end{spacing}\vspace{0.5em}}
-		\subtitle{\Large \textbf{Lecture 2: Mathematical preliminaries}\\
+{\usebackgroundtemplate{\tikz\node[opacity=0.4,inner sep=0]{\includegraphics[width=\paperwidth,height=\paperheight]{images/header}};}%
+\begin{frame}[plain]
+	\vspace{0.5cm}
+	\title{\large \begin{spacing}{1.0}Neural Networks for Data Science\end{spacing}\vspace{0.25em}
+		\normalsize \begin{spacing}{1.0}\textbf{Master's Degree in Data Science}\end{spacing}\vspace{0.5em}}
+	\subtitle{\Large \textbf{Lecture 2: Mathematical preliminaries}\\
 		\large 2b. Derivatives and optimization}
-		\date{
-			{\includegraphics[scale=0.8]{images/Uniroma1}}
-		}
-		\author{
-			\setlength{\tabcolsep}{2pt}
-			\begin{tabular}{rl}
-				\textbf{Lecturer}: & S. Scardapane \\
-			\end{tabular}
-		}\titlepage
-	\end{frame}
+	\date{
+		{\includegraphics[scale=0.8]{images/Uniroma1}}
 	}
+	\author{
+		\setlength{\tabcolsep}{2pt}
+		\begin{tabular}{rl}
+			\textbf{Lecturer}: & S. Scardapane \\
+		\end{tabular}
+	}\titlepage
+\end{frame}
+}
 
 \section{Derivatives and gradients}
 \subsection{Derivatives and gradients}
 
 \begin{frame}{Empirical risk minimization}
-	
+
 	For a dataset $\left\{x_i, y_i\right\}_{i=1}^N$ (more on this next lecture), let $\boldsymbol{\theta}$ denote the trainable parameters of a model $f_{\boldsymbol{\theta}}(x)$ (e.g., for a linear layer $\boldsymbol{\theta}=\{\vc{W},\vc{b}\}$) and define:
 	%
 	\begin{equation}
@@ -63,13 +63,13 @@
 	\begin{equation*}
 		\boldsymbol{\theta}^* = \argmin_{\boldsymbol{\theta}}\mathcal{L}(\boldsymbol{\theta})\,.
 	\end{equation*}
-	
+
 \end{frame}
 
 \begin{frame}{Derivative}
-	
+
 	Most of this course is based on the notion of derivative.
-	
+
 	\begin{tcolorbox}
 		The \myalert{derivative} of a function $f(x)$ is defined as:
 		%
@@ -81,49 +81,32 @@
 	\end{tcolorbox}
 
 	Informally, the derivative expresses the rate of change of $f$ around an infinitesimal displacement from $x$, or the slope of the line tangent to $f(x)$.
-	
-\end{frame}
 
-\begin{frame}{Examples of derivatives}
-	
-	Derivative of a polynomial:
-	%
-	\[
-		\partial \left[ x^p \right] = px^{p-1} \,.
-	\]
-	
-	Derivative of exponentials and logarithms:
-	%
-	\begin{gather*}
-		\partial \left[ \exp(x) \right] = \exp(x) \,, \\
-		\partial \left[ \log(x) \right] = \frac{1}{x} \,.
-	\end{gather*}
-	
 \end{frame}
 
 \begin{whiteframe}{Visualizing derivatives in the 1D case}
-		
+
 	\begin{figure}
-	\centering\includegraphics[width=8cm,keepaspectratio]{images/lecture_2/gradient_info.pdf} %
-	\caption{1D function ($f(x) = x^2 - 1.5x$), showing the derivative at two different locations.}
+		\centering\includegraphics[width=8cm,keepaspectratio]{images/lecture_2/gradient_info.pdf} %
+		\caption{1D function ($f(x) = x^2 - 1.5x$), showing the derivative at two different locations.}
 	\end{figure}
-		
+
 \end{whiteframe}
 
 \begin{frame}{Properties of derivatives}
-	
+
 	Derivatives possess a number of properties, most notably:
 	%
 	\begin{itemize}
 		\item \textbf{Linearity}: $$ \partial \Big[{\color{darkred}f(x)} + {\color{darkgreen}g(x)}\Big] = {\color{darkred}\pr{f}(x)} + {\color{darkgreen}g'(x)} \,. $$
 		\item \textbf{Product rule}: $$ \partial\Big[ {\color{darkred}f(x)}{\color{darkgreen}g(x)}\Big] = {\color{darkred}\pr{f}(x)}{\color{darkgreen}g(x)} + {\color{darkred}f(x)}{\color{darkgreen}g'(x)} \,, $$
 		\item \textbf{Chain rule} $$ \partial \Big[{\color{darkred}f(}{\color{darkgreen}g(x)}{\color{darkred})}\Big] = {\color{darkred}\pr{f}(}{\color{darkgreen}g(x)}{\color{darkred})}{\color{darkgreen}g'(x)} \,. $$
-	\end{itemize}		
+	\end{itemize}
 
 \end{frame}
 
 \begin{frame}{Gradient}
-	
+
 	For a function $y=f(\vc{x})$, $\vc{x} \in \mathbb{R}^m$, the \myalert{gradient} $\partial f(\vc{x})$ is an $m$-dimensional vector defined as:%
 	\begin{equation}
 		\idx{\partial f(\vc{x})}{i} = \frac{\partial f(\vc{x})}{\partial x_i} = \lim_{h \rightarrow 0} \frac{f(\vc{x} + h\vc{e}_i) - f(\vc{x})}{h} \,,
@@ -133,20 +116,20 @@
 	%
 	\begin{equation*}
 		\idx{\vc{e}_i}{j} = \begin{cases} 1 & \text{ if } i=j \\ 0 & \text{otherwise} \end{cases}
-	\end{equation*} 
+	\end{equation*}
 	%
 	Sometimes we use the alternative notation $\nabla f(\vc{x})$.
-	
+
 \end{frame}
 
 \begin{frame}{Directional derivative}
-	
+
 	\begin{tcolorbox}
-	More generally, the \myalert{directional derivative} of $f(\vc{x})$  in the direction $\vc{v}$ is:
-	%
-	\begin{equation}
-		\mathrm{D}_{\vc{v}}f(\vc{x}) = \lim_{h \rightarrow 0} \frac{f(\vc{x} + h\vc{v}) - f(\vc{x})}{h} \,,
-	\end{equation}
+		More generally, the \myalert{directional derivative} of $f(\vc{x})$  in the direction $\vc{v}$ is:
+		%
+		\begin{equation}
+			\mathrm{D}_{\vc{v}}f(\vc{x}) = \lim_{h \rightarrow 0} \frac{f(\vc{x} + h\vc{v}) - f(\vc{x})}{h} \,,
+		\end{equation}
 	\end{tcolorbox}
 	%
 	It is easy to prove that:
@@ -160,7 +143,7 @@
 \end{frame}
 
 \begin{frame}{Gradients and Jacobians}
-	
+
 	Everything extends to vector-valued functions $\vc{y} = f(\vc{x})$, $\vc{x} \in \mathbb{R}^m$, $\vc{y} \in \mathbb{R}^n$:
 	%
 	\begin{tcolorbox}
@@ -168,43 +151,43 @@
 		%
 		\begin{equation}
 			\partial f(\vc{x}) = \begin{pmatrix}
-				\frac{\partial y_1}{\partial x_1} & \dots & \frac{\partial y_1}{\partial x_m} \\
-				\vdots & \ddots & \vdots \\
-				\frac{\partial y_n}{\partial x_1} & \dots & \frac{\partial y_n}{\partial x_m} \\
+				\frac{\partial y_1}{\partial x_1} & \dots  & \frac{\partial y_1}{\partial x_m} \\
+				\vdots                            & \ddots & \vdots                            \\
+				\frac{\partial y_n}{\partial x_1} & \dots  & \frac{\partial y_n}{\partial x_m} \\
 			\end{pmatrix} \,.
 		\end{equation}
 	\end{tcolorbox}
 	%
 	For $n=1$, we recover the gradient, while for $m = n = 1$ we recover the standard derivative.
-	
+
 \end{frame}
 
 \begin{frame}{Examples of matrix derivatives}
-	
+
 	Derivative of the inner product:
 	%
 	\[
-	\frac{\partial}{\partial \vc{x}} \langle \vc{x}, \vc{y} \rangle = \vc{y} \,.
+		\frac{\partial}{\partial \vc{x}} \langle \vc{x}, \vc{y} \rangle = \vc{y} \,.
 	\]
-	
+
 	Derivative of a linear map:
 	%
 	\[
-	\frac{\partial}{\partial \vc{x}} \vc{A}\vc{x} = \vc{A} \,.
+		\frac{\partial}{\partial \vc{x}} \vc{A}\vc{x} = \vc{A} \,.
 	\]
-	
+
 	Derivative of the squared Euclidean norm:
 	%
 	\[
-	\partial \lVert \vc{x} \rVert^2 = 2\vc{x} \,.
+		\partial \lVert \vc{x} \rVert^2 = 2\vc{x} \,.
 	\]
-	
+
 	\blfootnote{See the matrix cookbook for reference: \\ \url{https://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf}.}
-	
+
 \end{frame}
 
 \begin{frame}{Properties of gradients}
-	
+
 	Jacobians inherit many properties from the scalar case. Importantly, there exists a chain rule for Jacobians. For $f: \mathbb{R}^m \rightarrow \mathbb{R}^n$ and $g: \mathbb{R}^o \rightarrow \mathbb{R}^m$:
 	%
 	\begin{equation}
@@ -216,32 +199,35 @@
 	\end{equation}
 	%
 	In words: the Jacobian of the composition of two functions is the product of their Jacobian matrices.
-	
+
 \end{frame}
 
 \begin{frame}{First-order approximation}
-	
-	Given a scalar-valued function $f$ and a reference point $\vc{x}_0$, its first-order approximation is:
-	
+
+
+	\begin{tcolorbox}
+		Given a scalar-valued function $f$ and a reference point $\vc{x}_0$, the best \textbf{linear approximation} of $f$ around $\vc{x}_0$ is given by (\myalert{Taylor's theorem}):
+		%
+		$$
+			\widetilde{f}(\mathbf{x})= f(\mathbf{x}_0)+\langle \eqnmarkbox[drawred]{node}{\partial f(\mathbf{x}_0)}, \eqnmarkbox[drawgreen]{node2}{\mathbf{x}-\mathbf{x}_0} \rangle
+			\annotate[yshift=1em]{above,right}{node}{Slope of the line}
+			\annotate[yshift=-1em]{below,left}{node2}{Displacement from $\mathbf{x}_0$}
+		$$
+	\end{tcolorbox}
+
 	\vspace{1em}
-	$$
-	\widetilde{f}(\mathbf{x})= f(\mathbf{x}_0)+\langle \eqnmarkbox[drawred]{node}{\partial f(\mathbf{x}_0)}, \eqnmarkbox[drawgreen]{node2}{\mathbf{x}-\mathbf{x}_0} \rangle
-	\annotate[yshift=1em]{above,right}{node}{Slope of the line}
-	\annotate[yshift=-1em]{below,left}{node2}{Displacement from $\mathbf{x}_0$}
-	$$
-	\vspace{1em}
-	
-	is the best \textbf{linear approximation} of $f$ around $\vc{x}_0$ (\myalert{Taylor's theorem}). Better approximations can be constructed from higher-order derivatives, but this is enough for building effective optimization algorithms.
-	
+
+	Better approximations can be constructed from higher-order derivatives, but this is enough for building effective optimization algorithms.
+
 \end{frame}
 
 \begin{whiteframe}{Visualizing the approximation}
-	
+
 	\begin{figure}
 		\centering\includegraphics[width=8cm,keepaspectratio]{images/lecture_2/taylor_approximation.pdf} %
 		\caption{1D function ($f(x) = x^2 - 1.5x$), linearized at 0.5.}
 	\end{figure}
-	
+
 \end{whiteframe}
 
 %\begin{frame}{Taylor's theorem (with remainders)}
@@ -263,7 +249,7 @@
 \subsection{Numerical optimization}
 
 \begin{frame}{Optimizing a function}
-	
+
 	We can use gradients to solve generic problems of the form:
 	%
 	\begin{equation}
@@ -279,7 +265,7 @@
 \end{frame}
 
 \begin{frame}{A few additional definitions}
-	
+
 	\begin{tcolorbox}
 		A point $\boldsymbol{\theta}$ such that $\mathcal{L}(\boldsymbol{\theta}) \le \mathcal{L}(\boldsymbol{\theta}') \;\;\forall\; \boldsymbol{\theta}'$ is called a \myalert{global minimum}. If instead (less restrictive):
 		%
@@ -289,113 +275,114 @@
 		%
 		for some $\varepsilon > 0$, it is called a \myalert{local minimum}.
 	\end{tcolorbox}
-	
+
 	\begin{tcolorbox}
 		If $\nabla \mathcal{L}(\boldsymbol{\theta}) = 0$, $\boldsymbol{\theta}$ is called a \myalert{stationary point}. Stationary points can be minima, maxima, or \myalert{saddle points}.
 	\end{tcolorbox}
 
-	First-order optimization generally targets stationary points. Its behavior near saddle points depends on the local geometry and on the optimization algorithm; stochasticity can help escape some unstable saddles, but does not provide a general guarantee.
-	
+	First-order optimization algorithms return stationary points, which are either local minima or saddle points.
+
 \end{frame}
 
 \begin{whiteframe}{Types of stationary points}
-		
+
 	\begin{figure}
-	\centering\includegraphics[width=8cm,keepaspectratio]{images/lecture_2/Extrema_example_original.png} %
-	\vspace{-1em}\caption{With no additional information, stationary points can be \myalert{minima}, \myalert{maxima}, and can be \myalert{local} or \myalert{global} (\textit{Wikimedia, KSmrq}).}
+		\centering\includegraphics[width=8cm,keepaspectratio]{images/lecture_2/Extrema_example_original.png} %
+		\vspace{-1em}\caption{With no additional information, stationary points can be \myalert{minima}, \myalert{maxima}, and can be \myalert{local} or \myalert{global} (\textit{Wikimedia, KSmrq}).}
 	\end{figure}
-		
+
 \end{whiteframe}
 
 \begin{whiteframe}{Saddle points}
-		
+
 	\begin{figure}
-	\centering\includegraphics[width=8cm,keepaspectratio]{images/lecture_2/saddle_point.pdf} %
-	\vspace{-0.5em}\caption{Stationary points can also be \myalert{saddle points}, either decreasing or increasing in different directions.}
+		\centering\includegraphics[width=8cm,keepaspectratio]{images/lecture_2/saddle_point.pdf} %
+		\vspace{-0.5em}\caption{Stationary points can also be \myalert{saddle points}, either decreasing or increasing in different directions.}
 	\end{figure}
-		
+
 \end{whiteframe}
 
 \begin{frame}{Finding stationary points}
-	
-	Given a randomly initialized $\boldsymbol{\theta}_0$, consider the following iteration:
-	
-	\vspace{1em}
-	\begin{equation}
-		\boldsymbol{\theta}_t = \eqnmarkbox[drawred]{node}{\boldsymbol{\theta}_{t-1}} + \eqnmarkbox[drawblue]{node2}{\eta_t\mathbf{p}_t}
-		\label{eq:iterative_descent}
-		\annotate[yshift=1em]{above,left}{node}{Guess at iteration $t$}
-		\annotate[yshift=-1em]{below,left}{node2}{Displacement at iteration $t$}
-	\end{equation}
-	\vspace{1em}
+
 
 	\begin{tcolorbox}
-		$\vc{p}_t$ is called a \myalert{descent direction} for $\mathcal{L}(\boldsymbol{\theta}_{t-1})$ if $\mathcal{L}(\boldsymbol{\theta}_t) < \mathcal{L}(\boldsymbol{\theta}_{t-1})$ for a sufficiently small $\eta_t$. $\eta_t$ is called \myalert{step size} or \myalert{learning rate}.
+
+		Given a randomly initialized $\boldsymbol{\theta}_0$, an \myalert{iterative optimization algorithm} has the form:
+		%
+		\begin{equation}
+			\boldsymbol{\theta}_t = \eqnmarkbox[drawred]{node}{\boldsymbol{\theta}_{t-1}} + \eqnmarkbox[drawblue]{node2}{\eta_t\mathbf{p}_t}
+			\label{eq:iterative_descent}
+			\annotate[yshift=1em]{above,left}{node}{Guess at iteration $t$}
+			\annotate[yshift=-1em]{below,left}{node2}{Displacement at iteration $t$}
+		\end{equation}
 	\end{tcolorbox}
-	
+
+	$\vc{p}_t$ is called a \myalert{descent direction} for $\mathcal{L}(\boldsymbol{\theta}_{t-1})$ if $\mathcal{L}(\boldsymbol{\theta}_t) < \mathcal{L}(\boldsymbol{\theta}_{t-1})$ for a sufficiently small $\eta_t$. $\eta_t$ is called \myalert{step size} or \myalert{learning rate}.
+
 	To implement this iterative algorithm we need a way to choose a descent direction (and a step size) for all $t$.
 
 \end{frame}
 
 \begin{frame}[fragile]{Descent direction}
-	
-	Without loss of generality, we restrict to unit directions ($\lVert \vc{p}_t \rVert = 1$). The rate of change is given by the directional derivative:\blfootnote{We rely on the identity $\langle \vc{a}, \vc{b} \rangle = \lVert \vc{a} \rVert \lVert \vc{b} \rVert \cos(\theta)$ for vectors $\vc{a}, \vc{b}$ and angle $\theta$ between them.}
+
+	Without loss of generality, we restrict to unit directions ($\lVert \vc{p}_t \rVert = 1$). The rate of change is given by the directional derivative (recalling $\langle \vc{a}, \vc{b} \rangle = \lVert \vc{a} \rVert \lVert \vc{b} \rVert \cos(\theta)$ for vectors $\vc{a}, \vc{b}$ and angle $\theta$ between them):
 	%
 	\begin{equation*}
 		\mathrm{D}_{\vc{p}_t} \mathcal{L}(\boldsymbol{\theta}_{t-1}) = \langle \nabla \mathcal{L}(\boldsymbol{\theta}_{t-1}), \vc{p}_t \rangle = \lVert \nabla \mathcal{L}(\boldsymbol{\theta}_{t-1}) \rVert \underbrace{\lVert \vc{p}_t \rVert}_{=1} \cos(\theta) = \lVert \nabla \mathcal{L}(\boldsymbol{\theta}_{t-1}) \rVert \cos(\theta).
-	\end{equation*} 
-	%
-	The above quantity is minimized when $\cos(\theta) = -1$, which happens if $\theta=\pi$, i.e.,
-	%
-	\begin{equation*}
-		\vc{p}_t =
-		-\frac{\nabla \mathcal{L}(\boldsymbol{\theta}_{t-1})}
-		{\lVert\nabla \mathcal{L}(\boldsymbol{\theta}_{t-1})\rVert}\,.
 	\end{equation*}
 	%
-	This is the unit \myalert{steepest descent direction}; its scale is absorbed into $\eta_t$. In general, anything with $\cos(\theta) < 0$ is a descent direction.
-	
+	The above quantity is minimized when $\cos(\theta) = -1$, which happens if $\theta=\pi$:
+	%
+	\begin{equation*}
+		\vc{p}_t \propto
+		- \nabla \mathcal{L}(\boldsymbol{\theta}_{t-1})\,.
+	\end{equation*}
+	%
+	This is the \myalert{steepest descent direction}. In general, anything with $\cos(\theta) < 0$ is a descent direction.
+
 \end{frame}
 
 \begin{frame}{Gradient descent}
-	
+
 	The resulting algorithm is called \myalert{gradient descent}.
 	%
 	\begin{tcolorbox}
 		Gradient descent (GD) finds stationary points by iterating:
 		%
 		\begin{equation}
-		\boldsymbol{\theta}_t = \boldsymbol{\theta}_{t-1} - \eta_t \nabla \mathcal{L}(\boldsymbol{\theta}_{t-1}) \,.
-	\end{equation}
+			\boldsymbol{\theta}_t = \boldsymbol{\theta}_{t-1} - \eta_t \nabla \mathcal{L}(\boldsymbol{\theta}_{t-1}) \,.
+		\end{equation}
 	\end{tcolorbox}
 
 	This is the basic form of gradient descent (GD, also known as \textbf{first-order} optimization): steepest local directions are not necessarily the \textit{fastest} in general and we can accelerate this iteration in many ways.
-	
+
 \end{frame}
 
+\subsection{Stochastic gradient descent}
+
 \begin{frame}{Handling large datasets}
-	
+
 	Consider the steps needed for a single iteration of GD in our specific optimization problem:
-	
+
 	\begin{enumerate}
 		\item Computing the output of the model $f(\vc{x})$ on \textit{all} examples;
 		\item Computing the gradient of the cost function with respect to the parameters.
 	\end{enumerate}
-	
+
 	Both these operations scale \textit{linearly} in the number of examples, which is unfeasible when we have $10^5$ or even more examples.
-	
+
 	In practice, to train neural networks we use \myalert{stochastic} versions of GD, that approximate the real gradient from smaller amounts of data.
-	
+
 \end{frame}
 
 \begin{frame}{Stochastic GD}
-	
+
 	The key observation is that the training problem in NNs is an average over the full dataset ($\vc{\theta}$ is the set of weights):
 	%
 	\begin{equation}
 		\mathcal{L}(\vc{\theta}) = \frac{1}{N} \sum_{i=1}^N \displaystyle \ell(f_{\boldsymbol{\theta}}(x_i), y_i) \,.
 	\end{equation}
-	
+
 	To limit the complexity, we can use only a \myalert{mini-batch} $\mathcal{B}_t$ of $B$ examples randomly sampled from the full dataset:
 	%
 	\begin{equation}
@@ -405,92 +392,79 @@
 	\end{equation}
 	%
 	The mini-batch gradient is a (unbiased, noisy) estimate of the full gradient.
-	
+
 \end{frame}
 
 \begin{frame}{Characteristics of stochastic GD}
-	
+
 	The previous algorithm is called \myalert{stochastic gradient descent} (SGD).
-	
+
 	The computational cost of one SGD iteration grows with $B$ (the \myalert{batch size}), but does not depend on the full dataset size $N$ once $B$ is fixed.
-	
+
 	Under standard regularity assumptions and a suitable learning-rate schedule, the noisy mini-batch gradients can still drive the expected gradient norm towards zero.
-	
+
 \end{frame}
 
 \begin{whiteframe}{Visualization of the loss}
-	
+
 	\begin{figure}
 		\centering
 		\includegraphics[width=0.9\columnwidth]{images/lecture_2/stochastic_loss_descent.png}
 		\caption{Mini-batch loss trajectories are noisy even when their average trend decreases (Source: \href{https://engmrk.com/mini-batch-gd/}{EngMRK}).}
 	\end{figure}
-	
+
 \end{whiteframe}
 
 \begin{frame}{Extracting batches from the data}
-	
+
 	Instead of randomly sampling batches from the training dataset at each iteration, we generally apply the following procedure:
-	
+
 	\begin{enumerate}
 		\item Shuffle the full dataset;
 		\item Split the dataset into blocks of $B$ elements and process them sequentially, batch-by-batch;
 		\item After the last block, return to point (1) and iterate.
 	\end{enumerate}
-	
+
 	A full pass over the dataset is called an \myalert{epoch}. This is efficient because the majority of the time we deal with data stored \textit{contiguously} in memory. In practice, even the shuffling operation can be approximated.
-	
+
 \end{frame}
 
 \begin{whiteframe}{Extracting batches from the data}
-	
+
 	\begin{figure}
 		\centering
 		\includegraphics[width=0.75\columnwidth]{images/lecture_2/stochastic_optimization.pdf}
 		\caption{Dividing the optimization process into epochs is also helpful to define metrics and stopping criteria.}
 	\end{figure}
-	
+
 \end{whiteframe}
 
 \begin{whiteframe}{Parallelizing GD optimization}
-	
+
 	\begin{figure}
 		\centering
 		\includegraphics[width=0.7\columnwidth]{images/lecture_2/mini_batch.pdf}
 		\caption{A simple form of distributed stochastic optimization: we process one mini-batch per available machine or GPU (by replicating the weights on each of them) and sum or average
 			the corresponding gradients before broadcasting back the result (which is valid due to the linearity of the gradient operation). This requires a synchronization mechanism across the machines or the GPUs.}
 	\end{figure}
-	
+
 \end{whiteframe}
 
-\begin{frame}{Choosing the batch size}
-	
-	Running SGD requires selecting the size of the mini-batch, which is an additional hyper-parameter:
-	
-	\begin{itemize}
-		\item Smaller mini-batches make each update cheaper, but provide a noisier estimate of the gradient.
-		\item Larger mini-batches require more computation per update, but reduce gradient variance and can use accelerators more efficiently.
-	\end{itemize}
-	
-	The best choice depends jointly on optimization, available memory, and hardware utilization. Powers of two (32, 64, 128, \ldots) are a common hardware-oriented heuristic, not a mathematical requirement.
-	
-	For $B=1$ we obtain single-example SGD; it is \myalert{online} optimization when examples arrive as a stream.
-	
-\end{frame}
+\subsection{Accelerating gradient descent (optional)}
 
 \begin{frame}{Momentum}
-	
+
 	Steepest-descent directions are local. On poorly conditioned objectives they can zig-zag, and noisy gradients make the path more erratic. \myalert{Momentum} smooths the path by retaining part of the previous displacement:
 	%
 	\begin{align*}
-		\vc{u}_t &= {\color{darkred}-\eta_t\nabla \widetilde{\mathcal{L}}_t(\vc{\theta}_{t-1})}
-		+ {\color{darkpastelblue}\lambda\vc{u}_{t-1}}\,,\\
-		\vc{\theta}_t &= \vc{\theta}_{t-1}+\vc{u}_t\,,
+		\vc{u}_t      & = {\color{darkred}-\eta_t\nabla \widetilde{\mathcal{L}}_t(\vc{\theta}_{t-1})}
+		+ {\color{darkpastelblue}\lambda\vc{u}_{t-1}}\,,                                              \\
+		\vc{\theta}_t & = \vc{\theta}_{t-1}+\vc{u}_t\,,
 		\qquad \vc{u}_0=\vc{0},\quad 0\leq\lambda<1\,.
 	\end{align*}
-	
+
 	Past displacements are exponentially damped: the contribution from $n$ iterations ago is multiplied by $\lambda^{n-1}$.
-	
+
 \end{frame}
 
 \begin{frame}{Adam}
@@ -502,83 +476,84 @@
 	\begin{equation*}
 		\begin{aligned}
 			\vc{m}_t
-			&=
+			                                & =
 			\beta_1\vc{m}_{t-1}+(1-\beta_1)\vc{g}_t
-			&& \text{\footnotesize first moment},\\
+			                                &   & \text{\footnotesize first moment},  \\
 			\vc{v}_t
-			&=
+			                                & =
 			\beta_2\vc{v}_{t-1}+(1-\beta_2)(\vc{g}_t\odot\vc{g}_t)
-			&& \text{\footnotesize second moment},\\
+			                                &   & \text{\footnotesize second moment}, \\
 			\widehat{\vc{m}}_t
-			&=
+			                                & =
 			\frac{\vc{m}_t}{1-\beta_1^t}\,,
-			&
+			\qquad
 			\widehat{\vc{v}}_t
-			&=
-			\frac{\vc{v}_t}{1-\beta_2^t}\,,\\[0.3em]
+			=
+			\frac{\vc{v}_t}{1-\beta_2^t}\,, &   & \text{\footnotesize correction,}    \\
 			{\color{darkred}
 			\vc{\theta}_t
-			=
+			                                & =
 			\vc{\theta}_{t-1}
 			-\eta_t
 			\frac{\widehat{\vc{m}}_t}
 			{\sqrt{\widehat{\vc{v}}_t}+\varepsilon}}
-			&& \text{\scriptsize update}.
+			                                &   & \text{\footnotesize update}.
 		\end{aligned}
 	\end{equation*}
 
 	\vspace{-0.8em}
 	\footnotesize
-	$\vc{m}_t$ smooths the direction as in momentum; $\vc{v}_t$ rescales the coordinates; the hats correct the bias from $\vc{m}_0=\vc{v}_0=\vc{0}$. Here $\beta_1,\beta_2\in[0,1)$ and all operations involving $\vc{v}_t$ are element-wise.
+	$\vc{m}_t$ smooths the direction as in momentum; $\vc{v}_t$ rescales the coordinates; the hats correct the bias from $\vc{m}_0=\vc{v}_0=\vc{0}$. $\beta_1,\beta_2\in[0,1)$ and all operations involving $\vc{v}_t$ are element-wise.
 
 \end{frame}
 
+\subsection{Convexity and convergence}
 
 \begin{frame}{Definition of a convex function}
-	
-	\myalert{Convexity} plays a pivotal role in optimization. If a function is convex, its optimization is easier with respect to a non-convex one. 
-	
+
+	\myalert{Convexity} plays a pivotal role in optimization. If a function is convex, its optimization is easier with respect to a non-convex one.
+
 	\begin{tcolorbox}
-	$f$ is said to be convex if for any $\lambda \in [0,1]$:
-	
-	\begin{equation}
-	f\Bigl((1-\lambda)\vc{x}_1 + \lambda \vc{x}_2\Bigr) \le (1-\lambda)f(\vc{x}_1) + \lambda f(\vc{x}_2) \,.
-	\end{equation}
+		$f$ is said to be convex if for any $\lambda \in [0,1]$:
+
+		\begin{equation}
+			f\Bigl((1-\lambda)\vc{x}_1 + \lambda \vc{x}_2\Bigr) \le (1-\lambda)f(\vc{x}_1) + \lambda f(\vc{x}_2) \,.
+		\end{equation}
 	\end{tcolorbox}
-		
+
 	If the inequality is strict for $\vc{x}_1\neq\vc{x}_2$ and $\lambda\in(0,1)$, then $f$ is \myalert{strictly convex}.
-	
+
 \end{frame}
 
 \begin{whiteframe}{Convex vs. non-convex functions}
-		
+
 	\begin{figure}
-	\centering\includegraphics[width=11cm, keepaspectratio]{images/lecture_2/Convex_non_convex_functions.png}
-	\caption{Left: an example of convex function. Right: an example of non-convex function. Taken from ``An Introduction to Machine Learning'' by Smola and Vishwanathan [unpublished].}
+		\centering\includegraphics[width=11cm, keepaspectratio]{images/lecture_2/Convex_non_convex_functions.png}
+		\caption{Left: an example of convex function. Right: an example of non-convex function. Taken from ``An Introduction to Machine Learning'' by Smola and Vishwanathan [unpublished].}
 	\end{figure}
-		
+
 \end{whiteframe}
 
 \begin{frame}{Notable results on gradient descent}
-	
+
 	\begin{tcolorbox}
-	Under standard regularity and step-size assumptions, suppose (S)GD converges to a stationary point $\vc{\theta}^*$. Then:
-	%
-	\begin{itemize}
-		\item \textbf{Generic non-convex $\mathcal{L}(\vc{\theta})$}: first-order methods generally guarantee only \textbf{stationarity}.
-		\item \textbf{Convex $\mathcal{L}(\vc{\theta})$}: every stationary point is a \textbf{global optimum}.
-		\item \textbf{Strictly convex $\mathcal{L}(\vc{\theta})$}: if an optimum exists, it is \textbf{unique}.
-	\end{itemize}
+		Under standard regularity and step-size assumptions, suppose (S)GD converges to a stationary point $\vc{\theta}^*$. Then:
+		%
+		\begin{itemize}
+			\item \textbf{Generic non-convex $\mathcal{L}(\vc{\theta})$}: first-order methods generally guarantee only \textbf{stationarity}.
+			\item \textbf{Convex $\mathcal{L}(\vc{\theta})$}: every stationary point is a \textbf{global optimum}.
+			\item \textbf{Strictly convex $\mathcal{L}(\vc{\theta})$}: if an optimum exists, it is \textbf{unique}.
+		\end{itemize}
 	\end{tcolorbox}
 	%
 	Without additional structure, globally optimizing a general non-convex objective can be \textbf{NP-hard}; this is why practical first-order methods usually target stationary points instead.
-	
+
 \end{frame}
 
 \begin{frame}{Reading material}
-	
+
 	\textbf{Chapter 2} from the book, along with the suggested exercises.
-	
+
 \end{frame}
 
 \end{document}
