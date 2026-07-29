@@ -8,6 +8,7 @@
 
 .slidev-layout {
   font-family: 'Fira Sans', sans-serif;
+  line-height: 1.44;
 }
 
 .slidev-layout h1,
@@ -24,7 +25,7 @@ code {
 
 .legacy-port {
   font-size: 0.82em;
-  line-height: 1.28;
+  line-height: 1.42;
 }
 
 .legacy-port pre {
@@ -41,3 +42,59 @@ code {
 
 .legacy-port .kw { color: #0000cc; }
 .legacy-port .comment { color: #009900; }
+
+/*
+ * NNDS authoring utilities.
+ * Prefer these semantic classes over one-off inline styles.
+ * See html/AUTHORING.md for examples.
+ */
+.text-lead { font-size: 1.12em; line-height: 1.45; }
+.text-small { font-size: .8em; line-height: 1.45; }
+.text-tiny { font-size: .68em; line-height: 1.4; }
+.text-tight { line-height: 1.22; }
+.text-relaxed { line-height: 1.58; }
+.accent { color: #8c0000; font-weight: 600; }
+.muted { color: #788789; }
+.mono { font-family: 'Fira Mono', monospace; }
+.nowrap { white-space: nowrap; }
+.center { text-align: center; }
+.right { text-align: right; }
+
+.stack-sm > * + * { margin-top: .35em; }
+.stack > * + * { margin-top: .7em; }
+.stack-lg > * + * { margin-top: 1.15em; }
+.mt-0 { margin-top: 0 !important; }
+.mt-sm { margin-top: .45em !important; }
+.mt-md { margin-top: .8em !important; }
+.mt-lg { margin-top: 1.25em !important; }
+.mb-0 { margin-bottom: 0 !important; }
+.mb-sm { margin-bottom: .45em !important; }
+.mb-md { margin-bottom: .8em !important; }
+.mb-lg { margin-bottom: 1.25em !important; }
+
+.two-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5em;
+  align-items: start;
+}
+.three-columns {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.1em;
+  align-items: start;
+}
+.rule-line {
+  margin: .7em 0;
+  padding: .5em 0;
+  border-top: 1px solid #24383c;
+  border-bottom: 1px solid #24383c;
+}
+.research-note {
+  margin-top: .75em;
+  padding-left: .7em;
+  border-left: 4px solid #8c0000;
+  color: #667678;
+  font-size: .8em;
+  line-height: 1.45;
+}

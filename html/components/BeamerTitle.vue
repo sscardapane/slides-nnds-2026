@@ -25,7 +25,7 @@ defineProps({
 
 <style>
 .beamer-title { position:absolute; inset:0; overflow:hidden; background:#f8f7f5; font-family:'Fira Sans',sans-serif; color:#23393c; }
-.beamer-title .title-bg { position:absolute; z-index:0; inset:0; width:100%; height:100%; object-fit:cover; opacity:.22; }
+.beamer-title .title-bg { position:absolute; z-index:0; inset:0; width:100%; height:100%; object-fit:contain; object-position:center bottom; opacity:.22; }
 .beamer-title .title-wash { position:absolute; z-index:1; inset:0; background:linear-gradient(90deg,rgba(255,255,255,.96) 0%,rgba(255,255,255,.90) 52%,rgba(255,255,255,.55) 100%); }
 .beamer-title .title-copy { position:absolute; z-index:2; left:72px; top:72px; width:720px; }
 .beamer-title .course { font-size:30px; font-weight:400; }

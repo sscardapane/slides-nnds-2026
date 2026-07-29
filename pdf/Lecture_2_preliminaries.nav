@@ -75,8 +75,10 @@
 \headcommand {\beamer@framepages {34}{34}}
 \headcommand {\slideentry {1}{2}{21}{35/35}{Numerical optimization}{0}}
 \headcommand {\beamer@framepages {35}{35}}
-\headcommand {\beamer@partpages {1}{35}}
-\headcommand {\beamer@subsectionpages {15}{35}}
-\headcommand {\beamer@sectionpages {2}{35}}
-\headcommand {\beamer@documentpages {35}}
-\headcommand {\gdef \inserttotalframenumber {33}}
+\headcommand {\slideentry {1}{2}{22}{36/36}{Numerical optimization}{0}}
+\headcommand {\beamer@framepages {36}{36}}
+\headcommand {\beamer@partpages {1}{36}}
+\headcommand {\beamer@subsectionpages {15}{36}}
+\headcommand {\beamer@sectionpages {2}{36}}
+\headcommand {\beamer@documentpages {36}}
+\headcommand {\gdef \inserttotalframenumber {34}}

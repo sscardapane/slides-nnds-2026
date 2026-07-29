@@ -1,4 +1,4 @@
-This is LuaHBTeX, Version 1.15.0 (TeX Live 2022)  (format=lualatex 2022.10.31)  28 JUL 2026 13:03
+This is LuaHBTeX, Version 1.15.0 (TeX Live 2022)  (format=lualatex 2022.10.31)  28 JUL 2026 14:51
  system commands enabled.
  file:line:error style messages enabled.
 **/Users/simonescardapane/GitHub/slides-nnds-2026/latex/Lecture_2_preliminaries.tex
@@ -1315,7 +1315,7 @@ Overfull \vbox (19.78307pt too high) detected at line 111
 ] [10
 
 ]
-Overfull \vbox (8.22055pt too high) detected at line 204
+Overfull \vbox (28.34544pt too high) detected at line 204
  []
 
 [11
@@ -1328,10 +1328,10 @@ Overfull \vbox (8.22055pt too high) detected at line 204
 <images/lecture_2/taylor_approximation.pdf, id=137, 394.5942pt x 286.1892pt>
 File: images/lecture_2/taylor_approximation.pdf Graphic file (type pdf)
 <use images/lecture_2/taylor_approximation.pdf>
-Package luatex.def Info: images/lecture_2/taylor_approximation.pdf  used on input line 241.
+Package luatex.def Info: images/lecture_2/taylor_approximation.pdf  used on input line 245.
 (luatex.def)             Requested size: 227.62204pt x 165.09462pt.
 
-Overfull \vbox (6.18306pt too high) detected at line 241
+Overfull \vbox (6.18306pt too high) detected at line 245
  []
 
 [14
@@ -1341,7 +1341,7 @@ Overfull \vbox (6.18306pt too high) detected at line 241
 ] [16
 
 ]
-Overfull \vbox (11.77057pt too high) detected at line 295
+Overfull \vbox (45.12039pt too high) detected at line 299
  []
 
 [17
@@ -1350,10 +1350,10 @@ Overfull \vbox (11.77057pt too high) detected at line 295
 <images/lecture_2/Extrema_example_original.png, id=183, 1027.84pt x 822.07124pt>
 File: images/lecture_2/Extrema_example_original.png Graphic file (type png)
 <use images/lecture_2/Extrema_example_original.png>
-Package luatex.def Info: images/lecture_2/Extrema_example_original.png  used on input line 304.
+Package luatex.def Info: images/lecture_2/Extrema_example_original.png  used on input line 308.
 (luatex.def)             Requested size: 227.62204pt x 182.04788pt.
 
-Overfull \vbox (24.73633pt too high) detected at line 304
+Overfull \vbox (24.73633pt too high) detected at line 308
  []
 
 [18
@@ -1362,16 +1362,16 @@ Overfull \vbox (24.73633pt too high) detected at line 304
 <images/lecture_2/saddle_point.pdf, id=190, 394.49544pt x 284.12285pt>
 File: images/lecture_2/saddle_point.pdf Graphic file (type pdf)
 <use images/lecture_2/saddle_point.pdf>
-Package luatex.def Info: images/lecture_2/saddle_point.pdf  used on input line 313.
+Package luatex.def Info: images/lecture_2/saddle_point.pdf  used on input line 317.
 (luatex.def)             Requested size: 227.62204pt x 163.94162pt.
 
-Overfull \vbox (12.63007pt too high) detected at line 313
+Overfull \vbox (12.63007pt too high) detected at line 317
  []
 
 [19
 
 <./images/lecture_2/saddle_point.pdf>]
-Overfull \vbox (5.98064pt too high) detected at line 334
+Overfull \vbox (5.98064pt too high) detected at line 338
  []
 
 [20
@@ -1381,14 +1381,18 @@ Overfull \vbox (5.98064pt too high) detected at line 334
  (/Users/simonescardapane/GitHub/slides-nnds-2026/pdf/Lecture_2_preliminaries.vrb
 LaTeX Font Info:    Font shape `OT1/cmss/b/n' in size <5> not available
 (Font)              Font shape `OT1/cmss/bx/n' tried instead on input line 3.
-) [21
+)
+Overfull \vbox (5.19925pt too high) detected at line 358
+ []
+
+[21
 
 ] [22
 
 ] [23
 
 ]
-Overfull \vbox (15.22023pt too high) detected at line 395
+Overfull \vbox (17.16365pt too high) detected at line 409
  []
 
 [24
@@ -1399,7 +1403,7 @@ Overfull \vbox (15.22023pt too high) detected at line 395
 <images/lecture_2/stochastic_loss_descent.png, id=245, 878.53218pt x 310.15875pt>
 File: images/lecture_2/stochastic_loss_descent.png Graphic file (type png)
 <use images/lecture_2/stochastic_loss_descent.png>
-Package luatex.def Info: images/lecture_2/stochastic_loss_descent.png  used on input line 415.
+Package luatex.def Info: images/lecture_2/stochastic_loss_descent.png  used on input line 429.
 (luatex.def)             Requested size: 358.50229pt x 126.5696pt.
  [26
 
@@ -1410,10 +1414,10 @@ warning  (file images/lecture_2/stochastic_optimization.pdf) (pdf inclusion): PD
 <images/lecture_2/stochastic_optimization.pdf, id=259, 393.38968pt x 233.9139pt>
 File: images/lecture_2/stochastic_optimization.pdf Graphic file (type pdf)
 <use images/lecture_2/stochastic_optimization.pdf>
-Package luatex.def Info: images/lecture_2/stochastic_optimization.pdf  used on input line 439.
+Package luatex.def Info: images/lecture_2/stochastic_optimization.pdf  used on input line 453.
 (luatex.def)             Requested size: 298.75394pt x 177.6479pt.
 
-Overfull \vbox (32.33635pt too high) detected at line 439
+Overfull \vbox (32.33635pt too high) detected at line 453
  []
 
 [28
@@ -1422,31 +1426,44 @@ Overfull \vbox (32.33635pt too high) detected at line 439
 <images/lecture_2/mini_batch.pdf, id=283, 376.5267pt x 143.57639pt>
 File: images/lecture_2/mini_batch.pdf Graphic file (type pdf)
 <use images/lecture_2/mini_batch.pdf>
-Package luatex.def Info: images/lecture_2/mini_batch.pdf  used on input line 450.
+Package luatex.def Info: images/lecture_2/mini_batch.pdf  used on input line 464.
 (luatex.def)             Requested size: 278.83578pt x 106.33029pt.
 
-Overfull \vbox (1.81876pt too high) detected at line 450
+Overfull \vbox (1.81876pt too high) detected at line 464
  []
 
 [29
 
-<./images/lecture_2/mini_batch.pdf>] [30
+<./images/lecture_2/mini_batch.pdf>]
+Overfull \vbox (9.37248pt too high) detected at line 479
+ []
+
+[30
 
 ] [31
 
-] [32
+]
+LaTeX Font Info:    Font shape `OT1/cmss/b/n' in size <10.95> not available
+(Font)              Font shape `OT1/cmss/bx/n' tried instead on input line 534.
+LaTeX Font Info:    Font shape `OT1/cmss/b/n' in size <10> not available
+(Font)              Font shape `OT1/cmss/bx/n' tried instead on input line 534.
+LaTeX Font Info:    Font shape `OT1/cmss/b/n' in size <7> not available
+(Font)              Font shape `OT1/cmss/bx/n' tried instead on input line 534.
+ [32
+
+] [33
 
 ]
-<images/lecture_2/Convex_non_convex_functions.png, id=316, 1074.26344pt x 396.7322pt>
+<images/lecture_2/Convex_non_convex_functions.png, id=321, 1074.26344pt x 396.7322pt>
 File: images/lecture_2/Convex_non_convex_functions.png Graphic file (type png)
 <use images/lecture_2/Convex_non_convex_functions.png>
-Package luatex.def Info: images/lecture_2/Convex_non_convex_functions.png  used on input line 506.
+Package luatex.def Info: images/lecture_2/Convex_non_convex_functions.png  used on input line 560.
 (luatex.def)             Requested size: 312.9803pt x 115.5821pt.
- [33
+ [34
 
-<./images/lecture_2/Convex_non_convex_functions.png>] [34
+<./images/lecture_2/Convex_non_convex_functions.png>] [35
 
-] [35
+] [36
 
 ]
 \tf@nav=\write6
@@ -1464,19 +1481,19 @@ Package rerunfilecheck Info: File `Lecture_2_preliminaries.out' has not changed.
 )
 
 Here is how much of LuaTeX's memory you used:
- 37661 strings out of 477785
+ 37680 strings out of 477785
  100000,1144653 words of node,token memory allocated
- 2621 words of node memory still in use:
-   23 hlist, 9 vlist, 5 rule, 7 disc, 3 local_par, 47 glue, 25 kern, 10 penalty, 74 glyph, 101 attribute, 129 glue_spec, 101 attribute_list, 4 write, 16 pdf_colorstack nodes
-   avail lists: 2:617,3:340,4:260,5:335,6:32,7:2042,8:87,9:502,10:15,11:143
- 56618 multiletter control sequences out of 65536+600000
- 138 fonts using 30382455 bytes
- 128i,14n,134p,1893b,931s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 2643 words of node memory still in use:
+   23 hlist, 9 vlist, 5 rule, 7 disc, 3 local_par, 47 glue, 25 kern, 10 penalty, 2 sub_mlist, 74 glyph, 105 attribute, 129 glue_spec, 105 attribute_list, 4 write, 16 pdf_colorstack nodes
+   avail lists: 2:717,3:344,4:260,5:358,6:32,7:2354,8:87,9:779,10:15,11:176
+ 56635 multiletter control sequences out of 65536+600000
+ 151 fonts using 32390607 bytes
+ 128i,18n,134p,1893b,931s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2022/texmf-dist/fonts/opentype/public/fira/FiraMono-Regular.otf></usr/local/texlive/2022/texmf-dist/fonts/opentype/public/lm/lmroman12-regular.otf></usr/local/texlive/2022/texmf-dist/fonts/opentype/public/fira/FiraSans-LightItalic.otf></usr/local/texlive/2022/texmf-dist/fonts/opentype/public/fira/FiraSans-Light.otf></usr/local/texlive/2022/texmf-dist/fonts/opentype/public/fira/FiraSans-Regular.otf></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib8.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmss12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on Lecture_2_preliminaries.pdf (35 pages, 1259023 bytes).
+Output written on Lecture_2_preliminaries.pdf (36 pages, 1263305 bytes).
 
-PDF statistics: 411 PDF objects out of 1000 (max. 8388607)
- 304 compressed objects within 4 object streams
- 75 named destinations out of 1000 (max. 131072)
+PDF statistics: 416 PDF objects out of 1000 (max. 8388607)
+ 308 compressed objects within 4 object streams
+ 77 named destinations out of 1000 (max. 131072)
  40 words of extra memory for PDF output out of 10000 (max. 100000000)
 

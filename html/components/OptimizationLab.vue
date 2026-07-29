@@ -6,7 +6,18 @@
           Batch size <strong>{{ batch }}</strong>
           <input v-model.number="batch" type="range" min="1" max="128" step="1" />
         </label>
+        <div class="batch-presets" aria-label="Batch-size presets">
+          <button @click="batch = 4">4</button>
+          <button @click="batch = 32">32</button>
+          <button @click="batch = 128">128</button>
+        </div>
         <button @click="seed += 1">Resample mini-batches</button>
+      </div>
+
+      <div class="batch-readout">
+        <span>gradient-noise scale ∝ 1/√B: <strong>{{ noiseScale.toFixed(3) }}</strong></span>
+        <span>examples used in 60 updates: <strong>{{ samplesProcessed }}</strong></span>
+        <span>final-run spread: <strong>{{ finalSpread.toFixed(2) }}</strong> log units</span>
       </div>
 
       <svg class="loss-chart" viewBox="0 0 900 350" role="img" aria-label="Loss curves for stochastic gradient descent">
@@ -44,7 +55,7 @@
     </div>
 
     <div v-else class="schedule-demo">
-      <div class="controls">
+      <div class="controls schedule-controls">
         <label>
           Highlight
           <select v-model="schedule">
@@ -57,6 +68,16 @@
           Peak learning rate <strong>{{ peakLearningRate.toFixed(3) }}</strong>
           <input v-model.number="peakLearningRate" type="range" min="0.04" max="0.22" step="0.005" />
         </label>
+        <label>
+          Conditioning <strong>{{ conditioning }}</strong>
+          <input v-model.number="conditioning" type="range" min="4" max="20" step="1" />
+        </label>
+      </div>
+
+      <div class="schedule-readout">
+        <span>fixed-step stability boundary η &lt; 2/κ ≈ <strong>{{ stabilityLimit.toFixed(3) }}</strong></span>
+        <span>selected final loss: <strong>{{ selectedFinalLoss.toExponential(1) }}</strong></span>
+        <span>best at this setting: <strong>{{ scheduleLabels[bestSchedule] }}</strong></span>
       </div>
 
       <div class="schedule-plots">
@@ -114,6 +135,7 @@ const batch = ref(16)
 const seed = ref(1)
 const schedule = ref('cosine')
 const peakLearningRate = ref(0.16)
+const conditioning = ref(12)
 const scheduleNames = ['constant', 'step', 'cosine']
 const scheduleLabels = {
   constant: 'constant',
@@ -173,6 +195,13 @@ const meanBatchLoss = computed(() =>
 )
 
 const fullBatchLoss = deterministicLosses()
+const noiseScale = computed(() => 1 / Math.sqrt(batch.value))
+const samplesProcessed = computed(() => iterations * batch.value)
+const finalSpread = computed(() => {
+  const values = batchRuns.value.map(run => logLoss(run[run.length - 1]))
+  const mean = values.reduce((sum, value) => sum + value, 0) / values.length
+  return Math.sqrt(values.reduce((sum, value) => sum + (value - mean) ** 2, 0) / values.length)
+})
 const xTicks = [0, 15, 30, 45, 60]
 const yTicks = [1, 0, -1, -2, -3]
 const xScale = value => 72 + (value / iterations) * 803
@@ -195,17 +224,29 @@ function scheduledLosses(name) {
   let y = 1.3
   const losses = []
   for (let t = 0; t <= iterations; t += 1) {
-    const loss = 0.5 * (x * x + 12 * y * y)
-    losses.push(Math.min(loss, 1e6))
+    const loss = 0.5 * (x * x + conditioning.value * y * y)
+    losses.push(Math.min(loss, 160))
     const eta = learningRateAt(name, t)
     x -= eta * x
-    y -= eta * 12 * y
+    y -= eta * conditioning.value * y
   }
   return losses
 }
 
 const scheduleLosses = computed(() =>
   Object.fromEntries(scheduleNames.map(name => [name, scheduledLosses(name)])),
+)
+const stabilityLimit = computed(() => 2 / conditioning.value)
+const selectedFinalLoss = computed(() => {
+  const values = scheduleLosses.value[schedule.value]
+  return values[values.length - 1]
+})
+const bestSchedule = computed(() =>
+  scheduleNames.reduce((best, name) => {
+    const bestLoss = scheduleLosses.value[best].at(-1)
+    const candidateLoss = scheduleLosses.value[name].at(-1)
+    return candidateLoss < bestLoss ? name : best
+  }, scheduleNames[0]),
 )
 
 const scheduleXTicks = [0, 20, 40, 60]
@@ -266,15 +307,44 @@ button {
 }
 .controls select { padding: 5px 9px; }
 .controls button { padding: 7px 14px; cursor: pointer; }
+.batch-presets {
+  display: flex;
+  gap: 5px;
+}
+.batch-presets button {
+  min-width: 40px;
+  padding: 6px 8px;
+  cursor: pointer;
+}
+.batch-readout,
+.schedule-readout {
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+  color: #667678;
+  font-size: .66em;
+  line-height: 1.3;
+}
+.batch-readout strong,
+.schedule-readout strong {
+  color: #8c0000;
+  font-weight: 600;
+}
 .loss-chart {
   display: block;
   width: 100%;
-  height: 350px;
+  height: 285px;
 }
+.schedule-controls {
+  gap: 20px;
+  font-size: .72em;
+}
+.schedule-controls input { width: 170px; }
 .schedule-plots {
   display: grid;
   grid-template-columns: 1.8fr 1fr;
   gap: 12px;
+  margin-top: 3px;
 }
 .comparison-chart,
 .learning-rate-chart {

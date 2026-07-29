@@ -32,7 +32,7 @@
 		\title{\large \begin{spacing}{1.0}Neural Networks for Data Science\end{spacing}\vspace{0.25em}
 			\normalsize \begin{spacing}{1.0}\textbf{Master's Degree in Data Science}\end{spacing}\vspace{0.5em}}
 		\subtitle{\Large \textbf{Lecture 2: Mathematical preliminaries}\\
-		\large 2b. Mathematical optimization}
+		\large 2b. Derivatives and optimization}
 		\date{
 			{\includegraphics[scale=0.8]{images/Uniroma1}}
 		}
@@ -50,12 +50,12 @@
 
 \begin{frame}{Empirical risk minimization}
 	
-	For a batch of examples $\left\{x_i, y_i\right\}_{i=1}^B$ (more on this next lecture), let $\boldsymbol{\theta}$ denote the trainable parameters of a model $f_{\boldsymbol{\theta}}(x)$ (e.g., for a linear layer $\boldsymbol{\theta}=\{\vc{W},\vc{b}\}$) and define:
+	For a dataset $\left\{x_i, y_i\right\}_{i=1}^N$ (more on this next lecture), let $\boldsymbol{\theta}$ denote the trainable parameters of a model $f_{\boldsymbol{\theta}}(x)$ (e.g., for a linear layer $\boldsymbol{\theta}=\{\vc{W},\vc{b}\}$) and define:
 	%
 	\begin{equation}
 		\mathcal{L}(\boldsymbol{\theta}) =
-		\frac{1}{B}\sum_{b=1}^{B}
-		\ell\Bigl(f_{\boldsymbol{\theta}}(x_b),y_b\Bigr)\,.
+		\frac{1}{N}\sum_{i=1}^{N}
+		\ell\Bigl(f_{\boldsymbol{\theta}}(x_i),y_i\Bigr)\,.
 	\end{equation}
 	%
 	where $\ell$ is some per-example loss. Training is the optimization problem:
@@ -68,7 +68,7 @@
 
 \begin{frame}{Derivative}
 	
-	Most of this course is funded upon the notion of derivative.
+	Most of this course is based on the notion of derivative.
 	
 	\begin{tcolorbox}
 		The \myalert{derivative} of a function $f(x)$ is defined as:
@@ -126,7 +126,7 @@
 	
 	For a function $y=f(\vc{x})$, $\vc{x} \in \mathbb{R}^m$, the \myalert{gradient} $\partial f(\vc{x})$ is an $m$-dimensional vector defined as:%
 	\begin{equation}
-		\idx{\partial f(\vc{x})}{i} = \frac{\partial y}{\partial \vc{x}} = \lim_{h \rightarrow 0} \frac{f(\vc{x} + h\vc{e}_i) - f(\vc{x})}{h} \,,
+		\idx{\partial f(\vc{x})}{i} = \frac{\partial f(\vc{x})}{\partial x_i} = \lim_{h \rightarrow 0} \frac{f(\vc{x} + h\vc{e}_i) - f(\vc{x})}{h} \,,
 	\end{equation}
 	%
 	where $\vc{e}_i$ is the $i$th standard basis vector:
@@ -193,7 +193,7 @@
 	\frac{\partial}{\partial \vc{x}} \vc{A}\vc{x} = \vc{A} \,.
 	\]
 	
-	Derivative of a norm:
+	Derivative of the squared Euclidean norm:
 	%
 	\[
 	\partial \lVert \vc{x} \rVert^2 = 2\vc{x} \,.
@@ -203,12 +203,16 @@
 	
 \end{frame}
 
-\begin{frame}{Properties of the gradients}
+\begin{frame}{Properties of gradients}
 	
 	Jacobians inherit many properties from the scalar case. Importantly, there exists a chain rule for Jacobians. For $f: \mathbb{R}^m \rightarrow \mathbb{R}^n$ and $g: \mathbb{R}^o \rightarrow \mathbb{R}^m$:
 	%
 	\begin{equation}
-		\stackunder{\partial \left[ f(g(x)) \right]}{\sss (n,o)} = \stackunder{\partial f(\bullet)}{\sss (n,m)} \; \stackunder{\partial g(x)}{\sss (m,o)} \,.
+		\stackunder{\partial \left[ f(g(\vc{x})) \right]}{\sss (n,o)}
+		=
+		\stackunder{\partial f(g(\vc{x}))}{\sss (n,m)}
+		\;
+		\stackunder{\partial g(\vc{x})}{\sss (m,o)} \,.
 	\end{equation}
 	%
 	In words: the Jacobian of the composition of two functions is the product of their Jacobian matrices.
@@ -217,7 +221,7 @@
 
 \begin{frame}{First-order approximation}
 	
-	Given a function $f(\vc{x}_0)$ evaluated at $\vc{x}_0$, then the function:
+	Given a scalar-valued function $f$ and a reference point $\vc{x}_0$, its first-order approximation is:
 	
 	\vspace{1em}
 	$$
@@ -263,7 +267,7 @@
 	We can use gradients to solve generic problems of the form:
 	%
 	\begin{equation}
-		\boldsymbol{\theta}^* = \argmin_{\boldsymbol{\theta}} \mathcal{L}(\boldsymbol{\theta}))
+		\boldsymbol{\theta}^* = \argmin_{\boldsymbol{\theta}} \mathcal{L}(\boldsymbol{\theta})
 	\end{equation}
 	%
 	Note that maximizing/minimizing are equivalent in the sense that:
@@ -287,10 +291,10 @@
 	\end{tcolorbox}
 	
 	\begin{tcolorbox}
-		If $\nabla \mathcal{L}(\boldsymbol{\theta}) = 0$, $\boldsymbol{\theta}$ is called a \myalert{stationary point}. Stationary points can be minima, maxima, or inflection points (aka \myalert{saddle points}).
+		If $\nabla \mathcal{L}(\boldsymbol{\theta}) = 0$, $\boldsymbol{\theta}$ is called a \myalert{stationary point}. Stationary points can be minima, maxima, or \myalert{saddle points}.
 	\end{tcolorbox}
 
-	In general, gradient optimization can find stationary points (mostly local minima, as saddle points are escaped due to numerical noise).
+	First-order optimization generally targets stationary points. Its behavior near saddle points depends on the local geometry and on the optimization algorithm; stochasticity can help escape some unstable saddles, but does not provide a general guarantee.
 	
 \end{frame}
 
@@ -335,13 +339,21 @@
 
 \begin{frame}[fragile]{Descent direction}
 	
-	Without lack of generality, we restrict to unit directions ($\lVert \vc{p}_t \rVert = 1$). The rate of change is given by the directional derivative:\blfootnote{We rely on the identity $\langle \vc{a}, \vc{b} \rangle = \lVert \vc{a} \rVert \lVert \vc{b} \rVert \cos(\theta)$ for vectors $\vc{a}, \vc{b}$ and angle $\theta$ between them.}
+	Without loss of generality, we restrict to unit directions ($\lVert \vc{p}_t \rVert = 1$). The rate of change is given by the directional derivative:\blfootnote{We rely on the identity $\langle \vc{a}, \vc{b} \rangle = \lVert \vc{a} \rVert \lVert \vc{b} \rVert \cos(\theta)$ for vectors $\vc{a}, \vc{b}$ and angle $\theta$ between them.}
 	%
 	\begin{equation*}
 		\mathrm{D}_{\vc{p}_t} \mathcal{L}(\boldsymbol{\theta}_{t-1}) = \langle \nabla \mathcal{L}(\boldsymbol{\theta}_{t-1}), \vc{p}_t \rangle = \lVert \nabla \mathcal{L}(\boldsymbol{\theta}_{t-1}) \rVert \underbrace{\lVert \vc{p}_t \rVert}_{=1} \cos(\theta) = \lVert \nabla \mathcal{L}(\boldsymbol{\theta}_{t-1}) \rVert \cos(\theta).
 	\end{equation*} 
 	%
-	The above quantity is minimized when $\cos(\theta) = -1$, which happens if $\theta=\pi$, i.e., $\vc{p}_t = - \nabla \mathcal{L}(\boldsymbol{\theta}_{t-1})$. This is the \myalert{steepest descent direction}. In general, anything with $\cos(\theta) < 0$ is a descent direction.
+	The above quantity is minimized when $\cos(\theta) = -1$, which happens if $\theta=\pi$, i.e.,
+	%
+	\begin{equation*}
+		\vc{p}_t =
+		-\frac{\nabla \mathcal{L}(\boldsymbol{\theta}_{t-1})}
+		{\lVert\nabla \mathcal{L}(\boldsymbol{\theta}_{t-1})\rVert}\,.
+	\end{equation*}
+	%
+	This is the unit \myalert{steepest descent direction}; its scale is absorbed into $\eta_t$. In general, anything with $\cos(\theta) < 0$ is a descent direction.
 	
 \end{frame}
 
@@ -378,16 +390,18 @@
 
 \begin{frame}{Stochastic GD}
 	
-	The key observation is that the training problem in NNs is an expectation with respect to all data ($\vc{\theta}$ is the set of weights):
+	The key observation is that the training problem in NNs is an average over the full dataset ($\vc{\theta}$ is the set of weights):
 	%
 	\begin{equation}
-		J(\vc{\theta}) = \frac{1}{n} \sum_{i=1}^n \displaystyle \ell(y_i, f_{\boldsymbol{\theta}}(x_i)) \,.
+		\mathcal{L}(\vc{\theta}) = \frac{1}{N} \sum_{i=1}^N \displaystyle \ell(f_{\boldsymbol{\theta}}(x_i), y_i) \,.
 	\end{equation}
 	
-	To limit the complexity, we can use only a \myalert{mini-batch} $\mathcal{B}$ of $M$ examples randomly sampled from the full dataset:
+	To limit the complexity, we can use only a \myalert{mini-batch} $\mathcal{B}_t$ of $B$ examples randomly sampled from the full dataset:
 	%
 	\begin{equation}
-		J(\vc{\theta}) \approx \widetilde{J}(\vc{\theta}) = {\color{darkred}\frac{1}{M} \sum_{i \in \mathcal{B}}} \displaystyle \ell(y_i, f_{\vc{\theta}}(x_i))\,.
+		\mathcal{L}(\vc{\theta}) \approx \widetilde{\mathcal{L}}_t(\vc{\theta})
+		= {\color{darkred}\frac{1}{B} \sum_{i \in \mathcal{B}_t}}
+		\displaystyle \ell(f_{\vc{\theta}}(x_i), y_i)\,.
 	\end{equation}
 	%
 	The mini-batch gradient is a (unbiased, noisy) estimate of the full gradient.
@@ -398,9 +412,9 @@
 	
 	The previous algorithm is called \myalert{stochastic gradient descent} (SGD).
 	
-	The computational complexity of an iteration of SGD is fixed with respect to $M$ (the \myalert{batch size}) and does not depend on the size of the dataset.
+	The computational cost of one SGD iteration grows with $B$ (the \myalert{batch size}), but does not depend on the full dataset size $N$ once $B$ is fixed.
 	
-	If we assume that elements of the dataset are i.i.d., we can prove that SGD also converges to a stationary point \textit{in average}, albeit \textit{with noisy steps}.
+	Under standard regularity assumptions and a suitable learning-rate schedule, the noisy mini-batch gradients can still drive the expected gradient norm towards zero.
 	
 \end{frame}
 
@@ -409,7 +423,7 @@
 	\begin{figure}
 		\centering
 		\includegraphics[width=0.9\columnwidth]{images/lecture_2/stochastic_loss_descent.png}
-		\caption{SGD will converge on average to a stationary point, although in an apparently noisy fashion (Source: \href{https://engmrk.com/mini-batch-gd/}{EngMRK}).}
+		\caption{Mini-batch loss trajectories are noisy even when their average trend decreases (Source: \href{https://engmrk.com/mini-batch-gd/}{EngMRK}).}
 	\end{figure}
 	
 \end{whiteframe}
@@ -420,7 +434,7 @@
 	
 	\begin{enumerate}
 		\item Shuffle the full dataset;
-		\item Split the dataset into blocks of $M$ elements and process them sequentially, batch-by-batch;
+		\item Split the dataset into blocks of $B$ elements and process them sequentially, batch-by-batch;
 		\item After the last block, return to point (1) and iterate.
 	\end{enumerate}
 	
@@ -454,29 +468,69 @@
 	Running SGD requires selecting the size of the mini-batch, which is an additional hyper-parameter:
 	
 	\begin{itemize}
-		\item Smaller mini-batches are faster, but the network might require more iterations to converge because the gradient is noisier.
-		\item Larger mini-batches provide a more reliable estimation of the gradient, but are slower.
+		\item Smaller mini-batches make each update cheaper, but provide a noisier estimate of the gradient.
+		\item Larger mini-batches require more computation per update, but reduce gradient variance and can use accelerators more efficiently.
 	\end{itemize}
 	
-	In general, it is typical to choose power-of-two sizes (32, 64, 128, ...) depending on the hardware configuration and the total memory available.
+	The best choice depends jointly on optimization, available memory, and hardware utilization. Powers of two (32, 64, 128, \ldots) are a common hardware-oriented heuristic, not a mathematical requirement.
 	
-	In the limit $M=1$ we obtain an \myalert{online} (streaming) optimization. 
+	For $B=1$ we obtain single-example SGD; it is \myalert{online} optimization when examples arrive as a stream.
 	
 \end{frame}
 
 \begin{frame}{Momentum}
 	
-	Steepest-descent directions are local. With noisy gradients, the resulting path can be erratic. As an example of a more advanced algorithm, \myalert{momentum} smooths the path by conserving some direction from the previous iteration:
+	Steepest-descent directions are local. On poorly conditioned objectives they can zig-zag, and noisy gradients make the path more erratic. \myalert{Momentum} smooths the path by retaining part of the previous displacement:
 	%
 	\begin{align*}
-		\vc{g}_t &= {\color{darkred}-\eta_t\nabla J(\vc{\theta}_{t-1})}
-		+ {\color{darkpastelblue}\lambda\vc{g}_{t-1}}\,,\\
-		\vc{\theta}_t &= \vc{\theta}_{t-1}+\vc{g}_t\,,
-		\qquad \vc{g}_0=\vc{0}\,.
+		\vc{u}_t &= {\color{darkred}-\eta_t\nabla \widetilde{\mathcal{L}}_t(\vc{\theta}_{t-1})}
+		+ {\color{darkpastelblue}\lambda\vc{u}_{t-1}}\,,\\
+		\vc{\theta}_t &= \vc{\theta}_{t-1}+\vc{u}_t\,,
+		\qquad \vc{u}_0=\vc{0},\quad 0\leq\lambda<1\,.
 	\end{align*}
 	
-	The contribution from $n$ iterations ago is dampened by a factor $\lambda^{n-1}$. This remains an active research area (see, e.g, Adam, AdamW, Muon, ...).
+	Past displacements are exponentially damped: the contribution from $n$ iterations ago is multiplied by $\lambda^{n-1}$.
 	
+\end{frame}
+
+\begin{frame}{Adam}
+
+	\small
+	Let $\vc{g}_t=\nabla\widetilde{\mathcal{L}}_t(\vc{\theta}_{t-1})$. \myalert{Adam} maintains two exponential averages and uses them to normalize the update:
+
+	\vspace{-0.7em}
+	\begin{equation*}
+		\begin{aligned}
+			\vc{m}_t
+			&=
+			\beta_1\vc{m}_{t-1}+(1-\beta_1)\vc{g}_t
+			&& \text{\footnotesize first moment},\\
+			\vc{v}_t
+			&=
+			\beta_2\vc{v}_{t-1}+(1-\beta_2)(\vc{g}_t\odot\vc{g}_t)
+			&& \text{\footnotesize second moment},\\
+			\widehat{\vc{m}}_t
+			&=
+			\frac{\vc{m}_t}{1-\beta_1^t}\,,
+			&
+			\widehat{\vc{v}}_t
+			&=
+			\frac{\vc{v}_t}{1-\beta_2^t}\,,\\[0.3em]
+			{\color{darkred}
+			\vc{\theta}_t
+			=
+			\vc{\theta}_{t-1}
+			-\eta_t
+			\frac{\widehat{\vc{m}}_t}
+			{\sqrt{\widehat{\vc{v}}_t}+\varepsilon}}
+			&& \text{\scriptsize update}.
+		\end{aligned}
+	\end{equation*}
+
+	\vspace{-0.8em}
+	\footnotesize
+	$\vc{m}_t$ smooths the direction as in momentum; $\vc{v}_t$ rescales the coordinates; the hats correct the bias from $\vc{m}_0=\vc{v}_0=\vc{0}$. Here $\beta_1,\beta_2\in[0,1)$ and all operations involving $\vc{v}_t$ are element-wise.
+
 \end{frame}
 
 
@@ -492,7 +546,7 @@
 	\end{equation}
 	\end{tcolorbox}
 		
-	If the equality is strict, we say that $f$ is \myalert{strictly convex}.
+	If the inequality is strict for $\vc{x}_1\neq\vc{x}_2$ and $\lambda\in(0,1)$, then $f$ is \myalert{strictly convex}.
 	
 \end{frame}
 
@@ -508,17 +562,16 @@
 \begin{frame}{Notable results on gradient descent}
 	
 	\begin{tcolorbox}
-	Consider a generic $J(\vc{\theta})$, and assume (S)GD converges to a point $\vc{\theta}^*$. Then:
+	Under standard regularity and step-size assumptions, suppose (S)GD converges to a stationary point $\vc{\theta}^*$. Then:
 	%
-	\vspace{-1em}
 	\begin{itemize}
-		\item \textbf{Generic  non-convex $J(\vc{\theta})$}: The point $\vc{\theta}^*$ is \textbf{stationary}.
-		\item \textbf{Convex $J(\vc{\theta})$}: The point $\vc{\theta}^*$ is a \textbf{global optimum}.
-		\item \textbf{Strictly convex $J(\vc{\theta})$}: The point $\vc{\theta}^*$ is \textbf{the only} global optimum.
+		\item \textbf{Generic non-convex $\mathcal{L}(\vc{\theta})$}: first-order methods generally guarantee only \textbf{stationarity}.
+		\item \textbf{Convex $\mathcal{L}(\vc{\theta})$}: every stationary point is a \textbf{global optimum}.
+		\item \textbf{Strictly convex $\mathcal{L}(\vc{\theta})$}: if an optimum exists, it is \textbf{unique}.
 	\end{itemize}
 	\end{tcolorbox}
 	%
-	For a non-convex function, unless additional assumptions are made on $J(\vc{\theta})$, this result cannot be improved. Finding a global optimum becomes an \textbf{NP-hard} problem, akin to evaluating the entire domain of the function.
+	Without additional structure, globally optimizing a general non-convex objective can be \textbf{NP-hard}; this is why practical first-order methods usually target stationary points instead.
 	
 \end{frame}
 

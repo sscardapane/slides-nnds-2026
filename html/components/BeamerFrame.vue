@@ -2,12 +2,23 @@
   <section class="beamer-frame">
     <header>{{ title }}</header>
     <main><slot /></main>
-    <footer v-if="page">{{ page }}</footer>
+    <footer>{{ displayedPage }}</footer>
   </section>
 </template>
 
 <script setup>
-defineProps({ title: { type: String, required: true }, page: { type: [String, Number], default: '' } })
+import { computed } from 'vue'
+import { useSlideContext } from '@slidev/client'
+
+const props = defineProps({
+  title: { type: String, required: true },
+  // Rare escape hatch. Normal slides should rely on Slidev's automatic page.
+  page: { type: [String, Number], default: '' },
+})
+
+const { $page, $slidev } = useSlideContext()
+const pageOffset = computed(() => Number($slidev.configs.themeConfig?.pageOffset || 0))
+const displayedPage = computed(() => props.page || $page.value + pageOffset.value)
 </script>
 
 <style>
@@ -20,7 +31,7 @@ defineProps({ title: { type: String, required: true }, page: { type: [String, Nu
   font-family: 'Fira Sans', sans-serif;
   font-size: 23px;
   font-weight: 300;
-  line-height: 1.32;
+  line-height: 1.44;
 }
 .beamer-frame > header {
   height: 58px;
@@ -43,7 +54,7 @@ defineProps({ title: { type: String, required: true }, page: { type: [String, Nu
   color: #42575a;
   font-size: 13px;
 }
-.beamer-frame p { margin: 0 0 17px; }
+.beamer-frame p { margin: 0 0 19px; }
 .beamer-frame strong { font-weight: 600; }
 .beamer-frame .accent { color: #8c0000; font-weight: 600; }
 .beamer-frame .definition-box {
@@ -54,7 +65,7 @@ defineProps({ title: { type: String, required: true }, page: { type: [String, Nu
   background: #fafafa;
 }
 .beamer-frame .muted { color: #929292; }
-.beamer-frame .small { font-size: .76em; }
+.beamer-frame .small { font-size: .78em; line-height: 1.45; }
 .beamer-frame .compact { margin-bottom: 9px; }
 .beamer-frame .axis-key {
   display: grid;
@@ -105,8 +116,9 @@ defineProps({ title: { type: String, required: true }, page: { type: [String, Nu
 }
 .beamer-frame .katex-display { margin: .6em 0 1em; }
 .beamer-frame .katex { font-size: 1.08em; }
-.beamer-frame ul { margin: 8px 0 0 24px; }
-.beamer-frame li { margin: 7px 0; }
+.beamer-frame ul,
+.beamer-frame ol { margin: 9px 0 0 24px; }
+.beamer-frame li { margin: 9px 0; }
 .beamer-frame .legacy-code {
   margin: 0 0 24px;
   padding: 8px 0 7px;

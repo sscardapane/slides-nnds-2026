@@ -1,5 +1,6 @@
 ---
 theme: default
+layout: full
 title: "NNDS 2026 — Lecture 2a: Tensors and linear maps"
 css: unocss
 fonts:
@@ -25,7 +26,7 @@ layout: full
 import BeamerFrame from '../components/BeamerFrame.vue'
 </script>
 
-<BeamerFrame title="Definition of a tensor" page="2">
+<BeamerFrame title="Definition of a tensor">
 
 <div class="definition-box">
 For the purpose of this course, an <strong>ndarray</strong> (informally, a <em>tensor</em>) is an array of elements of the <em>same type</em>, organized along one or more axes.
@@ -55,22 +56,48 @@ layout: full
 import BeamerFrame from '../components/BeamerFrame.vue'
 </script>
 
-<BeamerFrame title="Tensors in practice" page="3">
+<BeamerFrame title="Shape and dtype">
+
+A tensor is described both by its <span class="accent">shape</span> and by the type of its entries (<span class="accent">dtype</span>). We will mostly use three families:
+
+<div class="legacy-code">
+  <div class="code-line"><span class="ln">1</span><span class="code-text">X = torch.randn(32, 20, 128)          <span class="comment"># floating point</span></span></div>
+  <div class="code-line"><span class="ln">2</span><span class="code-text">token_ids = torch.randint(5000, (32, 20)) <span class="comment"># integers</span></span></div>
+  <div class="code-line"><span class="ln">3</span><span class="code-text">mask = token_ids != 0                  <span class="comment"># booleans</span></span></div>
+</div>
+
+- <strong>floating point</strong>: features, images, embeddings, activations, and parameters;
+- <strong>integers</strong>: token IDs, class labels, and indices;
+- <strong>booleans</strong>: masks.
+
+For text, tokenization produces integer IDs with shape $(B,T)$; an embedding layer maps them to floating-point vectors with shape $(B,T,D)$.
+
+</BeamerFrame>
+
+---
+layout: full
+---
+
+<script setup>
+import BeamerFrame from '../components/BeamerFrame.vue'
+</script>
+
+<BeamerFrame title="Tensors in practice">
   <p>Tensors are the default data structure in any deep learning framework:</p>
   <div class="legacy-code">
     <div class="code-line"><span class="ln">1</span><span class="code-text"><span class="kw">import</span> torch</span></div>
-    <div class="code-line"><span class="ln">2</span><span class="code-text">X = torch.randn((64, 64, 3)) <span class="comment"># random 3-axis tensor</span></span></div>
+    <div class="code-line"><span class="ln">2</span><span class="code-text">X = torch.randn((3, 64, 64)) <span class="comment"># shape (C, H, W)</span></span></div>
   </div>
   <p>NumPy-like indexing is pervasive (with 0-based indexing):</p>
   <div class="legacy-code">
     <div class="code-line"><span class="ln">1</span><span class="code-text">X[0, 0, 0]  <span class="comment"># full indexing (a scalar)</span></span></div>
-    <div class="code-line"><span class="ln">2</span><span class="code-text">X[0]        <span class="comment"># partial indexing (a slice of the original tensor)</span></span></div>
-    <div class="code-line"><span class="ln">3</span><span class="code-text">X[:, 0]     <span class="comment"># partial indexing on the second axis (a matrix)</span></span></div>
+    <div class="code-line"><span class="ln">2</span><span class="code-text">X[0]        <span class="comment"># shape (H, W)</span></span></div>
+    <div class="code-line"><span class="ln">3</span><span class="code-text">X[:, 0]     <span class="comment"># shape (C, W)</span></span></div>
   </div>
-  <p>We use a similar slicing notation in math with either subscripts or colored brackets when needed for readability:</p>
+  <p>In math, we use subscripts for scalar entries and brackets for slices:</p>
   <div class="math-row">
-    <div class="formula"><span class="bracket">[</span><i>X</i><span class="bracket">]</span><sub>:,i</sub></div>
-    <div>2-axis tensor of shape (<i>h</i>, <i>c</i>)</div>
+    <div class="formula"><span class="bracket">[</span><i>X</i><span class="bracket">]</span><sub>0,:,: </sub></div>
+    <div>2-axis tensor of shape (<i>H</i>, <i>W</i>)</div>
   </div>
 </BeamerFrame>
 
@@ -84,9 +111,7 @@ import PyRunner from '../components/PyRunner.vue'
 
 const indexingCode = [
   'import numpy as np',
-  '',
   'X = np.empty((32, 20, 128))  # (B, T, D)',
-  '',
   'print("X[0, 3, :]  ->", X[0, 3, :].shape)',
   'print("X[0, :, :]  ->", X[0, :, :].shape)',
   'print("X[:, 3, :]  ->", X[:, 3, :].shape)',
@@ -99,11 +124,11 @@ const indexingOutput = [
 ].join('\n')
 </script>
 
-<BeamerFrame title="Indexing tensors" page="4">
+<BeamerFrame title="Indexing tensors">
 
 For $X\sim(B,T,D)$, consider a concrete tensor with $B=32$, $T=20$, and $D=128$:
 
-<PyRunner :initial-code="indexingCode" :initial-output="indexingOutput" />
+<PyRunner :code-rows="5" :initial-code="indexingCode" :initial-output="indexingOutput" />
 
 <div class="rule-line small">
 
@@ -121,7 +146,7 @@ layout: full
 import BeamerFrame from '../components/BeamerFrame.vue'
 </script>
 
-<BeamerFrame title="Scalars and vectors" page="5">
+<BeamerFrame title="Scalars and vectors">
 
 $0$-axis tensors are called <span class="accent">scalars</span> (a physics terminology). Most scalars in this course are real-valued.
 
@@ -157,7 +182,7 @@ layout: full
 import BeamerFrame from '../components/BeamerFrame.vue'
 </script>
 
-<BeamerFrame title="Matrices and batches" page="6">
+<BeamerFrame title="Matrices and batches">
 
 $2$-axis tensors are <span class="accent">matrices</span>. A matrix can represent a grid, a sequence of elements, or a stack (a <span class="accent">batch</span>) of vectors:
 
@@ -178,7 +203,7 @@ For $\mathbf{X}\sim(B,D)$ and $\mathbf{W}\sim(D,H)$, matrix multiplication is de
 
 $$
 [\mathbf{X}\mathbf{W}]_{b,h}
-=\langle\mathbf{X}_{b,:},\mathbf{W}_{:,h}\rangle
+=\langle[\mathbf{X}]_{b,:},[\mathbf{W}]_{:,h}\rangle
 =\sum_{d=1}^{D}X_{b,d}W_{d,h}.
 $$
 
@@ -196,18 +221,20 @@ layout: full
 import BeamerFrame from '../components/BeamerFrame.vue'
 </script>
 
-<BeamerFrame title="Matrix multiplication" page="7">
+<BeamerFrame title="Matrix multiplication">
 
 Geometrically, a matrix represents a <em>linear map</em> between two vector spaces:
 
 $$
-\mathbf{W}(\alpha\mathbf{x} + \beta\mathbf{y}) = \alpha\mathbf{W}\mathbf{x} + \beta\mathbf{W}\mathbf{y}
+\mathbf{W}^{\top}(\alpha\mathbf{x} + \beta\mathbf{y})
+= \alpha\mathbf{W}^{\top}\mathbf{x} + \beta\mathbf{W}^{\top}\mathbf{y},
+\qquad \mathbf{W}\sim(D,H).
 $$
 
  When applied to a batch of elements $\mathbf{X} \sim (B, D)$, matrix multiplication yields a transformed batch $\mathbf{H} = \mathbf{X}\mathbf{W} \sim (B, H)$:
 
 $$
-\mathbf{H}_{b,:}=\mathbf{x}_b^{\top}\mathbf{W}.
+[\mathbf{H}]_{b,:}=\mathbf{x}_b^{\top}\mathbf{W}.
 $$
 
 Therefore $\mathbf{X}\mathbf{W}\sim(B,H)$ transforms a batch of vectors in $\mathbb{R}^D$ into a batch of vectors in $\mathbb{R}^H$. Importantly, any operation applied to a batch should not introduce any dependency between the elements of the batch.
@@ -222,20 +249,31 @@ layout: full
 import BeamerFrame from '../components/BeamerFrame.vue'
 </script>
 
-<BeamerFrame title="Low-rank factorization" page="8">
+<BeamerFrame title="Low-rank factorization">
 
-If $\mathbf{W}\approx\mathbf{U}\mathbf{V}$, with $\mathbf{U}\sim(M,r)$ and $\mathbf{V}\sim(r,N)$, we say $\mathbf{W}$ is of <span class="accent">rank</span> $r$:
+For $\mathbf{W}\sim(D,H)$, a <span class="accent">rank-$r$ approximation</span> can be factorized as:
 
 $$
-\mathbf{W}\mathbf{x}\approx
-\sum_{k=1}^{r}\mathbf{U}_k
-(\mathbf{V}_k^{\top}\mathbf{x}).
+\mathbf{W}\approx\mathbf{U}\mathbf{V}^{\top},
+\qquad
+\mathbf{U}\sim(D,r),\quad
+\mathbf{V}\sim(H,r),\quad
+r\ll\min(D,H).
 $$
 
-The map is composed of $r$ very simple (rank-1) components, where $\mathbf{V}_k^\top\mathbf{x}$ "reads off" the coordinate of $\mathbf{x}$ along $\mathbf{V}_k$, and $\mathbf{U}_k$ "writes" its contribution to the output along $\mathbf{U}_k$.
+For a row vector $\mathbf{x}^{\top}$:
+
+$$
+\mathbf{x}^{\top}\mathbf{W}\approx
+\sum_{k=1}^{r}
+(\mathbf{U}_k^{\top}\mathbf{x})\mathbf{V}_k^{\top}.
+$$
+
+Each rank-1 component uses $\mathbf{U}_k$ to <em>read</em> one scalar from the input and $\mathbf{V}_k$ to <em>write</em> one output direction.
 
 <div class="definition-box small">
-<strong>Why we care</strong>: the factorized map uses r(M+N) parameters instead of MN. In a sense, low-rank maps represent "simple" (parameter-efficient) linear maps and have become pervasive in AI (e.g., <strong>low-rank adaptation</strong>, LoRA).
+
+**Why we care:** $\mathbf{U}\mathbf{V}^{\top}$ has rank at most $r$ and uses $r(D+H)$ parameters instead of $DH$. This idea underlies parameter-efficient methods such as **low-rank adaptation** (LoRA).
 
 </div>
 
@@ -249,7 +287,7 @@ layout: full
 import BeamerFrame from '../components/BeamerFrame.vue'
 </script>
 
-<BeamerFrame title="Tensor contractions" page="9">
+<BeamerFrame title="Tensor contractions">
 
 Matrix multiplication sums over one shared axis. The same idea applies to tensors with more axes, e.g., a <strong>batched matrix multiplication</strong>:
 
@@ -283,7 +321,7 @@ layout: full
 import BeamerFrame from '../components/BeamerFrame.vue'
 </script>
 
-<BeamerFrame title="Element-wise operations" page="10">
+<BeamerFrame title="Element-wise operations">
 
 Some scalar operations extend to tensors by applying them independently to every element:
 
@@ -299,7 +337,7 @@ $$
   <div class="code-line"><span class="ln">3</span><span class="code-text">torch.exp(X)   <span class="comment"># element-wise exponential</span></span></div>
 </div>
 
-Element-wise matrix multiplication is sometimes called an <a href="https://en.wikipedia.org/wiki/Hadamard_product_(matrix_multiplication)">Hadamard product</a>. In the context of neural networks, element-wise non-linear functions are called <span class="accent">activation functions</span>.
+The element-wise product of two matrices is also called their <a href="https://en.wikipedia.org/wiki/Hadamard_product_(matrices)">Hadamard product</a>. In neural networks, element-wise non-linear functions are called <span class="accent">activation functions</span>.
 
 </BeamerFrame>
 
@@ -311,7 +349,7 @@ layout: full
 import BeamerFrame from '../components/BeamerFrame.vue'
 </script>
 
-<BeamerFrame title="Broadcasting rules" page="11">
+<BeamerFrame title="Broadcasting rules">
 
 Before an element-wise operation, align the two shapes from the right:
 
@@ -325,7 +363,7 @@ Before an element-wise operation, align the two shapes from the right:
   <div class="head"><span>left</span><span>right</span><span>result</span></div>
   <div><code>(B,T,D)</code><code>(D)</code><b>(B,T,D)</b></div>
   <div><code>(B,T,D)</code><code>(T,1)</code><b>(B,T,D)</b></div>
-  <div><code>(B,T,D)</code><code>(B,D)</code><b class="error">error</b></div>
+  <div><code>(32,20,128)</code><code>(32,128)</code><b class="error">error</b></div>
   <div><code>(3,1)</code><code>(1,3)</code><b>(3,3)</b></div>
 </div>
 
@@ -354,7 +392,7 @@ const broadcastingOutput = [
 ].join('\n')
 </script>
 
-<BeamerFrame title="Broadcasting in Python" page="12">
+<BeamerFrame title="Broadcasting in Python">
 
 Check compatible shapes directly:
 
@@ -376,7 +414,7 @@ layout: full
 import BeamerFrame from '../components/BeamerFrame.vue'
 </script>
 
-<BeamerFrame title="Our first neural network layer" page="13">
+<BeamerFrame title="Our first neural network layer">
 
 The operations introduced so far already define a fully connected layer:
 

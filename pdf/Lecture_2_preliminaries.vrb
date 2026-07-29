@@ -1,10 +1,18 @@
 \frametitle{Descent direction}
 
-	Without lack of generality, we restrict to unit directions ($\lVert \vc{p}_t \rVert = 1$). The rate of change is given by the directional derivative:\blfootnote{We rely on the identity $\langle \vc{a}, \vc{b} \rangle = \lVert \vc{a} \rVert \lVert \vc{b} \rVert \cos(\theta)$ for vectors $\vc{a}, \vc{b}$ and angle $\theta$ between them.}
+	Without loss of generality, we restrict to unit directions ($\lVert \vc{p}_t \rVert = 1$). The rate of change is given by the directional derivative:\blfootnote{We rely on the identity $\langle \vc{a}, \vc{b} \rangle = \lVert \vc{a} \rVert \lVert \vc{b} \rVert \cos(\theta)$ for vectors $\vc{a}, \vc{b}$ and angle $\theta$ between them.}
 	%
 	\begin{equation*}
 		\mathrm{D}_{\vc{p}_t} \mathcal{L}(\boldsymbol{\theta}_{t-1}) = \langle \nabla \mathcal{L}(\boldsymbol{\theta}_{t-1}), \vc{p}_t \rangle = \lVert \nabla \mathcal{L}(\boldsymbol{\theta}_{t-1}) \rVert \underbrace{\lVert \vc{p}_t \rVert}_{=1} \cos(\theta) = \lVert \nabla \mathcal{L}(\boldsymbol{\theta}_{t-1}) \rVert \cos(\theta).
 	\end{equation*}
 	%
-	The above quantity is minimized when $\cos(\theta) = -1$, which happens if $\theta=\pi$, i.e., $\vc{p}_t = - \nabla \mathcal{L}(\boldsymbol{\theta}_{t-1})$. This is the \myalert{steepest descent direction}. In general, anything with $\cos(\theta) < 0$ is a descent direction.
+	The above quantity is minimized when $\cos(\theta) = -1$, which happens if $\theta=\pi$, i.e.,
+	%
+	\begin{equation*}
+		\vc{p}_t =
+		-\frac{\nabla \mathcal{L}(\boldsymbol{\theta}_{t-1})}
+		{\lVert\nabla \mathcal{L}(\boldsymbol{\theta}_{t-1})\rVert}\,.
+	\end{equation*}
+	%
+	This is the unit \myalert{steepest descent direction}; its scale is absorbed into $\eta_t$. In general, anything with $\cos(\theta) < 0$ is a descent direction.
 	
