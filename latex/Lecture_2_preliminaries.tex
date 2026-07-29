@@ -522,12 +522,14 @@
 
 \end{frame}
 
-\begin{whiteframe}{Visualization of the loss}
+\begin{whiteframe}{Full-batch vs. mini-batch trajectories}
 
 	\begin{figure}
 		\centering
-		\includegraphics[width=0.9\columnwidth]{images/lecture_2/stochastic_loss_descent.png}
-		\caption{Mini-batch loss trajectories are noisy even when their average trend decreases (Source: \href{https://engmrk.com/mini-batch-gd/}{EngMRK}).}
+		\includegraphics[width=0.92\columnwidth]{images/lecture_2/full_vs_minibatch.pdf}
+		\caption{Comparison of standard GD (``full-batch'') and SGD:
+			mini-batch sampling introduces noise in each update, but the loss
+			still decreases on average.}
 	\end{figure}
 
 \end{whiteframe}

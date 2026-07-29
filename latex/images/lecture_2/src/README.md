@@ -8,6 +8,7 @@ Keep each source versioned beside its exported figure.
 | `plot_gradient_info.py` | `../gradient_info.pdf` | Recovered from NNDS 2024 preliminaries |
 | `plot_taylor_approximation.py` | `../taylor_approximation.pdf` | Recovered from NNDS 2024 preliminaries |
 | `plot_saddle_point.py` | `../saddle_point.pdf` | Recovered from NNDS 2024 preliminaries |
+| `plot_full_vs_minibatch.py` | `../full_vs_minibatch.pdf` | Native 2026 replacement for the former external raster screenshot |
 | `stochastic_optimization.drawio` | `../stochastic_optimization.pdf` | Authoritative source from NNDS 2024 `Book figures`; current PDF matches the archived export |
 | `mini_batch.drawio` | `../mini_batch.pdf` | Authoritative source from NNDS 2024 `Book figures`; current PDF matches the archived export |
 | `tensors.drawio` | no current export | Non-empty source from NNDS 2024 `Book figures`; retained for possible reuse |
