@@ -1,0 +1,17 @@
+\frametitle{Implementation}
+
+	\begin{python}
+	 from tensorflow.keras.metrics import *
+	
+	 # The one we have described up to now.
+	 categorical_crossentropy(ytrue, yhat)
+	
+	 # ytrue should contain the indexes of the classes instead of the
+	 # one-hot encodings.
+	 sparse_categorical_crossentropy(ytrue, yhat)
+	
+	 # Numerically-stable versions requiring the logits as inputs
+	 categorical_crossentropy(ytrue, yhat, from_logits=True)
+	 sparse_categorical_crossentropy(ytrue, yhat, from_logits=True)
+	\end{python}
+	

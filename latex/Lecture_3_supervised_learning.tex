@@ -1,0 +1,792 @@
+
+
+\documentclass[12pt,aspectratio=169]{beamer}
+
+\input{style.tex}
+% The 2024 source used annotate-equations for optional visual labels.
+% Keep the deck portable when that package is unavailable.
+\newcommand{\eqnmarkbox}[3][]{#3}
+\newcommand{\annotate}[4][]{}
+\usepackage{subfig}
+
+% Colors
+\definecolor{titlecolor}{RGB}{245, 242, 238} 
+\definecolor{drawgray}{HTML}{666666}
+\definecolor{drawgray_l}{HTML}{F5F5F5}
+\definecolor{drawblue}{HTML}{6C8EBF}
+\definecolor{drawblue_l}{HTML}{DAE8FC}
+\definecolor{drawgreen}{HTML}{82B366}
+\definecolor{drawgreen_l}{HTML}{D5E8D4}
+\definecolor{draworange}{HTML}{D79B00}
+\definecolor{draworange_l}{HTML}{FFE6CC}
+\definecolor{drawyellow}{HTML}{D6B656}
+\definecolor{drawyellow_l}{HTML}{FFF2CC}
+\definecolor{drawred}{HTML}{B85450}
+\definecolor{drawred_l}{HTML}{EA6B66}
+\definecolor{drawviolet}{HTML}{9673A6}
+\definecolor{drawviolet_l}{HTML}{E1D5E7}
+
+
+\begin{document}
+
+	{\usebackgroundtemplate{\tikz\node[opacity=0.4,inner sep=0]{\includegraphics[width=\paperwidth,height=\paperheight]{images/header}};}%
+	\begin{frame}[plain]
+		\vspace{0.5cm}
+		\title{\large \begin{spacing}{1.0}Neural Networks for Data Science\end{spacing}\vspace{0.25em}
+			\normalsize \begin{spacing}{1.0}\textbf{Master's Degree in Data Science}\end{spacing}\vspace{0.5em}}
+		\subtitle{\Large \textbf{Lecture 3: Linear regression and classification}}
+		\date{
+			{\includegraphics[scale=0.8]{images/Uniroma1}}
+		}
+		\author{
+			\setlength{\tabcolsep}{2pt}
+			\begin{tabular}{rl}
+				\textbf{Lecturer}: & S. Scardapane \\
+			\end{tabular}
+		}\titlepage
+	\end{frame}
+	}
+
+\part{1}
+
+\section{Introduction}
+
+\section{Supervised learning}
+\subsection{Setup and examples}
+
+\begin{frame}{(Informal) definition of supervised learning}
+	
+	\begin{tcolorbox}
+		A (supervised) dataset is a set of $n$ \myalert{examples}:
+		%
+		\begin{equation}
+			\mathcal{S} = \left\{ (x_1, y_1), \ldots, (x_n, y_n) \right\} \,.
+		\end{equation}
+	\end{tcolorbox}
+	
+	Informally, given a `new' pair $(x,y)$ not contained in $\mathcal{S}$, we want a function $f(\cdot)$ such that:
+	%
+	\begin{equation}
+		f(x) \approx y \,.
+	\end{equation}
+	%
+	More generally, we can test the model on a separate dataset $\mathcal{T}$ never seen during training, i.e., $\mathcal{S} \bigcap \mathcal{T} = \emptyset$.
+	
+\end{frame}
+
+\begin{frame}{Constraints on the dataset}
+	
+	We always assume implicitly that the elements in $\mathcal{S}$ and the elements in $\mathcal{T}$ are taken from \textit{the same} i.i.d, \textit{unknown} distribution $p(x, y)$.
+	
+	\begin{itemize}
+		\item \textbf{Identically distributed}: the data-generating process is stable (e.g., in recognizing cats, the distribution of species do not change).
+		\item \textbf{Independently distributed}: there is no bias in the data collection (e.g., we mostly collect siamese cats).
+	\end{itemize}
+
+	If the distribution between $\mathcal{S}$ and $\mathcal{T}$ varies, we talk about \myalert{domain shift}.
+	
+\end{frame}
+
+\begin{frame}{Some motivating examples}
+	
+	\begin{enumerate}
+		\item \textbf{Spam identification}: $x_i$ is an email, and $y_i$ describes its probability of being spam.
+		\item \textbf{Robot navigation}: $x_i$ is a sensory representation of the environment, and $y_i$ is a motor command.
+		\item \textbf{Text translation}: $x_i$ is a text and $y_i$ its corresponding translation.
+		\item \textbf{Product recommendation}: $x_i$ is a user, and $y_i$ its affinity w.r.t. a certain catalogue of products.
+	\end{enumerate}
+	
+	\textbf{Note}: ensuring the i.i.d. property sometimes is far from trivial!
+	
+\end{frame}
+
+\begin{frame}{Other types of learning}
+
+	We focus on \textbf{supervised learning} as it is the foundation of most existing applications. Many other scenarios can be traced back to supervised learning:
+
+	\begin{itemize}
+		\item Sometimes we can extract a supervised task from an \textbf{unsupervised} one (e.g., next-token prediction).
+		\item Other unsupervised tasks (e.g., \textbf{clustering}, \textbf{retrieval}) can be simplified by \textit{embedding} the data with some existing, pre-trained model. 
+	\end{itemize}
+
+	If we have access to a pre-trained LLM (or similar model), we can also solve some supervised tasks by avoiding training altogether, by, e.g., \textbf{few-shot prompting}.
+
+\end{frame}
+
+\begin{whiteframe}{Embedding the data}
+	
+	\begin{figure}
+		\centering
+		\includegraphics[width=0.6\columnwidth]{images/lecture_3/embedding.pdf}
+	\end{figure}
+	
+\end{whiteframe}
+
+\begin{whiteframe}{Few-shot prompting}
+	
+	\begin{figure}
+		\centering
+		\includegraphics[width=1.0\columnwidth]{images/lecture_3/using_models.pdf}
+	\end{figure}
+	
+\end{whiteframe}
+
+\subsection{Loss functions}
+
+\begin{whiteframe}{What is a good approximation?}
+	
+	\begin{figure}
+		\centering
+		\includegraphics[width=1.0\columnwidth]{images/lecture_3/Lecture_2_different_translations}
+	\end{figure}
+	
+\end{whiteframe}
+
+\begin{frame}{Introducing loss functions}
+	
+	Given a point $x$, a desired value $y$, and a prediction $\hat{y} = f(x)$, we formalize its quality with a \myalert{loss function} $l(y, \hat{y})$, such that:
+	
+	\begin{enumerate}
+		\item Low value of loss: good approximation;
+		\item High value of loss: poor approximation.
+	\end{enumerate}
+	
+	In this way, learning becomes a problem of minimizing a certain loss quantity that we designed. Importantly, the loss function should be a scalar, vary gradually, and (as we will see) be \myalert{differentiable}.
+	
+\end{frame}
+
+\begin{frame}{Expected risk and empirical risk}
+	
+	\begin{tcolorbox}
+	The \myalert{expected loss} (risk) of a function $f$ is:
+	%
+	\begin{equation}
+		f^*(x) = \arg\min \left\{ \mathbb{E}_{p(x,y)} \left[ l(y, f(x)) \right] \right\} \,.
+	\end{equation}
+	\end{tcolorbox}
+	%
+	The expected risk is uncomputable, but can be approximated via \myalert{empirical risk minimization}:
+	%
+	\begin{equation}
+		f^*(x) = \argmin_f \left\{ \frac{1}{n} \sum_{i=1}^n l(y_i, f(x_i)) \right\} \,.
+	\end{equation}
+	%
+	The gap between the two approaches is called \myalert{generalization gap}.
+	
+\end{frame}
+
+\begin{frame}{Overfitting}
+	
+	Consider the following algorithm (a variation of $1$-NN):
+	
+	\vspace{1em}
+	\begin{equation}
+		f(x) = \begin{cases} y & \text{ if } \eqnmarkbox[drawred]{node}{(x,y) \in \mathcal{S}_n} \\ \eqnmarkbox[drawblue]{node2}{\bar{y}} & \text{ otherwise} \end{cases} \;.
+		\label{eq:lookup_table}
+		\end{equation}
+		\annotate[yshift=1em]{above,right}{node}{$x$ is in the training set}
+		\annotate[yshift=-1em]{below,right}{node2}{Default value, e.g., $0$}
+	\vspace{1em}
+
+	This has $0$ training error by construction, but a very large test error: this is an example of \myalert{overfitting}. We will see that (large) neural networks have many counter-intuitive properties when it comes to generalization.
+	
+\end{frame}
+
+\begin{frame}{Some simplifications}
+	
+	To begin our exploration of supervised learning, we will make a few simplifying assumptions:
+	%
+	\begin{itemize}
+		\item The input $\stackunder{\vc{x}}{\sss (d)}$ is a vector of shape $d$.
+		\item The output $y$ is a single real number.
+	\end{itemize}
+	%
+	There are three interesting cases: when $y \in \mathbb{R}$, it is a \myalert{regression} task; when $y \in \left\{0, \ldots, c-1\right\}$, it is a \myalert{classification} task; when $c=2$, it is a \myalert{binary classification} task.
+	
+\end{frame}
+
+\subsection{Building a loss function}
+
+\begin{frame}{How to build a loss function?}
+	
+	Building a loss function can be done empirically: considering regression, for example, the prediction error $(y - \hat{y})$ is a reasonable quantity to penalize.
+	
+	Since most times we do not care about the sign of the error, these are all valid choices:
+	%
+	\begin{equation}
+		\underset{\text{\textbf{squared} loss}}{(y - \hat{y})^2} \;\;,\;\; \underset{\text{\textbf{absolute} loss}}{\lvert y - \hat{y} \rvert}  \;\;,\;\; \underset{\text{\textbf{squared log} loss}}{\left(\log(1 + y) - \log(1 + \hat{y})\right)^2}
+	\end{equation}
+	%
+	Is there a principled way to make the choice?
+	
+\end{frame}
+
+\begin{whiteframe}{Losses for regression}
+	
+	\begin{figure}
+		\centering
+		\includegraphics[width=0.7\columnwidth]{images/lecture_3/loss_functions_regression.pdf}
+	\end{figure}
+	
+\end{whiteframe}
+
+\begin{frame}{Probabilistic formulation}
+	
+	Let us assume that $f(x)$ parameterizes a \textit{probability distribution} $\hat{p}(y \,\vert\, f(x))$ over the possible outputs $y$. We are now choosing $\hat{p}(\cdot \,\lvert\, \cdot)$ instead of $l(\cdot, \cdot)$, which can feel more natural. 
+	
+	For example, for regression we can assume a Gaussian shape:
+	%
+	\begin{equation}
+		\hat{p}(y \,\vert\, f(x)) = \mathcal{N}(y \,\vert\, f(x), \sigma^2) \,,
+		\label{eq:gaussian_likelihood}
+	\end{equation}
+	%
+	where the model predicts the center of a Gaussian distribution with fixed variance (hyper-parameter).
+	
+\end{frame}
+
+\begin{frame}{Maximum likelihood}
+	
+	The probabilistic formulation also provides a principled way to interpret training by maximizing the \myalert{likelihood} (or log-likelihood) of the model (assuming the elements of the dataset are i.i.d.):
+	%
+	\begin{equation}
+		f^*(x) = \arg\max \prod_{(x_i, y_i)} \hat{p}(y_i \,\vert\, f(x_i)) = \arg\min \sum_{(x_i, y_i)} -\log \hat{p}(y_i \,\vert\, f(x_i)) \,.
+	\end{equation}
+	%
+	Under the Gaussian assumption in \eqref{eq:gaussian_likelihood}, we obtain $-\log \hat{p}(y_i \,\vert\, f(x_i)) \propto (y_i - f(x_i))^2$, i.e., we should optimize the squared loss!
+	
+\end{frame}
+
+\section{Linear models}
+\subsection{Linear models for regression}
+
+\begin{frame}{What is a linear model?}
+	
+	\begin{tcolorbox}
+	A linear model $f$ is defined as:
+	%
+	\begin{equation}
+		f(\vc{x}) = \langle \vc{w}, \vc{x} \rangle = \vc{w}^\top \vc{x} = \sum_j w_j x_j \,,
+	\end{equation}
+	
+	where $\vc{w}$ is a vector of adaptable parameters.
+	\end{tcolorbox}
+
+	This model is fundamental in many disciplines, ranging from econometrics to statistics.
+	
+\end{frame}
+
+\begin{frame}{Linear models with bias}
+	
+	A more general formulation considers the inclusion of an \myalert{offset} (bias) $b \in \mathbb{R}$:
+	
+	\begin{equation}
+		f(\vc{x}) = \vc{w}^\top \vc{x} + b \,.
+	\end{equation}
+	
+	Because we can always rewrite this as $\vc{w}^\top \bar{\vc{x}}$, with $\bar{\vc{x}} = \left[ \vc{x}; \,\, 1 \right]$, we can avoid writing the bias explicitly to simplify the notation.
+	
+	\begin{tcolorbox}
+	\textbf{Hint}: Everytime we write a linear model, mentally add an offset term whenever needed.
+	\end{tcolorbox}
+	
+\end{frame}
+
+	\begin{whiteframe}{Graphical representation}
+		
+		\begin{figure}
+			\centering
+			\includegraphics[width=0.3\columnwidth]{images/lecture_3/linear_model}
+			\caption{Each arrow represents a \textit{linear} influence on the destination, which sums the results.}
+		\end{figure}
+		
+	\end{whiteframe}
+
+\begin{frame}{Least-squares cost function}
+	
+	Combining the squared loss with a linear model results in the \myalert{least-squares} optimization problem:
+	
+	\begin{equation}
+		\text{LS}(\vc{w}) = \frac{1}{n} \sum_{i=1}^n \displaystyle \bigl( y_i - \vc{w}^\top\vc{x}_i \bigr)^2 \,.
+	\end{equation}
+	%
+	We can vectorize LS as:
+	%
+	\begin{equation}
+		\text{LS}(\vc{w}) = \frac{1}{n} \bigl\lVert \stackunder{\vc{y}}{\sss (n)} - \stackunder{\vc{X}}{\sss (n, d)}\stackunder{\vc{w}}{\sss (d)} \bigr\rVert^2 \,,
+	\end{equation}
+	%
+	where $\idx{\vc{X}}{i} = \vc{x}_i$ and $\idx{\vc{y}}{i} = y_i$.
+	
+\end{frame}
+
+\subsection{Solving the LS problem}
+
+\begin{frame}{Solving the LS problem}
+	
+	LS is a convex problem, with a simple gradient (\myalert{normal equations}):
+	%
+	\begin{equation}
+		\nabla \text{LS}(\vc{w}) = \frac{2}{n}\vc{X}^\top(\vc{X}\vc{w} - \vc{y}) \,.
+	\end{equation}
+	%
+	LS is special in the sense that $\nabla \text{LS}(\vc{w}) = 0$ is a linear equation that can be solved explicitly:
+	%
+	\begin{equation}
+		\vc{w}^* = \stackunder{\left(\vc{X}^\top\vc{X}\right)}{\sss (d, d)}^{-1}\stackunder{\vc{X}^\top}{\sss (d,n)} \stackunder{\vc{y}}{\sss (n)} = \stackunder{\vc{X}^\top}{\sss (d,n)}\stackunder{\left(\vc{X}\vc{X}^\top\right)}{\sss (n, n)}^{-1} \stackunder{\vc{y}}{\sss (n)} \,.
+	\end{equation}
+	%
+	The terms $\left(\vc{X}^\top\vc{X}\right)^{-1}\vc{X}^\top$ and $\vc{X}^\top\left(\vc{X}\vc{X}^\top\right)^{-1}$ are called the \myalert{pseudoinverses} of $\vc{X}$, and they require the corresponding matrices to be invertible (full rank).
+	
+\end{frame}
+
+\begin{frame}{Regularizing the LS problem}
+	
+	Numerical problems in the inversion of $\left(\vc{X}^\top\vc{X}\right)$ can be solved by adding a small amount of $\ell_2$ \myalert{regularization} (\myalert{ridge regression}):
+	%
+	\begin{equation}
+		\text{LS-REG}(\vc{w}) = \text{LS}(\vc{w}) \; {\color{darkred} + \; \frac{\lambda}{2} \lVert \vc{w} \rVert^2} \,,
+	\end{equation}
+	%
+	for some $\lambda > 0$. This makes the problem \textit{strictly} convex and forces the solution to be contained in a ball of given radius, modifying the gradient and the explicit solution as:
+	%
+	\begin{align}
+		\nabla \text{LS-REG}(\vc{w}) & = \nabla \text{LS}(\vc{w}) {\color{darkred} + \lambda\vc{w}} \,. \\
+		\vc{w}^* & = \left(\vc{X}^\top\vc{X} {\color{darkred} + \lambda\vc{I}}\right)^{-1}\vc{X}^\top \vc{y} \,.
+	\end{align}
+	%
+	where $\vc{I}$ is the identity matrix of appropriate shape.
+	
+\end{frame}
+
+\begin{frame}[fragile]{Show me some code!}
+	
+	Generating some data:
+	%
+	\begin{python}
+	 # Linear model with unknown coefficients
+	 X = tf.random.normal((10, 5))
+	 y = X @ tf.random.normal((5, 1)) 
+	\end{python}
+	%
+	Computing a linear model:
+	%
+	\begin{python}
+	 w = tf.random.normal((5, 1))
+	 yhat = X @ w # (10, 1)
+	\end{python}
+	%
+	Computing the objective function:
+	%
+	\begin{python}
+	 mse = tf.reduce_mean((y - yhat)**2)
+	\end{python}
+	
+\end{frame}
+
+\begin{frame}[fragile]{Show me some code (2)!}
+	
+	Explicit solution (numerically unstable):
+	%
+	\begin{python}
+	 wopt = tf.linalg.inv(tf.transpose(X) @ X) @ tf.transpose(X) @ y
+	\end{python}
+	%
+	Explicit solution (better numerical conditioning):
+	%
+	\begin{python}
+	 wopt = tf.linalg.solve(tf.transpose(X) @ X, tf.transpose(X) @ y)
+	\end{python}
+	
+\end{frame}
+
+{\setbeamercolor{background canvas}{bg=white}
+\begin{frame}[fragile]{Show me some code (3)!}
+	
+	Simple implementation of gradient descent:
+	%
+	\begin{python}
+	 for i in range(15000):
+	    # Note the sign: the derivative has a minus!
+	    w = w + 0.001 * tf.transpose(X) @ (y - X @ w)
+	\end{python}
+	%
+	\begin{figure}
+		\centering
+		\includegraphics[width=0.4\columnwidth]{images/lecture_3/least_squares_example}
+	\end{figure}
+
+\end{frame}
+}
+
+\begin{frame}{Computational complexity of LS}
+	
+	Matrix multiplication $\shape{\vc{A}}{(a,b)}\shape{\vc{B}}{(b,c)}$ has complexity $\mathcal{O}(abc)$, while matrix inversion has complexity (roughly) cubic.
+	
+	For large models and datasets, we want algorithms that can scale linearly in both $n$ and $d$: we will see that gradient descent can satisfy this property.
+	
+\end{frame}
+
+\subsection{Linear models for classification}
+
+\begin{frame}{Multi-class classification}
+	
+	In \myalert{classification}, $y$ is an integer $\left\{0, \ldots, c-1 \right\}$, such that $y_i = j$ means that $\vc{x}_i$ is of class $j$.
+	
+	For example, with $c=3$ we might have:
+	%
+	\begin{itemize}
+		\item $y = 0$: the email is spam;
+		\item $y = 1$: the email is legit;
+		\item $y = 2$: the email is dubious.
+	\end{itemize}
+	%
+	Solving these as regression tasks is generally not an optimal choice: among other things, it is not guaranteed that classes have a definite ordering.
+	
+\end{frame}
+
+\begin{frame}{Probability distributions}
+	
+	A common solution is to predict a \myalert{probability distribution} over the classes.
+	%
+	\begin{tcolorbox}
+		A vector $\stackunder{\vc{a}}{\sss (c)}$ belongs to the \myalert{probability simplex} $\Delta_c$ if:
+		%
+		\begin{equation}
+			\sum_i \idx{\vc{a}}{i} = 1 \,, \;\;\; \idx{\vc{a}}{i} \ge 0 \,.
+		\end{equation}
+	\end{tcolorbox}
+	%
+	If $f(\vc{x}) = \hat{\vc{y}} \in \Delta_c$, we can interpret it as a \myalert{categorical probability distribution}, e.g., we can select the class with highest probability as:
+	%
+	\begin{equation}
+		\text{class} = \argmax_i \idx{\hat{\vc{y}}}{i} \,.
+	\end{equation}
+	
+\end{frame}
+
+\begin{frame}{A comment on differentiability}
+	
+	Note that we \textit{cannot} easily predict an integer with our models, because it would require some form of threshold operation which is not compatible with gradient descent (gradient zero almost everywhere).
+	
+	Predicting a probability distribution can be seen as a \textit{soft} approximation to this problem.
+	
+\end{frame}
+
+\begin{frame}{The softmax function}
+	
+	The \myalert{softmax} function maps any vector to the probability simplex:
+	%
+	\begin{equation}
+		\idx{\text{softmax}(\vc{a})}{i} = \frac{\exp\left(a_i\right)}{\sum_j \exp\left(a_j\right)}
+	\end{equation}
+	%
+	The numerator ensures that all outputs are positive, while the denominator ensures that the final vector sums to $1$. It can be seen as a soft approximation to the argmax (a better name is in fact \textit{softargmax}).
+	
+	If desired, we can control the approximation with an additional hyper-parameter $\tau$ called \myalert{temperature}:
+	%
+	\begin{equation}
+		\idx{\text{softmax}(\vc{a})}{i} = \frac{\exp\left(a_i/\tau\right)}{\sum_j \exp\left(a_j/\tau\right)}
+	\end{equation}
+	
+\end{frame}
+
+
+\begin{whiteframe}{Visualizing the softmax}
+
+	\begin{figure}
+		\subfloat[Logits]{\includegraphics[width=0.2\columnwidth]{images/lecture_3/softmax_1.pdf}}\qquad
+		\subfloat[$\tau=1$]{\includegraphics[width=0.2\columnwidth]{images/lecture_3/softmax_2.pdf}}\qquad
+		\subfloat[$\tau=10$]{\includegraphics[width=0.2\columnwidth]{images/lecture_3/softmax_3.pdf}}\qquad
+		\subfloat[$\tau=100$]{\includegraphics[width=0.2\columnwidth]{images/lecture_3/softmax_4.pdf}}\qquad
+		\caption{Input logits (red) and softmax outputs with three different temperature values.}
+	  \end{figure}
+	
+	\end{whiteframe}
+
+\begin{frame}{Final model}
+	
+	Our linear model for classification becomes:
+	%
+	\begin{equation}
+		\stackunder{f(\vc{x})}{\sss (c)} = \text{softmax}(\stackunder{\vc{W}}{\sss (c,d)} \,\, \stackunder{\vc{x}}{\sss (d)})
+	\end{equation}
+	%
+	The pre-softmax values $\vc{W}\vc{x}$ are called the \myalert{logits} of the model. By explicitly writing the biases $\shape{\vc{b}}{(c)}$:
+	%
+	\begin{equation}
+		f(\vc{x}) = \text{softmax}(\vc{W}\vc{x} + \vc{b}) \,.
+	\end{equation}
+	
+\end{frame}
+
+\begin{frame}{One-hot encoding}
+	
+	In order to compare the predictions with the ground truth, we encode our targets using a \myalert{one-hot encoding}. Given a pair $(\vc{x}, \vc{y})$:
+	%
+	\begin{equation}
+		y_i = \begin{cases}
+			1 & \text{ if } \vc{x} \text{ is of class } i \,, \\
+			0 & \text{ otherwise} \,.
+		\end{cases}
+	\end{equation}
+	%
+	For example, with $3$ classes $\left\{ \text{cat}, \text{dog}, \text{other} \right\}$:
+	%
+	\begin{equation}
+		\text{cat} = [1, 0, 0] \;\;\; \text{dog} = [0, 1, 0] \;\;\; \text{other} = [0, 0, 1] \,.
+	\end{equation}
+	%
+	This is a probability distribution putting all the \textbf{mass} on a single class.
+	
+\end{frame}
+
+\begin{frame}{Cross-entropy loss}
+	
+	Finally, we need a loss function $l$ to compare two probability distributions.
+	%
+	\begin{tcolorbox}
+		The \myalert{cross-entropy} loss is defined for two vectors $\vc{y}, \hat{\vc{y}} \in \Delta_c$ as:
+		%
+		\begin{equation}
+			\text{CE}(\vc{y}, \hat{\vc{y}}) = - \sum_i y_i \log\left(\hat{y}_i\right) \,.
+		\end{equation}
+	\end{tcolorbox}
+	%
+	The CE loss can be derived from the maximum likelihood principle under the assumption that $f(\vc{x})$ encodes a \myalert{categorical} distribution (try it!).\footnote[frame]{The equation for the categorical distribution in this case would be $p(\vc{y} \vert f(\vc{x})) = \prod_i \idx{f(\vc{x})}{i}^{y_i}$.}
+	
+\end{frame}
+
+\begin{frame}{Log-likelihood loss}
+	
+	The CE loss is generic for \textit{any} pair of vectors belonging to the probability simplex. However, in our case $\vc{y}$ is always a one-hot encoded vector. 
+	
+	Denote by $t$ the index of the class, $t = \arg\max \vc{y}$, the CE loss simplifies since only one term in the summation will be different from $0$:
+	%
+	\begin{equation}
+		\text{CE}(\vc{y}, \hat{\vc{y}}) = - \log(\hat{y}_t) \,.
+	\end{equation}
+	%
+	Hence, CE can be interpreted as maximizing the probability of the true class at the expense of all other outputs.
+	
+\end{frame}
+
+\begin{frame}{Logistic regression}
+	
+	\begin{tcolorbox}
+		A \myalert{logistic regression} is a linear model $f(\vc{x}) = \text{softmax}(\vc{W}\vc{x})$ trained by optimizing the cross-entropy:
+		%
+		\begin{equation}
+			\text{LR}(\vc{W}) = \frac{1}{n} \sum_{i=1}^n \text{CE}\left( \vc{y}_i, f(\vc{x}_i) \right) \,.
+		\end{equation}
+	\end{tcolorbox}
+	%
+	It is not possible to solve the logistic regression problem explicitly. A linear model for classification has $dc$ parameters (or $dc + c$ with biases).
+	
+\end{frame}
+
+\begin{frame}{Binary classification}
+	
+	A special case is \myalert{binary classification}, where $c=2$. In this case, we can predict a single scalar value $f(\vc{x}) \in \left[0, 1\right]$ since:
+	%
+	\begin{align}
+		f(\vc{x}) & \;\;\; \text{ probability of class 1 } \,, \\
+		1 - f(\vc{x}) & \;\;\; \text{ probability of class 2 } \,.
+	\end{align}
+	%
+	The softmax function simplifies to the \myalert{sigmoid} function:
+	%
+	\begin{tcolorbox}
+		The sigmoid $\sigma(s) \in \left[0, 1 \right]$ is defined as:
+		%
+		\begin{equation}
+			\sigma(s) = \frac{1}{1 + \exp(-s)} \,.
+		\end{equation}
+	\end{tcolorbox}
+	
+\end{frame}
+
+\begin{whiteframe}{Visualizing the sigmoid function}
+	
+	\begin{figure}
+		\centering
+		\includegraphics[width=0.6\columnwidth]{images/lecture_3/sigmoid.pdf}
+		\vspace{-0.5em}\caption{A visualization of the sigmoid function. Note that $0$ and $1$ are only approached asymptotically.}
+	\end{figure}
+	
+\end{whiteframe}
+
+\begin{frame}{Binary logistic regression model}
+	
+	Combining everything, we obtain a binary version of the logistic regression algorithm:
+	%
+	\begin{equation}
+		\text{BIN-LR}(\vc{w}) = \frac{1}{n} \sum_{i=1}^n \Bigl[ -\underbrace{y_i\log\left(\sigma(\vc{w}^\top\vc{x})\right)}_{\text{Class 1}} - \underbrace{(1-y_i)\log\left( 1 - \sigma(\vc{w}^\top\vc{x})\right)}_{\text{Class 2}} \Bigr]
+	\end{equation}
+	%
+	In this case, we can obtain the most probable class from the model as:
+	%
+	\begin{equation}
+		\text{class} = \begin{cases}
+			1 & \text{ if } \sigma(\vc{w}^\top\vc{x}) > 0.5 \,, \\
+			0 & \text{ otherwise } \,.
+		\end{cases}
+	\end{equation}
+	
+\end{frame}
+
+\begin{frame}{Gradient of the logistic regression}
+	
+	By manually differentiating we obtain:
+	%
+	\begin{equation}
+		\sigma'(s) = \sigma(s)(1 - \sigma(s)) \,.
+	\end{equation}
+	%
+	Plugging this into the gradient computation we obtain:
+	%
+	\begin{equation}
+		\nabla \text{BIN-LR}(\vc{w}) = \frac{1}{n} \sum_{i=1}^n (\sigma(\vc{w}^\top\vc{x}_i) - y_i)\vc{x}_i \,,
+	\end{equation}
+	%
+	showing its similarity to the regression case.
+	
+\end{frame}
+
+\begin{frame}[fragile]{Implementation}
+	
+	\begin{python}
+	 from tensorflow.keras.metrics import *
+	
+	 # The one we have described up to now.
+	 categorical_crossentropy(ytrue, yhat)
+	 
+	 # ytrue should contain the indexes of the classes instead of the
+	 # one-hot encodings.
+	 sparse_categorical_crossentropy(ytrue, yhat)
+	 
+	 # Numerically-stable versions requiring the logits as inputs
+	 categorical_crossentropy(ytrue, yhat, from_logits=True)
+	 sparse_categorical_crossentropy(ytrue, yhat, from_logits=True)
+	\end{python}
+	
+\end{frame}
+
+\begin{frame}{The logsumexp function}
+	
+	Why a variant with logits in input? Note that the $i$th term of the cross-entropy wrt the logits $\vc{p}$ is given by:
+	%
+	\begin{equation}
+		- \log\left( \frac{\exp{p_i}}{\sum_j \exp{p_j}} \right) \,.
+	\end{equation}
+	
+	In practice, this can be \textit{highly} unstable. However, it can be rewritten as:
+	%
+	\begin{equation}
+		- p_i + \text{logsumexp}(\vc{p}) \,,
+	\end{equation}
+	%
+	where $\text{logsumexp}$ is defined as $\text{logsumexp}(\vc{p}) = \log\left( \sum_i \exp p_i \right)$.
+	
+	\blfootnote{\url{https://gregorygundersen.com/blog/2020/02/09/log-sum-exp/}}
+	
+\end{frame}
+
+\begin{frame}{The logsumexp trick}
+	
+	The reason this is important is that the logsumexp function is invariant in the following sense:
+	%
+	\begin{equation}
+		\text{logsumexp}(\vc{p}) = \log\left( \sum_i \exp (p_i - c) \right) + c \,,
+	\end{equation}
+	%
+	where $c$ is an arbitrary constant. By setting $c = \max\left(\vc{p}\right)$, we can ensure numerical instabilities never occur.
+	
+	In this sense, softmax can be interpreted as part of the model \textit{or} as part of the loss; this is not an issue, since $\arg\max$ only cares about the relative ranking of the values, which is not changed by the softmax.
+	
+\end{frame}
+
+\subsection{Calibration and a probabilistic formulation}
+
+\begin{frame}{Calibration}
+	
+	A common misconception when doing classification is that $\idx{f(x)}{i}$ can be immediately interpreted as \textit{the probability of pattern $x$ being of class $i$}.
+	
+	However, this is only true whenever the trained model satisfies:
+	%
+	\begin{equation}
+		p(y = i \,\vert\, x) = \idx{f(x)}{i} \,.
+	\end{equation}
+	%
+	We say the model is well \myalert{calibrated}, but this must be checked manually.
+	
+	\blfootnote{Guo, C., et al.. \textbf{On calibration of modern neural networks}. ICML 2017.}
+	
+\end{frame}
+
+\begin{frame}{Measuring calibration}
+	
+	To measure calibration, we keep a separate validation set, and we split the interval $[0,1]$ into $m$ equispaced bins (each of size $1/m$). Define:
+	%
+	\begin{itemize}
+		\item $B_m$ the number of samples from the validation set, whose predicted confidence falls in bin $m$.
+		\item $p_m$ the average confidence of the network for that bin.
+		\item $a_m$ the average accuracy of the network for these elements.
+	\end{itemize}
+	%
+	Then, the \myalert{expected calibration error} (ECE) is given by:
+	%
+	\vspace{1em}
+	\begin{equation}
+		\displaystyle\text{ECE}= \sum_i \eqnmarkbox[drawred]{node2}{\frac{\lvert\mathcal{B}_i\rvert}{n}} \eqnmarkbox[drawblue]{node}{\left|a_i - p_i\right|}
+		\label{eq:ece}
+		\end{equation}
+		\annotate[yshift=1em]{above,right}{node}{Calibration for bin $i$}
+		\annotate[yshift=-1em]{below,right}{node2}{Fraction falling into bin $i$}
+	
+\end{frame}
+
+\begin{whiteframe}{Reliability plots}
+	
+	\begin{figure}
+		\centering\includegraphics[width=7cm,keepaspectratio]{images/lecture_3/reliability_plot.pdf} %
+		\vspace{-1em}\caption{Plotting $a_m$ against $p_m$ for every bin gives us a \myalert{reliability plot} (from Guo et al., 2017).}
+	\end{figure}
+	
+\end{whiteframe}
+
+\begin{frame}{Focal loss}
+	
+	This topic is important because more complex networks may be highly over (or under) confident, with many methods to improve it (temperature scaling, logit normalization, ...).
+	
+	A simple (and popular) option is to decrease the weight given to `easy' samples using a variant of cross-entropy call the \myalert{focal loss}:
+	%
+	\begin{equation}
+		\text{FL}_\alpha(\vc{y}, \hat{\vc{y}}) = -(1 - \hat{\vc{y}}_c)^\alpha \log \hat{\vc{y}}_c \,,
+	\end{equation}
+	%
+	where $c = \arg\max \vc{y}$.
+	
+	\blfootnote{Mukhoti, J., et al., 2020. \textbf{Calibrating deep neural networks using focal loss}. \textit{Advances in Neural Information Processing Systems}, 33, pp. 15288-15299.}
+	
+\end{frame}
+
+\begin{whiteframe}{Visualizing the focal loss}
+	
+	\begin{figure}
+		\centering\includegraphics[width=7cm,keepaspectratio]{images/lecture_3/focal_loss} %
+	\end{figure}
+	
+	\blfootnote{Lin, T.Y., et al., 2017. \textbf{Focal loss for dense object detection}. In \textit{IEEE ICCV} (pp. 2980-2988).}
+	
+\end{whiteframe}
+
+\begin{frame}{Reading material}
+	
+	\begin{itemize}
+		\item \textbf{Chapters 3 and 4} of the book, along with the suggested exercises in Chapter 4.
+	\end{itemize}
+	
+\end{frame}
+
+\end{document}
