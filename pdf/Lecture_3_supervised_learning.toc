@@ -1,10 +1,10 @@
 \beamer@sectionintoc {1}{Introduction}{2}{1}{1}
 \beamer@sectionintoc {2}{Supervised learning}{2}{1}{2}
-\beamer@subsectionintoc {2}{1}{Setup and examples}{2}{1}{2}
-\beamer@subsectionintoc {2}{2}{Loss functions}{9}{1}{2}
-\beamer@subsectionintoc {2}{3}{Building a loss function}{15}{1}{2}
-\beamer@sectionintoc {3}{Linear models}{20}{1}{3}
-\beamer@subsectionintoc {3}{1}{Linear models for regression}{20}{1}{3}
-\beamer@subsectionintoc {3}{2}{Solving the LS problem}{25}{1}{3}
-\beamer@subsectionintoc {3}{3}{Linear models for classification}{32}{1}{3}
-\beamer@subsectionintoc {3}{4}{Calibration and a probabilistic formulation}{50}{1}{3}
+\beamer@subsectionintoc {2}{1}{Setup and data splits}{2}{1}{2}
+\beamer@subsectionintoc {2}{2}{Loss functions}{5}{1}{2}
+\beamer@subsectionintoc {2}{3}{Building a loss function}{11}{1}{2}
+\beamer@sectionintoc {3}{Linear models}{16}{1}{3}
+\beamer@subsectionintoc {3}{1}{Linear models for regression}{16}{1}{3}
+\beamer@subsectionintoc {3}{2}{Solving the LS problem}{21}{1}{3}
+\beamer@subsectionintoc {3}{3}{Linear models for classification}{28}{1}{3}
+\beamer@subsectionintoc {3}{4}{Calibration and a probabilistic formulation}{46}{1}{3}

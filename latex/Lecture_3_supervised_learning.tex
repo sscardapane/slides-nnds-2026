@@ -52,84 +52,45 @@
 \section{Introduction}
 
 \section{Supervised learning}
-\subsection{Setup and examples}
+\subsection{Setup and data splits}
 
-\begin{frame}{(Informal) definition of supervised learning}
-	
+\begin{frame}{Supervised learning}
+
 	\begin{tcolorbox}
-		A (supervised) dataset is a set of $n$ \myalert{examples}:
-		%
+		A supervised dataset is a set of $N$ input-target pairs:
 		\begin{equation}
-			\mathcal{S} = \left\{ (x_1, y_1), \ldots, (x_n, y_n) \right\} \,.
+			\mathcal{S} = \left\{ (x_i, y_i) \right\}_{i=1}^{N} \,.
 		\end{equation}
 	\end{tcolorbox}
-	
-	Informally, given a `new' pair $(x,y)$ not contained in $\mathcal{S}$, we want a function $f(\cdot)$ such that:
-	%
+
+	A model $f_{\boldsymbol{\theta}}$ maps an input $x$ to a prediction $\hat{y}$:
 	\begin{equation}
-		f(x) \approx y \,.
+		\hat{y} = f_{\boldsymbol{\theta}}(x) \,.
 	\end{equation}
-	%
-	More generally, we can test the model on a separate dataset $\mathcal{T}$ never seen during training, i.e., $\mathcal{S} \bigcap \mathcal{T} = \emptyset$.
-	
+
+	We fit $\boldsymbol{\theta}$ on $\mathcal{S}$ and evaluate the model on examples that were not used for training.
+
 \end{frame}
 
-\begin{frame}{Constraints on the dataset}
-	
-	We always assume implicitly that the elements in $\mathcal{S}$ and the elements in $\mathcal{T}$ are taken from \textit{the same} i.i.d, \textit{unknown} distribution $p(x, y)$.
-	
-	\begin{itemize}
-		\item \textbf{Identically distributed}: the data-generating process is stable (e.g., in recognizing cats, the distribution of species do not change).
-		\item \textbf{Independently distributed}: there is no bias in the data collection (e.g., we mostly collect siamese cats).
-	\end{itemize}
+\begin{frame}{Training, validation, and test data}
 
-	If the distribution between $\mathcal{S}$ and $\mathcal{T}$ varies, we talk about \myalert{domain shift}.
-	
-\end{frame}
-
-\begin{frame}{Some motivating examples}
-	
-	\begin{enumerate}
-		\item \textbf{Spam identification}: $x_i$ is an email, and $y_i$ describes its probability of being spam.
-		\item \textbf{Robot navigation}: $x_i$ is a sensory representation of the environment, and $y_i$ is a motor command.
-		\item \textbf{Text translation}: $x_i$ is a text and $y_i$ its corresponding translation.
-		\item \textbf{Product recommendation}: $x_i$ is a user, and $y_i$ its affinity w.r.t. a certain catalogue of products.
-	\end{enumerate}
-	
-	\textbf{Note}: ensuring the i.i.d. property sometimes is far from trivial!
-	
-\end{frame}
-
-\begin{frame}{Other types of learning}
-
-	We focus on \textbf{supervised learning} as it is the foundation of most existing applications. Many other scenarios can be traced back to supervised learning:
+	We split the available examples into three disjoint sets:
+	\begin{equation}
+		\mathcal{S}
+		= {\color{darkred}\mathcal{S}_{\mathrm{train}}}
+		\mathbin{\dot\cup} {\color{darkpastelblue}\mathcal{S}_{\mathrm{val}}}
+		\mathbin{\dot\cup} {\color{darkgreen}\mathcal{S}_{\mathrm{test}}} \,.
+	\end{equation}
 
 	\begin{itemize}
-		\item Sometimes we can extract a supervised task from an \textbf{unsupervised} one (e.g., next-token prediction).
-		\item Other unsupervised tasks (e.g., \textbf{clustering}, \textbf{retrieval}) can be simplified by \textit{embedding} the data with some existing, pre-trained model. 
+		\item ${\color{darkred}\mathcal{S}_{\mathrm{train}}}$ is used to fit the parameters $\boldsymbol{\theta}$.
+		\item ${\color{darkpastelblue}\mathcal{S}_{\mathrm{val}}}$ is used to select the model and its hyper-parameters.
+		\item ${\color{darkgreen}\mathcal{S}_{\mathrm{test}}}$ is used for the final evaluation.
 	\end{itemize}
 
-	If we have access to a pre-trained LLM (or similar model), we can also solve some supervised tasks by avoiding training altogether, by, e.g., \textbf{few-shot prompting}.
+	We usually assume independent samples from the same unknown distribution $p(x,y)$ (\textit{identically} and \textit{independently} distributed, i.i.d.). If the deployment distribution differs, we have a \myalert{distribution shift}.
 
 \end{frame}
-
-\begin{whiteframe}{Embedding the data}
-	
-	\begin{figure}
-		\centering
-		\includegraphics[width=0.6\columnwidth]{images/lecture_3/embedding.pdf}
-	\end{figure}
-	
-\end{whiteframe}
-
-\begin{whiteframe}{Few-shot prompting}
-	
-	\begin{figure}
-		\centering
-		\includegraphics[width=1.0\columnwidth]{images/lecture_3/using_models.pdf}
-	\end{figure}
-	
-\end{whiteframe}
 
 \subsection{Loss functions}
 
