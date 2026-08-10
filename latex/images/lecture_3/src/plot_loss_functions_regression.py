@@ -1,13 +1,12 @@
 import numpy as np
 import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from pylab import rcParams
+from pathlib import Path
 
 np.random.seed(1)
 
 font_size = 9
-
-matplotlib.use('Qt5Agg')
 
 # Set parameters for plotting
 params = {
@@ -21,8 +20,11 @@ params = {
    'ytick.major.size': 2,
    'text.usetex': True,
    'figure.figsize': [4*0.9,3*0.9],
+   'figure.facecolor': 'none',
+   'axes.facecolor': 'none',
+   'savefig.transparent': True,
 }
-rcParams.update(params)
+matplotlib.rcParams.update(params)
 
 colors = ['#B85450', '#82B366', '#6C8EBF']
 
@@ -45,8 +47,8 @@ plt.plot(e, np.abs(e), '-o', color=colors[1], label='Absolute loss',
 plt.plot(e, huber_loss, '-d', color=colors[2], label='Huber loss ($\delta=1.5$)', 
          markersize=6, markevery=5)
 
-plt.xlabel('$e$')
-plt.ylabel('$L(e)$')
+plt.xlabel(r'$e = \hat{y} - y$')
+plt.ylabel(r'$\ell(e)$')
 
 leg = plt.legend(loc='upper center')
 fr = leg.get_frame()
@@ -55,5 +57,7 @@ fr.set_lw(0.5)
 plt.grid(alpha=0.35, linewidth=1)
 plt.box(on=True)
 plt.tight_layout()
-plt.savefig('loss_functions_regression.pdf', format='pdf',bbox_inches='tight', pad_inches=0.01)
-plt.show()
+output_path = Path(__file__).resolve().parent.parent / 'loss_functions_regression.pdf'
+plt.savefig(output_path, format='pdf', bbox_inches='tight', pad_inches=0.01,
+            transparent=True)
+plt.close()

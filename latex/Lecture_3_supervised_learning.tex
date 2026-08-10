@@ -166,69 +166,33 @@
 	
 \end{frame}
 
-\begin{frame}{Some simplifications}
-	
-	To begin our exploration of supervised learning, we will make a few simplifying assumptions:
-	%
-	\begin{itemize}
-		\item The input $\stackunder{\vc{x}}{\sss (d)}$ is a vector of shape $d$.
-		\item The output $y$ is a single real number.
-	\end{itemize}
-	%
-	There are three interesting cases: when $y \in \mathbb{R}$, it is a \myalert{regression} task; when $y \in \left\{0, \ldots, c-1\right\}$, it is a \myalert{classification} task; when $c=2$, it is a \myalert{binary classification} task.
-	
-\end{frame}
+\begin{frame}{Losses for regression}
 
-\subsection{Building a loss function}
+	\footnotesize
+	For \myalert{regression} we have $y,\hat{y}\in\mathbb{R}$, and we can write the prediction error as $e=\hat{y}-y$.
 
-\begin{frame}{How to build a loss function?}
-	
-	Building a loss function can be done empirically: considering regression, for example, the prediction error $(y - \hat{y})$ is a reasonable quantity to penalize.
-	
-	Since most times we do not care about the sign of the error, these are all valid choices:
-	%
-	\begin{equation}
-		\underset{\text{\textbf{squared} loss}}{(y - \hat{y})^2} \;\;,\;\; \underset{\text{\textbf{absolute} loss}}{\lvert y - \hat{y} \rvert}  \;\;,\;\; \underset{\text{\textbf{squared log} loss}}{\left(\log(1 + y) - \log(1 + \hat{y})\right)^2}
-	\end{equation}
-	%
-	Is there a principled way to make the choice?
-	
-\end{frame}
+	\begin{columns}[T,onlytextwidth]
+		\begin{column}{0.43\textwidth}
+			\begin{itemize}
+				\item \textcolor{drawred}{\textbf{Squared loss}}:
+				${\color{drawred}\ell(e)=e^2}$. Smooth, but gives large errors more weight.
 
-\begin{whiteframe}{Losses for regression}
-	
-	\begin{figure}
-		\centering
-		\includegraphics[width=0.7\columnwidth]{images/lecture_3/loss_functions_regression.pdf}
-	\end{figure}
-	
-\end{whiteframe}
+				\item \textcolor{drawgreen}{\textbf{Absolute loss}}:
+				${\color{drawgreen}\ell(e)=\lvert e\rvert}$. Less sensitive to outliers, but not differentiable at $e=0$.
 
-\begin{frame}{Probabilistic formulation}
-	
-	Let us assume that $f(x)$ parameterizes a \textit{probability distribution} $\hat{p}(y \,\vert\, f(x))$ over the possible outputs $y$. We are now choosing $\hat{p}(\cdot \,\lvert\, \cdot)$ instead of $l(\cdot, \cdot)$, which can feel more natural. 
-	
-	For example, for regression we can assume a Gaussian shape:
-	%
-	\begin{equation}
-		\hat{p}(y \,\vert\, f(x)) = \mathcal{N}(y \,\vert\, f(x), \sigma^2) \,,
-		\label{eq:gaussian_likelihood}
-	\end{equation}
-	%
-	where the model predicts the center of a Gaussian distribution with fixed variance (hyper-parameter).
-	
-\end{frame}
+				\item \textcolor{drawblue}{\textbf{Huber loss}}:
+				quadratic near zero and linear for large $\lvert e\rvert$.
+			\end{itemize}
+		\end{column}
+		\begin{column}{0.54\textwidth}
+			\centering
+			\includegraphics[width=0.94\linewidth]{images/lecture_3/loss_functions_regression.pdf}
+		\end{column}
+	\end{columns}
 
-\begin{frame}{Maximum likelihood}
-	
-	The probabilistic formulation also provides a principled way to interpret training by maximizing the \myalert{likelihood} (or log-likelihood) of the model (assuming the elements of the dataset are i.i.d.):
-	%
-	\begin{equation}
-		f^*(x) = \arg\max \prod_{(x_i, y_i)} \hat{p}(y_i \,\vert\, f(x_i)) = \arg\min \sum_{(x_i, y_i)} -\log \hat{p}(y_i \,\vert\, f(x_i)) \,.
-	\end{equation}
-	%
-	Under the Gaussian assumption in \eqref{eq:gaussian_likelihood}, we obtain $-\log \hat{p}(y_i \,\vert\, f(x_i)) \propto (y_i - f(x_i))^2$, i.e., we should optimize the squared loss!
-	
+	\vspace{0.15em}
+	{\scriptsize Maximum likelihood gives squared loss under Gaussian noise and absolute loss under Laplace noise, see the book.}
+
 \end{frame}
 
 \section{Linear models}
