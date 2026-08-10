@@ -140,18 +140,29 @@
 
 \begin{frame}{Overfitting}
 	
-	Consider the following algorithm (a variation of $1$-NN):
-	
-	\vspace{1em}
+	Consider a model that memorizes the training set:
 	\begin{equation}
-		f(x) = \begin{cases} y & \text{ if } \eqnmarkbox[drawred]{node}{(x,y) \in \mathcal{S}_n} \\ \eqnmarkbox[drawblue]{node2}{\bar{y}} & \text{ otherwise} \end{cases} \;.
+		f(x) =
+		\begin{cases}
+			{\color{darkred}y_i}
+			& \text{if } x=x_i \text{ for some } (x_i,y_i)\in\mathcal{S}_{\mathrm{train}}, \\
+			{\color{darkpastelblue}\bar{y}}
+			& \text{otherwise}.
+		\end{cases}
 		\label{eq:lookup_table}
-		\end{equation}
-		\annotate[yshift=1em]{above,right}{node}{$x$ is in the training set}
-		\annotate[yshift=-1em]{below,right}{node2}{Default value, e.g., $0$}
-	\vspace{1em}
+	\end{equation}
 
-	This has $0$ training error by construction, but a very large test error: this is an example of \myalert{overfitting}. We will see that (large) neural networks have many counter-intuitive properties when it comes to generalization.
+	It predicts every training target exactly. For any new input, however, it returns the same default value $\bar{y}$.
+
+	\begin{tcolorbox}
+		\begin{equation*}
+			{\color{darkred}\mathcal{L}(\boldsymbol{\theta})=0}
+			\quad\nRightarrow\quad
+			{\color{darkpastelblue}\mathcal{R}(\boldsymbol{\theta})\text{ is small}} \,.
+		\end{equation*}
+	\end{tcolorbox}
+
+	This is \myalert{overfitting}: fitting the training data without learning a rule that generalizes.
 	
 \end{frame}
 

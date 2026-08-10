@@ -1,4 +1,4 @@
-This is LuaHBTeX, Version 1.15.0 (TeX Live 2022)  (format=lualatex 2022.10.31)  10 AUG 2026 15:41
+This is LuaHBTeX, Version 1.15.0 (TeX Live 2022)  (format=lualatex 2022.10.31)  10 AUG 2026 15:54
  system commands enabled.
 **Lecture_3_supervised_learning.tex
 (./Lecture_3_supervised_learning.tex
@@ -1691,10 +1691,13 @@ Overfull \vbox (15.44142pt too high) detected at line 104
 
 ] [8
 
-] [9
-
 ]
-[10
+Overfull \vbox (18.98415pt too high) detected at line 167
+ []
+
+[9
+
+] [10
 
 ] [11
 
@@ -1706,10 +1709,10 @@ t>
 File: images/lecture_3/loss_functions_regression.pdf Graphic file (type pdf)
 <use images/lecture_3/loss_functions_regression.pdf>
 Package luatex.def Info: images/lecture_3/loss_functions_regression.pdf  used o
-n input line 194.
+n input line 205.
 (luatex.def)             Requested size: 278.83578pt x 203.93251pt.
 
-Overfull \vbox (17.42096pt too high) detected at line 194
+Overfull \vbox (17.42096pt too high) detected at line 205
  []
 
 [13
@@ -1730,7 +1733,7 @@ Overfull \vbox (17.42096pt too high) detected at line 194
 File: images/lecture_3/linear_model.pdf Graphic file (type pdf)
 <use images/lecture_3/linear_model.pdf>
 Package luatex.def Info: images/lecture_3/linear_model.pdf  used on input line 
-266.
+277.
 (luatex.def)             Requested size: 119.50279pt x 133.00696pt.
  [19
 
@@ -1741,7 +1744,7 @@ Package luatex.def Info: images/lecture_3/linear_model.pdf  used on input line
 ] [22
 
 ]
-Overfull \vbox (22.28519pt too high) detected at line 323
+Overfull \vbox (22.28519pt too high) detected at line 334
  []
 
 [23
@@ -1758,7 +1761,7 @@ Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
 )
-Overfull \vbox (13.91263pt too high) detected at line 348
+Overfull \vbox (13.91263pt too high) detected at line 359
  []
 
 [24
@@ -1781,7 +1784,7 @@ Package luatex.def Info: images/lecture_3/least_squares_example.pdf  used on in
 put line 13.
 (luatex.def)             Requested size: 159.333pt x 116.40541pt.
 )
-Overfull \vbox (17.7685pt too high) detected at line 382
+Overfull \vbox (17.7685pt too high) detected at line 393
  []
 
 [26
@@ -1793,7 +1796,7 @@ Overfull \vbox (17.7685pt too high) detected at line 382
 ] [29
 
 ]
-Overfull \vbox (12.40218pt too high) detected at line 429
+Overfull \vbox (12.40218pt too high) detected at line 440
  []
 
 [30
@@ -1801,7 +1804,7 @@ Overfull \vbox (12.40218pt too high) detected at line 429
 ] [31
 
 ]
-Overfull \vbox (27.07788pt too high) detected at line 455
+Overfull \vbox (27.07788pt too high) detected at line 466
  []
 
 [32
@@ -1810,25 +1813,25 @@ Overfull \vbox (27.07788pt too high) detected at line 455
 <images/lecture_3/softmax_1.pdf, id=355, 241.8656pt x 177.0615pt>
 File: images/lecture_3/softmax_1.pdf Graphic file (type pdf)
 <use images/lecture_3/softmax_1.pdf>
-Package luatex.def Info: images/lecture_3/softmax_1.pdf  used on input line 468
+Package luatex.def Info: images/lecture_3/softmax_1.pdf  used on input line 479
 .
 (luatex.def)             Requested size: 79.66649pt x 58.32239pt.
 <images/lecture_3/softmax_2.pdf, id=356, 241.8656pt x 177.0615pt>
 File: images/lecture_3/softmax_2.pdf Graphic file (type pdf)
 <use images/lecture_3/softmax_2.pdf>
-Package luatex.def Info: images/lecture_3/softmax_2.pdf  used on input line 468
+Package luatex.def Info: images/lecture_3/softmax_2.pdf  used on input line 479
 .
 (luatex.def)             Requested size: 79.66649pt x 58.32239pt.
 <images/lecture_3/softmax_3.pdf, id=357, 241.8656pt x 177.0615pt>
 File: images/lecture_3/softmax_3.pdf Graphic file (type pdf)
 <use images/lecture_3/softmax_3.pdf>
-Package luatex.def Info: images/lecture_3/softmax_3.pdf  used on input line 468
+Package luatex.def Info: images/lecture_3/softmax_3.pdf  used on input line 479
 .
 (luatex.def)             Requested size: 79.66649pt x 58.32239pt.
 <images/lecture_3/softmax_4.pdf, id=358, 241.8656pt x 177.0615pt>
 File: images/lecture_3/softmax_4.pdf Graphic file (type pdf)
 <use images/lecture_3/softmax_4.pdf>
-Package luatex.def Info: images/lecture_3/softmax_4.pdf  used on input line 468
+Package luatex.def Info: images/lecture_3/softmax_4.pdf  used on input line 479
 .
 (luatex.def)             Requested size: 79.66649pt x 58.32239pt.
  [33
@@ -1841,7 +1844,7 @@ cture_3/softmax_3.pdf><./images/lecture_3/softmax_4.pdf>] [34
 
 ]
 LaTeX Font Info:    Font shape `OT1/cmss/b/n' in size <5> not available
-(Font)              Font shape `OT1/cmss/bx/n' tried instead on input line 521.
+(Font)              Font shape `OT1/cmss/bx/n' tried instead on input line 532.
 
  [36
 
@@ -1850,7 +1853,7 @@ LaTeX Font Info:    Font shape `OT1/cmss/b/n' in size <5> not available
 ] [38
 
 ]
-Overfull \vbox (2.10112pt too high) detected at line 570
+Overfull \vbox (2.10112pt too high) detected at line 581
  []
 
 [39
@@ -1859,10 +1862,10 @@ Overfull \vbox (2.10112pt too high) detected at line 570
 <images/lecture_3/sigmoid.pdf, id=466, 240.6591pt x 175.6161pt>
 File: images/lecture_3/sigmoid.pdf Graphic file (type pdf)
 <use images/lecture_3/sigmoid.pdf>
-Package luatex.def Info: images/lecture_3/sigmoid.pdf  used on input line 580.
+Package luatex.def Info: images/lecture_3/sigmoid.pdf  used on input line 591.
 (luatex.def)             Requested size: 239.00558pt x 174.4098pt.
 
-Overfull \vbox (23.09825pt too high) detected at line 580
+Overfull \vbox (23.09825pt too high) detected at line 591
  []
 
 [40
@@ -1878,7 +1881,7 @@ Overfull \vbox (23.09825pt too high) detected at line 580
 ing.vrb) [43
 
 ]
-Overfull \vbox (13.05505pt too high) detected at line 656
+Overfull \vbox (13.05505pt too high) detected at line 667
  []
 
 [44
@@ -1890,7 +1893,7 @@ Overfull \vbox (13.05505pt too high) detected at line 656
 ] [47
 
 ]
-Overfull \vbox (11.16168pt too high) detected at line 710
+Overfull \vbox (11.16168pt too high) detected at line 721
  []
 
 [48
@@ -1900,7 +1903,7 @@ Overfull \vbox (11.16168pt too high) detected at line 710
 File: images/lecture_3/reliability_plot.pdf Graphic file (type pdf)
 <use images/lecture_3/reliability_plot.pdf>
 Package luatex.def Info: images/lecture_3/reliability_plot.pdf  used on input l
-ine 719.
+ine 730.
 (luatex.def)             Requested size: 199.16928pt x 145.66684pt.
  [49
 
@@ -1910,11 +1913,11 @@ ine 719.
 <images/lecture_3/focal_loss.png, id=574, 438.63875pt x 367.3725pt>
 File: images/lecture_3/focal_loss.png Graphic file (type png)
 <use images/lecture_3/focal_loss.png>
-Package luatex.def Info: images/lecture_3/focal_loss.png  used on input line 74
-5.
+Package luatex.def Info: images/lecture_3/focal_loss.png  used on input line 75
+6.
 (luatex.def)             Requested size: 199.16928pt x 166.81279pt.
 
-Overfull \vbox (11.37614pt too high) detected at line 745
+Overfull \vbox (11.37614pt too high) detected at line 756
  []
 
 [51
@@ -1940,15 +1943,15 @@ hanged.
 )
 
 Here is how much of LuaTeX's memory you used:
- 39759 strings out of 477785
+ 39761 strings out of 477785
  100000,1648299 words of node,token memory allocated
- 3195 words of node memory still in use:
+ 3199 words of node memory still in use:
    28 hlist, 9 vlist, 5 rule, 8 disc, 4 local_par, 2 math, 63 glue, 28 kern, 15 
-penalty, 2 margin_kern, 92 glyph, 149 attribute, 129 glue_spec, 149 attribute_li
+penalty, 2 margin_kern, 92 glyph, 150 attribute, 129 glue_spec, 150 attribute_li
 st, 4 write, 1 pdf_action, 22 pdf_colorstack nodes
    avail lists: 2:1231,3:246,4:858,5:396,6:51,7:1922,8:61,9:1582,10:16,11:127,12
 :1
- 58542 multiletter control sequences out of 65536+600000
+ 58544 multiletter control sequences out of 65536+600000
  139 fonts using 30397023 bytes
  128i,15n,134p,1845b,931s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2022/texmf-dist/fonts/opentype/public/fira/FiraMono-Regular.
@@ -1971,7 +1974,7 @@ ss8.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy1
 fb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/symbols/msam1
 0.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/symbols/ms
 bm10.pfb>
-Output written on Lecture_3_supervised_learning.pdf (52 pages, 2136779 bytes).
+Output written on Lecture_3_supervised_learning.pdf (52 pages, 2137669 bytes).
 
 PDF statistics: 669 PDF objects out of 1000 (max. 8388607)
  513 compressed objects within 6 object streams
