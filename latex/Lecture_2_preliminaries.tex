@@ -687,7 +687,7 @@
 		bottom=4pt
 	]
 		\centering
-		{\scriptsize\color{drawgray} bias correction}
+		{\scriptsize\color{drawgray} bias correction (initialization at 0)}
 		\\[0.15em]
 		$\displaystyle
 		\widehat{\vc{m}}_t=\frac{\vc{m}_t}{1-\beta_1^t}
@@ -723,10 +723,7 @@
 	\vspace{-0.35cm}
 
 	\footnotesize
-	The hats correct zero-initialization bias;
-	$\beta_1,\beta_2\in[0,1)$, and operations involving $\vc{v}_t$ are
-	element-wise.
-
+	We need to introduce two additional hyper-parameters ($\beta_1,\beta_2\in[0,1)$), but the algorithm is generally robust to their defaults (see \textbf{Muon} for more recent research).
 \end{frame}
 
 \subsection{Convexity and convergence}
