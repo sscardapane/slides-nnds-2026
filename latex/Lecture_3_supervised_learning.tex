@@ -26,6 +26,13 @@
 \definecolor{drawviolet}{HTML}{9673A6}
 \definecolor{drawviolet_l}{HTML}{E1D5E7}
 
+\tcbset{
+	nndsblue/.style={colback=drawblue_l!35!white,colframe=drawblue,boxrule=0.8pt,arc=1mm},
+	nndsgreen/.style={colback=drawgreen_l!35!white,colframe=drawgreen,boxrule=0.8pt,arc=1mm},
+	nndsorange/.style={colback=draworange_l!35!white,colframe=draworange,boxrule=0.8pt,arc=1mm},
+	nndsred/.style={colback=drawred_l!12!white,colframe=drawred,boxrule=0.8pt,arc=1mm}
+}
+
 
 \begin{document}
 
@@ -56,24 +63,37 @@
 
 \begin{frame}{Supervised learning}
 
-	\begin{tcolorbox}
-		A supervised dataset is a set of $N$ input-target pairs:
-		\begin{equation}
-			\mathcal{S} = \left\{ (x_i, y_i) \right\}_{i=1}^{N} \,.
-		\end{equation}
-	\end{tcolorbox}
+	\begin{columns}[T,onlytextwidth]
+		\begin{column}{0.49\textwidth}
+			\begin{tcolorbox}[nndsblue,height=0.42\textheight]
+				\textbf{\color{darkcerulean}Dataset}
 
-	A model $f_{\boldsymbol{\theta}}$ maps an input $x$ to a prediction $\hat{y}$:
-	\begin{equation}
-		\hat{y} = f_{\boldsymbol{\theta}}(x) \,.
-	\end{equation}
+				A set of $N$ input--target pairs:
+				\begin{equation}
+					\mathcal{S}=\left\{(x_i,y_i)\right\}_{i=1}^{N} \,.
+				\end{equation}
+			\end{tcolorbox}
+		\end{column}
+		\begin{column}{0.49\textwidth}
+			\begin{tcolorbox}[nndsgreen,height=0.42\textheight]
+				\textbf{\color{darkgreen}Model}
 
+				A map from an input to a prediction:
+				\begin{equation}
+					\hat{y}=f_{\boldsymbol{\theta}}(x) \,.
+				\end{equation}
+			\end{tcolorbox}
+		\end{column}
+	\end{columns}
+
+	\vspace{1em}
 	We fit $\boldsymbol{\theta}$ on $\mathcal{S}$ and evaluate the model on examples that were not used for training.
 
 \end{frame}
 
 \begin{frame}{Training, validation, and test data}
 
+	\small
 	We split the available examples into three disjoint sets:
 	\begin{equation}
 		\mathcal{S}
@@ -82,13 +102,33 @@
 		\mathbin{\dot\cup} {\color{darkgreen}\mathcal{S}_{\mathrm{test}}} \,.
 	\end{equation}
 
-	\begin{itemize}
-		\item ${\color{darkred}\mathcal{S}_{\mathrm{train}}}$ is used to fit the parameters $\boldsymbol{\theta}$.
-		\item ${\color{darkpastelblue}\mathcal{S}_{\mathrm{val}}}$ is used to select the model and its hyper-parameters.
-		\item ${\color{darkgreen}\mathcal{S}_{\mathrm{test}}}$ is used for the final evaluation.
-	\end{itemize}
+	\begin{columns}[T,onlytextwidth]
+		\begin{column}{0.32\textwidth}
+			\begin{tcolorbox}[nndsred,height=0.27\textheight]
+				\textbf{\color{darkred}Training}
 
-	We usually assume independent samples from the same unknown distribution $p(x,y)$ (\textit{identically} and \textit{independently} distributed, i.i.d.). If the deployment distribution differs, we have a \myalert{distribution shift}.
+				Fit parameters $\boldsymbol{\theta}$.
+			\end{tcolorbox}
+		\end{column}
+		\begin{column}{0.32\textwidth}
+			\begin{tcolorbox}[nndsblue,height=0.27\textheight]
+				\textbf{\color{darkcerulean}Validation}
+
+				Choose model and hyperparameters.
+			\end{tcolorbox}
+		\end{column}
+		\begin{column}{0.32\textwidth}
+			\begin{tcolorbox}[nndsgreen,height=0.27\textheight]
+				\textbf{\color{darkgreen}Test}
+
+				Final evaluation.
+			\end{tcolorbox}
+		\end{column}
+	\end{columns}
+
+	\begin{tcolorbox}[nndsorange,boxsep=1mm,top=1mm,bottom=1mm]
+		We usually assume i.i.d. samples from the same unknown distribution $p(x,y)$. If the deployment distribution differs, we have a \myalert{distribution shift}.
+	\end{tcolorbox}
 
 \end{frame}
 
@@ -104,42 +144,67 @@
 \end{whiteframe}
 
 \begin{frame}{Introducing loss functions}
-	
-	A \myalert{loss function} assigns a scalar cost to a prediction--target pair:
-	\begin{equation}
-		\ell\left(\hat{y}, y\right) \in \mathbb{R},
-		\qquad \hat{y} = f_{\boldsymbol{\theta}}(x) \,.
-	\end{equation}
+
+	\begin{tcolorbox}[nndsblue]
+		A \myalert{loss function} assigns a scalar cost to a prediction--target pair:
+		\begin{equation}
+			\ell\left(\hat{y}, y\right) \in \mathbb{R},
+			\qquad \hat{y} = f_{\boldsymbol{\theta}}(x) \,.
+		\end{equation}
+	\end{tcolorbox}
 
 	A smaller loss means a better prediction. Learning amounts to choosing $\boldsymbol{\theta}$ so that predictions have low loss on the training data.
 
-	\vspace{0.5em}
-	For gradient-based learning, we usually choose losses that are \myalert{differentiable} with respect to the model parameters.
+	\begin{tcolorbox}[nndsgreen,boxsep=1mm,top=1mm,bottom=1mm]
+		For gradient-based learning, we usually choose losses that are \myalert{differentiable} with respect to the model parameters.
+	\end{tcolorbox}
 	
 \end{frame}
 
 \begin{frame}{Expected risk and empirical risk}
-	
-	Ideally, we would minimize the loss on the entire data distribution:
-	\begin{equation}
-		\mathcal{R}(\boldsymbol{\theta})
-		= \mathbb{E}_{p(x,y)}
-		\left[\ell\left(f_{\boldsymbol{\theta}}(x),y\right)\right] \,.
-	\end{equation}
-	This is the \myalert{expected risk}, but $p(x,y)$ is unknown. We replace the expectation with the average over the training data:
-	\begin{equation}
-		\mathcal{L}(\boldsymbol{\theta})
-		= \frac{1}{N}\sum_{i=1}^{N}
-		\ell\left(f_{\boldsymbol{\theta}}(x_i),y_i\right),
-		\qquad
-		\boldsymbol{\theta}^*=\argmin_{\boldsymbol{\theta}}\mathcal{L}(\boldsymbol{\theta}) \,.
-	\end{equation}
-	A small empirical risk does not guarantee a small expected risk. Their difference is the \myalert{generalization gap}.
+
+	\small
+	\begin{columns}[T,onlytextwidth]
+		\begin{column}{0.49\textwidth}
+			\begin{tcolorbox}[nndsgreen,height=0.61\textheight]
+				\textbf{\color{darkgreen}What we care about}
+
+				The loss over the full data distribution:
+				\begin{equation}
+					\mathcal{R}(\boldsymbol{\theta})
+					=\mathbb{E}_{p(x,y)}\!\left[
+					\ell\left(f_{\boldsymbol{\theta}}(x),y\right)\right] \,.
+				\end{equation}
+				This is the \myalert{expected risk}, but $p(x,y)$ is unknown.
+			\end{tcolorbox}
+		\end{column}
+		\begin{column}{0.49\textwidth}
+			\begin{tcolorbox}[nndsblue,height=0.61\textheight]
+				\textbf{\color{darkcerulean}What we can optimize}
+
+				The average loss over the training data:
+				\begin{equation}
+					\mathcal{L}(\boldsymbol{\theta})
+					=\frac{1}{N}\sum_{i=1}^{N}
+					\ell\left(f_{\boldsymbol{\theta}}(x_i),y_i\right) \,.
+				\end{equation}
+				\begin{equation}
+					\boldsymbol{\theta}^*
+					=\argmin_{\boldsymbol{\theta}}\mathcal{L}(\boldsymbol{\theta}) \,.
+				\end{equation}
+			\end{tcolorbox}
+		\end{column}
+	\end{columns}
+
+	\begin{tcolorbox}[nndsorange,boxsep=1mm,top=1mm,bottom=1mm]
+		A small empirical risk does not guarantee a small expected risk. Their difference is the \myalert{generalization gap}.
+	\end{tcolorbox}
 	
 \end{frame}
 
 \begin{frame}{Overfitting}
-	
+
+	\small
 	Consider a model that memorizes the training set:
 	\begin{equation}
 		f(x) =
@@ -154,7 +219,8 @@
 
 	It predicts every training target exactly. For any new input, however, it returns the same default value $\bar{y}$.
 
-	\begin{tcolorbox}
+	\begin{tcolorbox}[nndsorange,boxsep=1mm,top=1mm,bottom=1mm]
+		Zero training risk does not imply small expected risk:
 		\begin{equation*}
 			{\color{darkred}\mathcal{L}(\boldsymbol{\theta})=0}
 			\quad\nRightarrow\quad
@@ -200,7 +266,7 @@
 
 \begin{frame}{A linear model}
 
-	\begin{tcolorbox}[boxsep=1mm,top=1mm,bottom=1mm]
+	\begin{tcolorbox}[nndsblue,boxsep=1mm,top=1mm,bottom=1mm]
 		\justifying
 		For an input $\vc{x}\in\mathbb{R}^{D}$, a scalar linear model is defined as:
 		\begin{equation}
@@ -224,8 +290,8 @@
 		\qquad \idx{\vc{X}}{i}=\vc{x}_i^{\top} \,.
 	\end{equation}
 
-	Combining a linear model with squared loss gives the \myalert{least-squares} objective:
-	\begin{tcolorbox}
+	\begin{tcolorbox}[nndsblue]
+		Combining a linear model with squared loss gives the \myalert{least-squares} objective:
 		\begin{equation}
 			\mathcal{L}_{\mathrm{LS}}(\vc{w})
 			= \frac{1}{N}\sum_{i=1}^{N}
@@ -240,21 +306,27 @@
 
 \begin{frame}{Solving least squares}
 
-	\textit{Only} in this case, setting $\nabla \mathcal{L}_{\mathrm{LS}}(\vc{w}) = \mathbf{0}$ leads to a closed-form solution via the so-called normal equations:
-	
-	\begin{equation}
-		\vc{X}^{\top}\vc{X}\vc{w} = \vc{X}^{\top}\vc{y}.
-	\end{equation}
-	
-	If $\vc{X}$ has full column rank:
+	\small
+	\begin{tcolorbox}[nndsblue]
+		\textbf{\color{darkcerulean}Normal equations}
 
-	\begin{equation}
-		\vc{X}^{\top}\vc{X}\vc{w}^{*}=\vc{X}^{\top}\vc{y},
-		\qquad
-		\vc{w}^{*}=\left(\vc{X}^{\top}\vc{X}\right)^{-1}\vc{X}^{\top}\vc{y} \,.
-	\end{equation}
+		For least squares, setting $\nabla \mathcal{L}_{\mathrm{LS}}(\vc{w})=\mathbf{0}$ gives a linear system:
+		\begin{equation}
+			\vc{X}^{\top}\vc{X}\vc{w}=\vc{X}^{\top}\vc{y} \,.
+		\end{equation}
+	\end{tcolorbox}
 
-	However, solving the $D\times D$ system directly costs roughly $\mathcal{O}(D^3)$. Gradient methods avoid the explicit solution, scale to larger problems, and still work when no closed-form solution is available.
+	\begin{tcolorbox}[nndsgreen]
+		\textbf{\color{darkgreen}If $\vc{X}$ has full column rank}
+		\begin{equation}
+			\vc{w}^{*}=\left(\vc{X}^{\top}\vc{X}\right)^{-1}
+			\vc{X}^{\top}\vc{y} \,.
+		\end{equation}
+	\end{tcolorbox}
+
+	\begin{tcolorbox}[nndsorange,boxsep=1mm,top=1mm,bottom=1mm]
+		Solving the $D\times D$ system directly costs roughly $\mathcal{O}(D^3)$. Gradient methods avoid the explicit solution, scale to larger problems, and still work when no closed-form solution is available.
+	\end{tcolorbox}
 
 
 \end{frame}
@@ -263,9 +335,9 @@
 
 	\justifying
 	\small
-	With redundant or strongly correlated features, small changes in the data can produce large changes in the fitted weights.
+	With strongly correlated features, the fitted weights can be unstable.
 
-	\begin{tcolorbox}[boxsep=1mm,top=1mm,bottom=1mm]
+	\begin{tcolorbox}[nndsorange,boxsep=1mm,top=1mm,bottom=1mm]
 		\justifying
 		\myalert{Regularization} modifies the training objective to favour solutions with useful properties. \myalert{Ridge regression} favours smaller weights:
 		\begin{equation}
@@ -277,7 +349,7 @@
 		\end{equation}
 	\end{tcolorbox}
 
-	For $\lambda=0$, we recover ordinary least squares. Increasing $\lambda$ makes the weights smaller and more stable, but fits the training data less closely.
+	At $\lambda=0$ this is ordinary least squares. Larger values produce smaller, more stable weights at the cost of training fit. Since the penalty acts on the coefficients, features should be on comparable scales.
 
 	The normal equations and their solution become:
 	\begin{equation}
@@ -293,358 +365,211 @@
 
 \subsection{Linear models for classification}
 
-\begin{frame}{Multi-class classification}
-	
-	In \myalert{classification}, $y$ is an integer $\left\{0, \ldots, c-1 \right\}$, such that $y_i = j$ means that $\vc{x}_i$ is of class $j$.
-	
-	For example, with $c=3$ we might have:
-	%
-	\begin{itemize}
-		\item $y = 0$: the email is spam;
-		\item $y = 1$: the email is legit;
-		\item $y = 2$: the email is dubious.
-	\end{itemize}
-	%
-	Solving these as regression tasks is generally not an optimal choice: among other things, it is not guaranteed that classes have a definite ordering.
-	
+\begin{frame}{Linear models for classification}
+
+	\justifying
+	In classification, each target $y_i\in\{1,\ldots,C\}$ identifies one of $C$ classes. These numbers are labels, not quantities: class $2$ does not mean twice class $1$.
+
+	A linear classifier produces one score for each class:
+	\begin{tcolorbox}[nndsblue]
+		\begin{equation}
+			\vc{z}_i=\vc{W}\vc{x}_i+\vc{b}\in\mathbb{R}^{C},
+			\qquad
+			\vc{W}\in\mathbb{R}^{C\times D},
+			\quad
+			\vc{b}\in\mathbb{R}^{C} \,.
+		\end{equation}
+		The components of $\vc{z}_i$ are called the \myalert{logits}.
+	\end{tcolorbox}
+
+	\begin{tcolorbox}[nndsorange,boxsep=1mm,top=1mm,bottom=1mm]
+		The largest logit gives the predicted class. Since $\argmax$ is not differentiable, training replaces the argmax with a continuous approximation (\myalert{softmax}) that turns the logits into probabilities.
+	\end{tcolorbox}
+
 \end{frame}
 
-\begin{frame}{Probability distributions}
-	
-	A common solution is to predict a \myalert{probability distribution} over the classes.
-	%
-	\begin{tcolorbox}
-		A vector $\stackunder{\vc{a}}{\sss (c)}$ belongs to the \myalert{probability simplex} $\Delta_c$ if:
-		%
+\begin{frame}{From logits to probabilities}
+
+	\justifying
+	\begin{tcolorbox}[nndsblue,boxsep=1mm,top=1mm,bottom=1mm]
+		The \myalert{softmax} maps the logits to a vector $\vc{p}_i\in\mathbb{R}^{C}$:
 		\begin{equation}
-			\sum_i \idx{\vc{a}}{i} = 1 \,, \;\;\; \idx{\vc{a}}{i} \ge 0 \,.
+			\idx{\vc{p}_i}{k}
+			=\idx{\operatorname{softmax}(\vc{z}_i)}{k}
+			=\frac{\exp(z_{ik})}{\sum_{j=1}^{C}\exp(z_{ij})} \,.
 		\end{equation}
 	\end{tcolorbox}
-	%
-	If $f(\vc{x}) = \hat{\vc{y}} \in \Delta_c$, we can interpret it as a \myalert{categorical probability distribution}, e.g., we can select the class with highest probability as:
-	%
-	\begin{equation}
-		\text{class} = \argmax_i \idx{\hat{\vc{y}}}{i} \,.
-	\end{equation}
-	
+
+	\begin{tcolorbox}[nndsgreen,boxsep=1mm,top=1mm,bottom=1mm]
+		Every component is non-negative and the components sum to one:
+		\begin{equation}
+			\vc{p}_i\in\Delta_C
+			=\left\{\vc{p}\in\mathbb{R}^{C}:p_k\geq 0,\ \sum_{k=1}^{C}p_k=1\right\} \,.
+		\end{equation}
+	\end{tcolorbox}
+
+	We can therefore read $p_{ik}$ as the predicted probability of class $k$. Softmax preserves the ordering of the logits, so $\argmax_k p_{ik}=\argmax_k z_{ik}$.
+
 \end{frame}
 
-\begin{frame}{A comment on differentiability}
-	
-	Note that we \textit{cannot} easily predict an integer with our models, because it would require some form of threshold operation which is not compatible with gradient descent (gradient zero almost everywhere).
-	
-	Predicting a probability distribution can be seen as a \textit{soft} approximation to this problem.
-	
-\end{frame}
+\begin{whiteframe}{Softmax and temperature}
 
-\begin{frame}{The softmax function}
-	
-	The \myalert{softmax} function maps any vector to the probability simplex:
-	%
+	The \myalert{temperature} $\tau>0$ controls the sharpness of the distribution:
 	\begin{equation}
-		\idx{\text{softmax}(\vc{a})}{i} = \frac{\exp\left(a_i\right)}{\sum_j \exp\left(a_j\right)}
+		\idx{\operatorname{softmax}(\vc{z}/\tau)}{k}
+		=\frac{\exp(z_k/\tau)}{\sum_{j=1}^{C}\exp(z_j/\tau)} \,.
 	\end{equation}
-	%
-	The numerator ensures that all outputs are positive, while the denominator ensures that the final vector sums to $1$. It can be seen as a soft approximation to the argmax (a better name is in fact \textit{softargmax}).
-	
-	If desired, we can control the approximation with an additional hyper-parameter $\tau$ called \myalert{temperature}:
-	%
-	\begin{equation}
-		\idx{\text{softmax}(\vc{a})}{i} = \frac{\exp\left(a_i/\tau\right)}{\sum_j \exp\left(a_j/\tau\right)}
-	\end{equation}
-	
-\end{frame}
-
-
-\begin{whiteframe}{Visualizing the softmax}
+	Smaller values produce sharper distributions; larger values produce flatter ones.
+	The same temperature controls the sharpness of token distributions in language models.
 
 	\begin{figure}
-		\subfloat[Logits]{\includegraphics[width=0.2\columnwidth]{images/lecture_3/softmax_1.pdf}}\qquad
-		\subfloat[$\tau=1$]{\includegraphics[width=0.2\columnwidth]{images/lecture_3/softmax_2.pdf}}\qquad
-		\subfloat[$\tau=10$]{\includegraphics[width=0.2\columnwidth]{images/lecture_3/softmax_3.pdf}}\qquad
-		\subfloat[$\tau=100$]{\includegraphics[width=0.2\columnwidth]{images/lecture_3/softmax_4.pdf}}\qquad
-		\caption{Input logits (red) and softmax outputs with three different temperature values.}
-	  \end{figure}
-	
-	\end{whiteframe}
+		\subfloat[Logits]{\includegraphics[width=0.19\columnwidth]{images/lecture_3/softmax_1.pdf}}\qquad
+		\subfloat[$\tau=1$]{\includegraphics[width=0.19\columnwidth]{images/lecture_3/softmax_2.pdf}}\qquad
+		\subfloat[$\tau=10$]{\includegraphics[width=0.19\columnwidth]{images/lecture_3/softmax_3.pdf}}\qquad
+		\subfloat[$\tau=100$]{\includegraphics[width=0.19\columnwidth]{images/lecture_3/softmax_4.pdf}}
+	\end{figure}
 
-\begin{frame}{Final model}
-	
-	Our linear model for classification becomes:
-	%
-	\begin{equation}
-		\stackunder{f(\vc{x})}{\sss (c)} = \text{softmax}(\stackunder{\vc{W}}{\sss (c,d)} \,\, \stackunder{\vc{x}}{\sss (d)})
-	\end{equation}
-	%
-	The pre-softmax values $\vc{W}\vc{x}$ are called the \myalert{logits} of the model. By explicitly writing the biases $\shape{\vc{b}}{(c)}$:
-	%
-	\begin{equation}
-		f(\vc{x}) = \text{softmax}(\vc{W}\vc{x} + \vc{b}) \,.
-	\end{equation}
-	
-\end{frame}
+\end{whiteframe}
 
-\begin{frame}{One-hot encoding}
-	
-	In order to compare the predictions with the ground truth, we encode our targets using a \myalert{one-hot encoding}. Given a pair $(\vc{x}, \vc{y})$:
-	%
-	\begin{equation}
-		y_i = \begin{cases}
-			1 & \text{ if } \vc{x} \text{ is of class } i \,, \\
-			0 & \text{ otherwise} \,.
-		\end{cases}
-	\end{equation}
-	%
-	For example, with $3$ classes $\left\{ \text{cat}, \text{dog}, \text{other} \right\}$:
-	%
-	\begin{equation}
-		\text{cat} = [1, 0, 0] \;\;\; \text{dog} = [0, 1, 0] \;\;\; \text{other} = [0, 0, 1] \,.
-	\end{equation}
-	%
-	This is a probability distribution putting all the \textbf{mass} on a single class.
-	
-\end{frame}
+\begin{frame}{Multiclass logistic regression}
 
-\begin{frame}{Cross-entropy loss}
-	
-	Finally, we need a loss function $l$ to compare two probability distributions.
-	%
-	\begin{tcolorbox}
-		The \myalert{cross-entropy} loss is defined for two vectors $\vc{y}, \hat{\vc{y}} \in \Delta_c$ as:
-		%
+	\justifying
+	\small
+	Let $\vc{p}_i=f_{\boldsymbol{\theta}}(\vc{x}_i)$, with $\boldsymbol{\theta}=\{\vc{W},\vc{b}\}$.
+	\begin{tcolorbox}[nndsblue]
+		The \myalert{cross-entropy loss} is the negative log-probability assigned to the correct class:
 		\begin{equation}
-			\text{CE}(\vc{y}, \hat{\vc{y}}) = - \sum_i y_i \log\left(\hat{y}_i\right) \,.
+			\ell\left(f_{\boldsymbol{\theta}}(\vc{x}_i),y_i\right)
+			=-\log p_{i,y_i} \,.
 		\end{equation}
 	\end{tcolorbox}
-	%
-	The CE loss can be derived from the maximum likelihood principle under the assumption that $f(\vc{x})$ encodes a \myalert{categorical} distribution (try it!).\footnote[frame]{The equation for the categorical distribution in this case would be $p(\vc{y} \vert f(\vc{x})) = \prod_i \idx{f(\vc{x})}{i}^{y_i}$.}
-	
-\end{frame}
 
-\begin{frame}{Log-likelihood loss}
-	
-	The CE loss is generic for \textit{any} pair of vectors belonging to the probability simplex. However, in our case $\vc{y}$ is always a one-hot encoded vector. 
-	
-	Denote by $t$ the index of the class, $t = \arg\max \vc{y}$, the CE loss simplifies since only one term in the summation will be different from $0$:
-	%
+	With one-hot targets, this is the usual cross-entropy between two vectors.
+
+	Training minimizes the empirical risk:
 	\begin{equation}
-		\text{CE}(\vc{y}, \hat{\vc{y}}) = - \log(\hat{y}_t) \,.
+		\mathcal{L}(\boldsymbol{\theta})
+		=\frac{1}{N}\sum_{i=1}^{N}
+		\ell\left(f_{\boldsymbol{\theta}}(\vc{x}_i),y_i\right) \,.
 	\end{equation}
-	%
-	Hence, CE can be interpreted as maximizing the probability of the true class at the expense of all other outputs.
-	
-\end{frame}
+	There is no closed-form solution. The equivalent maximum-likelihood interpretation is discussed in the book.
 
-\begin{frame}{Logistic regression}
-	
-	\begin{tcolorbox}
-		A \myalert{logistic regression} is a linear model $f(\vc{x}) = \text{softmax}(\vc{W}\vc{x})$ trained by optimizing the cross-entropy:
-		%
-		\begin{equation}
-			\text{LR}(\vc{W}) = \frac{1}{n} \sum_{i=1}^n \text{CE}\left( \vc{y}_i, f(\vc{x}_i) \right) \,.
-		\end{equation}
-	\end{tcolorbox}
-	%
-	It is not possible to solve the logistic regression problem explicitly. A linear model for classification has $dc$ parameters (or $dc + c$ with biases).
-	
 \end{frame}
 
 \begin{frame}{Binary classification}
-	
-	A special case is \myalert{binary classification}, where $c=2$. In this case, we can predict a single scalar value $f(\vc{x}) \in \left[0, 1\right]$ since:
-	%
-	\begin{align}
-		f(\vc{x}) & \;\;\; \text{ probability of class 1 } \,, \\
-		1 - f(\vc{x}) & \;\;\; \text{ probability of class 2 } \,.
-	\end{align}
-	%
-	The softmax function simplifies to the \myalert{sigmoid} function:
-	%
-	\begin{tcolorbox}
-		The sigmoid $\sigma(s) \in \left[0, 1 \right]$ is defined as:
-		%
+
+	\justifying
+	\begin{tcolorbox}[nndsblue,boxsep=1mm,top=1mm,bottom=1mm]
+		For two classes, with $y_i\in\{0,1\}$, one scalar logit is enough:
 		\begin{equation}
-			\sigma(s) = \frac{1}{1 + \exp(-s)} \,.
+			s_i=\vc{w}^{\top}\vc{x}_i+b,
+			\qquad
+			p_i=\sigma(s_i)=\frac{1}{1+\exp(-s_i)} \,.
 		\end{equation}
 	\end{tcolorbox}
-	
+	Here $p_i$ is the probability of class $1$, while $1-p_i$ is the probability of class $0$.
+
+	\begin{tcolorbox}[nndsgreen]
+		The cross-entropy becomes the \myalert{binary cross-entropy}:
+		%
+		\begin{equation}
+			\ell(p_i,y_i)
+			=-y_i\log p_i-(1-y_i)\log(1-p_i) \,.
+		\end{equation}
+	\end{tcolorbox}
+
+	The most probable class is $1$ whenever $p_i\geq 0.5$, equivalently whenever $s_i\geq 0$.
+
+\end{frame}
+
+\begin{frame}{What makes the classifier linear?}
+
+	\footnotesize
+	\begin{columns}[T,onlytextwidth]
+		\begin{column}{0.49\textwidth}
+			\begin{tcolorbox}[nndsblue,height=0.49\textheight]
+				\textbf{\color{darkcerulean}Binary case}
+
+				\justifying
+				At threshold $0.5$, the predicted class changes when the scalar logit is zero:
+				\begin{equation}
+					\vc{w}^{\top}\vc{x}+b=0 \,.
+				\end{equation}
+				This hyperplane is normal to $\vc{w}$.
+			\end{tcolorbox}
+		\end{column}
+		\begin{column}{0.49\textwidth}
+			\begin{tcolorbox}[nndsblue,height=0.49\textheight]
+				\textbf{\color{darkcerulean}Multiclass case}
+
+				\justifying
+				The boundary between classes $k$ and $j$ is where their logits are equal:
+				\begin{equation}
+					(\vc{w}_k-\vc{w}_j)^{\top}\vc{x}
+					+(b_k-b_j)=0 \,.
+				\end{equation}
+				This is again a hyperplane.
+			\end{tcolorbox}
+		\end{column}
+	\end{columns}
+
+	\begin{tcolorbox}[nndsgreen,boxsep=1mm,top=1mm,bottom=1mm]
+		\justifying
+		Softmax and sigmoid are nonlinear, but the resulting decision boundaries are linear in the input. Curved boundaries require transforming or composing features, the topic of the next lecture.
+	\end{tcolorbox}
+
 \end{frame}
 
 \begin{whiteframe}{Visualizing the sigmoid function}
-	
+
 	\begin{figure}
 		\centering
 		\includegraphics[width=0.6\columnwidth]{images/lecture_3/sigmoid.pdf}
-		\vspace{-0.5em}\caption{A visualization of the sigmoid function. Note that $0$ and $1$ are only approached asymptotically.}
+		\vspace{-0.5em}\caption{The sigmoid approaches $0$ and $1$ asymptotically.}
 	\end{figure}
-	
+
 \end{whiteframe}
 
-\begin{frame}{Binary logistic regression model}
-	
-	Combining everything, we obtain a binary version of the logistic regression algorithm:
-	%
-	\begin{equation}
-		\text{BIN-LR}(\vc{w}) = \frac{1}{n} \sum_{i=1}^n \Bigl[ -\underbrace{y_i\log\left(\sigma(\vc{w}^\top\vc{x})\right)}_{\text{Class 1}} - \underbrace{(1-y_i)\log\left( 1 - \sigma(\vc{w}^\top\vc{x})\right)}_{\text{Class 2}} \Bigr]
-	\end{equation}
-	%
-	In this case, we can obtain the most probable class from the model as:
-	%
-	\begin{equation}
-		\text{class} = \begin{cases}
-			1 & \text{ if } \sigma(\vc{w}^\top\vc{x}) > 0.5 \,, \\
-			0 & \text{ otherwise } \,.
-		\end{cases}
-	\end{equation}
-	
-\end{frame}
+\begin{frame}{Cross-entropy from logits}
 
-\begin{frame}{Gradient of the logistic regression}
-	
-	By manually differentiating we obtain:
-	%
-	\begin{equation}
-		\sigma'(s) = \sigma(s)(1 - \sigma(s)) \,.
-	\end{equation}
-	%
-	Plugging this into the gradient computation we obtain:
-	%
-	\begin{equation}
-		\nabla \text{BIN-LR}(\vc{w}) = \frac{1}{n} \sum_{i=1}^n (\sigma(\vc{w}^\top\vc{x}_i) - y_i)\vc{x}_i \,,
-	\end{equation}
-	%
-	showing its similarity to the regression case.
-	
-\end{frame}
-
-\begin{frame}[fragile]{Implementation}
-	
-	\begin{python}
-	 from tensorflow.keras.metrics import *
-	
-	 # The one we have described up to now.
-	 categorical_crossentropy(ytrue, yhat)
-	 
-	 # ytrue should contain the indexes of the classes instead of the
-	 # one-hot encodings.
-	 sparse_categorical_crossentropy(ytrue, yhat)
-	 
-	 # Numerically-stable versions requiring the logits as inputs
-	 categorical_crossentropy(ytrue, yhat, from_logits=True)
-	 sparse_categorical_crossentropy(ytrue, yhat, from_logits=True)
-	\end{python}
-	
-\end{frame}
-
-\begin{frame}{The logsumexp function}
-	
-	Why a variant with logits in input? Note that the $i$th term of the cross-entropy wrt the logits $\vc{p}$ is given by:
-	%
-	\begin{equation}
-		- \log\left( \frac{\exp{p_i}}{\sum_j \exp{p_j}} \right) \,.
-	\end{equation}
-	
-	In practice, this can be \textit{highly} unstable. However, it can be rewritten as:
-	%
-	\begin{equation}
-		- p_i + \text{logsumexp}(\vc{p}) \,,
-	\end{equation}
-	%
-	where $\text{logsumexp}$ is defined as $\text{logsumexp}(\vc{p}) = \log\left( \sum_i \exp p_i \right)$.
-	
-	\blfootnote{\url{https://gregorygundersen.com/blog/2020/02/09/log-sum-exp/}}
-	
-\end{frame}
-
-\begin{frame}{The logsumexp trick}
-	
-	The reason this is important is that the logsumexp function is invariant in the following sense:
-	%
-	\begin{equation}
-		\text{logsumexp}(\vc{p}) = \log\left( \sum_i \exp (p_i - c) \right) + c \,,
-	\end{equation}
-	%
-	where $c$ is an arbitrary constant. By setting $c = \max\left(\vc{p}\right)$, we can ensure numerical instabilities never occur.
-	
-	In this sense, softmax can be interpreted as part of the model \textit{or} as part of the loss; this is not an issue, since $\arg\max$ only cares about the relative ranking of the values, which is not changed by the softmax.
-	
-\end{frame}
-
-\subsection{Calibration and a probabilistic formulation}
-
-\begin{frame}{Calibration}
-	
-	A common misconception when doing classification is that $\idx{f(x)}{i}$ can be immediately interpreted as \textit{the probability of pattern $x$ being of class $i$}.
-	
-	However, this is only true whenever the trained model satisfies:
-	%
-	\begin{equation}
-		p(y = i \,\vert\, x) = \idx{f(x)}{i} \,.
-	\end{equation}
-	%
-	We say the model is well \myalert{calibrated}, but this must be checked manually.
-	
-	\blfootnote{Guo, C., et al.. \textbf{On calibration of modern neural networks}. ICML 2017.}
-	
-\end{frame}
-
-\begin{frame}{Measuring calibration}
-	
-	To measure calibration, we keep a separate validation set, and we split the interval $[0,1]$ into $m$ equispaced bins (each of size $1/m$). Define:
-	%
-	\begin{itemize}
-		\item $B_m$ the number of samples from the validation set, whose predicted confidence falls in bin $m$.
-		\item $p_m$ the average confidence of the network for that bin.
-		\item $a_m$ the average accuracy of the network for these elements.
-	\end{itemize}
-	%
-	Then, the \myalert{expected calibration error} (ECE) is given by:
-	%
-	\vspace{1em}
-	\begin{equation}
-		\displaystyle\text{ECE}= \sum_i \eqnmarkbox[drawred]{node2}{\frac{\lvert\mathcal{B}_i\rvert}{n}} \eqnmarkbox[drawblue]{node}{\left|a_i - p_i\right|}
-		\label{eq:ece}
+	\justifying
+	Computing softmax first and then taking its logarithm can be numerically unstable.
+	\begin{tcolorbox}[nndsblue,boxsep=1mm,top=1mm,bottom=1mm]
+		Substituting the softmax definition gives the equivalent logits-based loss:
+		\begin{equation}
+			\ell(\vc{z}_i,y_i)
+			=-z_{i,y_i}+\operatorname{logsumexp}(\vc{z}_i) \,.
 		\end{equation}
-		\annotate[yshift=1em]{above,right}{node}{Calibration for bin $i$}
-		\annotate[yshift=-1em]{below,right}{node2}{Fraction falling into bin $i$}
-	
+	\end{tcolorbox}
+
+	\begin{tcolorbox}[nndsgreen,boxsep=1mm,top=1mm,bottom=1mm]
+		Writing $m_i=\max_k z_{ik}$, we can evaluate the second term safely as:
+		\begin{equation}
+			\operatorname{logsumexp}(\vc{z}_i)
+			=m_i+\log\sum_{k=1}^{C}\exp(z_{ik}-m_i) \,.
+		\end{equation}
+	\end{tcolorbox}
+
+	Use logits-based framework losses; apply softmax only when probabilities are needed.
+
 \end{frame}
+\begin{frame}{Can we trust these probabilities?}
 
-\begin{whiteframe}{Reliability plots}
-	
-	\begin{figure}
-		\centering\includegraphics[width=7cm,keepaspectratio]{images/lecture_3/reliability_plot.pdf} %
-		\vspace{-1em}\caption{Plotting $a_m$ against $p_m$ for every bin gives us a \myalert{reliability plot} (from Guo et al., 2017).}
-	\end{figure}
-	
-\end{whiteframe}
+	\justifying
+	Softmax scores are not automatically calibrated probabilities.
 
-\begin{frame}{Focal loss}
-	
-	This topic is important because more complex networks may be highly over (or under) confident, with many methods to improve it (temperature scaling, logit normalization, ...).
-	
-	A simple (and popular) option is to decrease the weight given to `easy' samples using a variant of cross-entropy call the \myalert{focal loss}:
-	%
-	\begin{equation}
-		\text{FL}_\alpha(\vc{y}, \hat{\vc{y}}) = -(1 - \hat{\vc{y}}_c)^\alpha \log \hat{\vc{y}}_c \,,
-	\end{equation}
-	%
-	where $c = \arg\max \vc{y}$.
-	
-	\blfootnote{Mukhoti, J., et al., 2020. \textbf{Calibrating deep neural networks using focal loss}. \textit{Advances in Neural Information Processing Systems}, 33, pp. 15288-15299.}
-	
+	\begin{tcolorbox}[nndsgreen,boxsep=1mm,top=1mm,bottom=1mm]
+		\justifying
+		A classifier is \myalert{calibrated} if predictions made with confidence $q$ are correct about a fraction $q$ of the time.
+	\end{tcolorbox}
+
+	\vspace{0.5em}
+	\centering
+	\includegraphics[width=0.38\columnwidth]{images/lecture_3/reliability_plot.pdf}
+	\par\vspace{-0.2em}
+	This is a \myalert{reliability plot}, see the book for more details.
+
 \end{frame}
-
-\begin{whiteframe}{Visualizing the focal loss}
-	
-	\begin{figure}
-		\centering\includegraphics[width=7cm,keepaspectratio]{images/lecture_3/focal_loss} %
-	\end{figure}
-	
-	\blfootnote{Lin, T.Y., et al., 2017. \textbf{Focal loss for dense object detection}. In \textit{IEEE ICCV} (pp. 2980-2988).}
-	
-\end{whiteframe}
-
 \begin{frame}{Reading material}
 	
 	\begin{itemize}

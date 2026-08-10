@@ -5,4 +5,3 @@
 \beamer@sectionintoc {3}{Linear models}{11}{1}{3}
 \beamer@subsectionintoc {3}{1}{Linear models for regression}{11}{1}{3}
 \beamer@subsectionintoc {3}{2}{Linear models for classification}{16}{1}{3}
-\beamer@subsectionintoc {3}{3}{Calibration and a probabilistic formulation}{34}{1}{3}
