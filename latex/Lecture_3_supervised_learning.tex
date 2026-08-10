@@ -105,9 +105,9 @@
 
 \begin{frame}{Introducing loss functions}
 	
-	A \myalert{loss function} assigns a scalar cost to a target--prediction pair:
+	A \myalert{loss function} assigns a scalar cost to a prediction--target pair:
 	\begin{equation}
-		\ell\left(y, \hat{y}\right) \in \mathbb{R},
+		\ell\left(\hat{y}, y\right) \in \mathbb{R},
 		\qquad \hat{y} = f_{\boldsymbol{\theta}}(x) \,.
 	\end{equation}
 
@@ -120,21 +120,21 @@
 
 \begin{frame}{Expected risk and empirical risk}
 	
-	\begin{tcolorbox}
-	The \myalert{expected loss} (risk) of a function $f$ is:
-	%
+	Ideally, we would minimize the loss on the entire data distribution:
 	\begin{equation}
-		f^*(x) = \arg\min \left\{ \mathbb{E}_{p(x,y)} \left[ l(y, f(x)) \right] \right\} \,.
+		\mathcal{R}(\boldsymbol{\theta})
+		= \mathbb{E}_{p(x,y)}
+		\left[\ell\left(f_{\boldsymbol{\theta}}(x),y\right)\right] \,.
 	\end{equation}
-	\end{tcolorbox}
-	%
-	The expected risk is uncomputable, but can be approximated via \myalert{empirical risk minimization}:
-	%
+	This is the \myalert{expected risk}, but $p(x,y)$ is unknown. We replace the expectation with the average over the training data:
 	\begin{equation}
-		f^*(x) = \argmin_f \left\{ \frac{1}{n} \sum_{i=1}^n l(y_i, f(x_i)) \right\} \,.
+		\mathcal{L}(\boldsymbol{\theta})
+		= \frac{1}{N}\sum_{i=1}^{N}
+		\ell\left(f_{\boldsymbol{\theta}}(x_i),y_i\right),
+		\qquad
+		\boldsymbol{\theta}^*=\argmin_{\boldsymbol{\theta}}\mathcal{L}(\boldsymbol{\theta}) \,.
 	\end{equation}
-	%
-	The gap between the two approaches is called \myalert{generalization gap}.
+	A small empirical risk does not guarantee a small expected risk. Their difference is the \myalert{generalization gap}.
 	
 \end{frame}
 

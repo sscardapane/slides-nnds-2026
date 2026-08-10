@@ -1,4 +1,4 @@
-This is LuaHBTeX, Version 1.15.0 (TeX Live 2022)  (format=lualatex 2022.10.31)  10 AUG 2026 12:22
+This is LuaHBTeX, Version 1.15.0 (TeX Live 2022)  (format=lualatex 2022.10.31)  10 AUG 2026 15:41
  system commands enabled.
 **Lecture_3_supervised_learning.tex
 (./Lecture_3_supervised_learning.tex
@@ -1934,16 +1934,13 @@ Overfull \vbox (11.37614pt too high) detected at line 745
 
 (/Users/simonescardapane/GitHub/slides-nnds-2026/pdf/Lecture_3_supervised_learn
 ing.aux)
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
 Package rerunfilecheck Info: File `Lecture_3_supervised_learning.out' has not c
 hanged.
 (rerunfilecheck)             Checksum: 17D02908731F1002FC40409D398F2E16;1811.
 )
 
 Here is how much of LuaTeX's memory you used:
- 39760 strings out of 477785
+ 39759 strings out of 477785
  100000,1648299 words of node,token memory allocated
  3195 words of node memory still in use:
    28 hlist, 9 vlist, 5 rule, 8 disc, 4 local_par, 2 math, 63 glue, 28 kern, 15 
@@ -1951,7 +1948,7 @@ penalty, 2 margin_kern, 92 glyph, 149 attribute, 129 glue_spec, 149 attribute_li
 st, 4 write, 1 pdf_action, 22 pdf_colorstack nodes
    avail lists: 2:1231,3:246,4:858,5:396,6:51,7:1922,8:61,9:1582,10:16,11:127,12
 :1
- 58543 multiletter control sequences out of 65536+600000
+ 58542 multiletter control sequences out of 65536+600000
  139 fonts using 30397023 bytes
  128i,15n,134p,1845b,931s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2022/texmf-dist/fonts/opentype/public/fira/FiraMono-Regular.
@@ -1974,7 +1971,7 @@ ss8.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy1
 fb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/symbols/msam1
 0.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/symbols/ms
 bm10.pfb>
-Output written on Lecture_3_supervised_learning.pdf (52 pages, 2137253 bytes).
+Output written on Lecture_3_supervised_learning.pdf (52 pages, 2136779 bytes).
 
 PDF statistics: 669 PDF objects out of 1000 (max. 8388607)
  513 compressed objects within 6 object streams
