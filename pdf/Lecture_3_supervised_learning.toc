@@ -4,6 +4,5 @@
 \beamer@subsectionintoc {2}{2}{Loss functions}{5}{1}{2}
 \beamer@sectionintoc {3}{Linear models}{11}{1}{3}
 \beamer@subsectionintoc {3}{1}{Linear models for regression}{11}{1}{3}
-\beamer@subsectionintoc {3}{2}{Solving the LS problem}{14}{1}{3}
-\beamer@subsectionintoc {3}{3}{Linear models for classification}{21}{1}{3}
-\beamer@subsectionintoc {3}{4}{Calibration and a probabilistic formulation}{39}{1}{3}
+\beamer@subsectionintoc {3}{2}{Linear models for classification}{16}{1}{3}
+\beamer@subsectionintoc {3}{3}{Calibration and a probabilistic formulation}{34}{1}{3}

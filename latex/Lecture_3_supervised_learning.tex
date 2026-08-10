@@ -214,129 +214,81 @@
 
 \end{frame}
 
-\begin{frame}{Least-squares cost function}
-	
-	Combining the squared loss with a linear model results in the \myalert{least-squares} optimization problem:
+\begin{frame}{Least squares}
+
+	\justifying
+	With the bias omitted, we collect all $N$ training examples as rows of a matrix $\vc{X}$ and the  targets as a vector $\vc{y}$:
+	\begin{equation}
+		\vc{X}\in\mathbb{R}^{N\times D},
+		\qquad \vc{y}\in\mathbb{R}^{N},
+		\qquad \idx{\vc{X}}{i}=\vc{x}_i^{\top} \,.
+	\end{equation}
+
+	Combining a linear model with squared loss gives the \myalert{least-squares} objective:
+	\begin{tcolorbox}
+		\begin{equation}
+			\mathcal{L}_{\mathrm{LS}}(\vc{w})
+			= \frac{1}{N}\sum_{i=1}^{N}
+			\left(y_i-\vc{w}^{\top}\vc{x}_i\right)^2
+			= \frac{1}{N}\left\lVert\vc{y}-\vc{X}\vc{w}\right\rVert^2 \,.
+		\end{equation}
+	\end{tcolorbox}
+
+	For gradient descent we have $\nabla \mathcal{L}_{\mathrm{LS}}(\vc{w}) = \frac{2}{N}\vc{X}^{\top}(\vc{X}\vc{w}-\vc{y})$.
+
+\end{frame}
+
+\begin{frame}{Solving least squares}
+
+	\textit{Only} in this case, setting $\nabla \mathcal{L}_{\mathrm{LS}}(\vc{w}) = \mathbf{0}$ leads to a closed-form solution via the so-called normal equations:
 	
 	\begin{equation}
-		\text{LS}(\vc{w}) = \frac{1}{n} \sum_{i=1}^n \displaystyle \bigl( y_i - \vc{w}^\top\vc{x}_i \bigr)^2 \,.
+		\vc{X}^{\top}\vc{X}\vc{w} = \vc{X}^{\top}\vc{y}.
 	\end{equation}
-	%
-	We can vectorize LS as:
-	%
+	
+	If $\vc{X}$ has full column rank:
+
 	\begin{equation}
-		\text{LS}(\vc{w}) = \frac{1}{n} \bigl\lVert \stackunder{\vc{y}}{\sss (n)} - \stackunder{\vc{X}}{\sss (n, d)}\stackunder{\vc{w}}{\sss (d)} \bigr\rVert^2 \,,
+		\vc{X}^{\top}\vc{X}\vc{w}^{*}=\vc{X}^{\top}\vc{y},
+		\qquad
+		\vc{w}^{*}=\left(\vc{X}^{\top}\vc{X}\right)^{-1}\vc{X}^{\top}\vc{y} \,.
 	\end{equation}
-	%
-	where $\idx{\vc{X}}{i} = \vc{x}_i$ and $\idx{\vc{y}}{i} = y_i$.
-	
+
+	However, solving the $D\times D$ system directly costs roughly $\mathcal{O}(D^3)$. Gradient methods avoid the explicit solution, scale to larger problems, and still work when no closed-form solution is available.
+
+
 \end{frame}
 
-\subsection{Solving the LS problem}
+\begin{frame}{Regularizing least squares}
 
-\begin{frame}{Solving the LS problem}
-	
-	LS is a convex problem, with a simple gradient (\myalert{normal equations}):
-	%
+	\justifying
+	\small
+	With redundant or strongly correlated features, small changes in the data can produce large changes in the fitted weights.
+
+	\begin{tcolorbox}[boxsep=1mm,top=1mm,bottom=1mm]
+		\justifying
+		\myalert{Regularization} modifies the training objective to favour solutions with useful properties. \myalert{Ridge regression} favours smaller weights:
+		\begin{equation}
+			\mathcal{L}_{\mathrm{ridge}}(\vc{w})
+			= \frac{1}{N}\left(
+			\left\lVert\vc{y}-\vc{X}\vc{w}\right\rVert^2
+			{\color{darkred}+\,\lambda\left\lVert\vc{w}\right\rVert^2}
+			\right) \,.
+		\end{equation}
+	\end{tcolorbox}
+
+	For $\lambda=0$, we recover ordinary least squares. Increasing $\lambda$ makes the weights smaller and more stable, but fits the training data less closely.
+
+	The normal equations and their solution become:
 	\begin{equation}
-		\nabla \text{LS}(\vc{w}) = \frac{2}{n}\vc{X}^\top(\vc{X}\vc{w} - \vc{y}) \,.
+		\left(\vc{X}^{\top}\vc{X}{\color{darkred}+\,\lambda\vc{I}}\right)\vc{w}^{*}
+		= \vc{X}^{\top}\vc{y},
+		\qquad
+		\vc{w}^{*}
+		= \left(\vc{X}^{\top}\vc{X}{\color{darkred}+\,\lambda\vc{I}}\right)^{-1}
+		\vc{X}^{\top}\vc{y} \,.
 	\end{equation}
-	%
-	LS is special in the sense that $\nabla \text{LS}(\vc{w}) = 0$ is a linear equation that can be solved explicitly:
-	%
-	\begin{equation}
-		\vc{w}^* = \stackunder{\left(\vc{X}^\top\vc{X}\right)}{\sss (d, d)}^{-1}\stackunder{\vc{X}^\top}{\sss (d,n)} \stackunder{\vc{y}}{\sss (n)} = \stackunder{\vc{X}^\top}{\sss (d,n)}\stackunder{\left(\vc{X}\vc{X}^\top\right)}{\sss (n, n)}^{-1} \stackunder{\vc{y}}{\sss (n)} \,.
-	\end{equation}
-	%
-	The terms $\left(\vc{X}^\top\vc{X}\right)^{-1}\vc{X}^\top$ and $\vc{X}^\top\left(\vc{X}\vc{X}^\top\right)^{-1}$ are called the \myalert{pseudoinverses} of $\vc{X}$, and they require the corresponding matrices to be invertible (full rank).
-	
-\end{frame}
 
-\begin{frame}{Regularizing the LS problem}
-	
-	Numerical problems in the inversion of $\left(\vc{X}^\top\vc{X}\right)$ can be solved by adding a small amount of $\ell_2$ \myalert{regularization} (\myalert{ridge regression}):
-	%
-	\begin{equation}
-		\text{LS-REG}(\vc{w}) = \text{LS}(\vc{w}) \; {\color{darkred} + \; \frac{\lambda}{2} \lVert \vc{w} \rVert^2} \,,
-	\end{equation}
-	%
-	for some $\lambda > 0$. This makes the problem \textit{strictly} convex and forces the solution to be contained in a ball of given radius, modifying the gradient and the explicit solution as:
-	%
-	\begin{align}
-		\nabla \text{LS-REG}(\vc{w}) & = \nabla \text{LS}(\vc{w}) {\color{darkred} + \lambda\vc{w}} \,. \\
-		\vc{w}^* & = \left(\vc{X}^\top\vc{X} {\color{darkred} + \lambda\vc{I}}\right)^{-1}\vc{X}^\top \vc{y} \,.
-	\end{align}
-	%
-	where $\vc{I}$ is the identity matrix of appropriate shape.
-	
-\end{frame}
-
-\begin{frame}[fragile]{Show me some code!}
-	
-	Generating some data:
-	%
-	\begin{python}
-	 # Linear model with unknown coefficients
-	 X = tf.random.normal((10, 5))
-	 y = X @ tf.random.normal((5, 1)) 
-	\end{python}
-	%
-	Computing a linear model:
-	%
-	\begin{python}
-	 w = tf.random.normal((5, 1))
-	 yhat = X @ w # (10, 1)
-	\end{python}
-	%
-	Computing the objective function:
-	%
-	\begin{python}
-	 mse = tf.reduce_mean((y - yhat)**2)
-	\end{python}
-	
-\end{frame}
-
-\begin{frame}[fragile]{Show me some code (2)!}
-	
-	Explicit solution (numerically unstable):
-	%
-	\begin{python}
-	 wopt = tf.linalg.inv(tf.transpose(X) @ X) @ tf.transpose(X) @ y
-	\end{python}
-	%
-	Explicit solution (better numerical conditioning):
-	%
-	\begin{python}
-	 wopt = tf.linalg.solve(tf.transpose(X) @ X, tf.transpose(X) @ y)
-	\end{python}
-	
-\end{frame}
-
-{\setbeamercolor{background canvas}{bg=white}
-\begin{frame}[fragile]{Show me some code (3)!}
-	
-	Simple implementation of gradient descent:
-	%
-	\begin{python}
-	 for i in range(15000):
-	    # Note the sign: the derivative has a minus!
-	    w = w + 0.001 * tf.transpose(X) @ (y - X @ w)
-	\end{python}
-	%
-	\begin{figure}
-		\centering
-		\includegraphics[width=0.4\columnwidth]{images/lecture_3/least_squares_example}
-	\end{figure}
-
-\end{frame}
-}
-
-\begin{frame}{Computational complexity of LS}
-	
-	Matrix multiplication $\shape{\vc{A}}{(a,b)}\shape{\vc{B}}{(b,c)}$ has complexity $\mathcal{O}(abc)$, while matrix inversion has complexity (roughly) cubic.
-	
-	For large models and datasets, we want algorithms that can scale linearly in both $n$ and $d$: we will see that gradient descent can satisfy this property.
-	
 \end{frame}
 
 \subsection{Linear models for classification}
