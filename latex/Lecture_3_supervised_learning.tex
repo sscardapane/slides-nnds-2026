@@ -105,14 +105,16 @@
 
 \begin{frame}{Introducing loss functions}
 	
-	Given a point $x$, a desired value $y$, and a prediction $\hat{y} = f(x)$, we formalize its quality with a \myalert{loss function} $l(y, \hat{y})$, such that:
-	
-	\begin{enumerate}
-		\item Low value of loss: good approximation;
-		\item High value of loss: poor approximation.
-	\end{enumerate}
-	
-	In this way, learning becomes a problem of minimizing a certain loss quantity that we designed. Importantly, the loss function should be a scalar, vary gradually, and (as we will see) be \myalert{differentiable}.
+	A \myalert{loss function} assigns a scalar cost to a target--prediction pair:
+	\begin{equation}
+		\ell\left(y, \hat{y}\right) \in \mathbb{R},
+		\qquad \hat{y} = f_{\boldsymbol{\theta}}(x) \,.
+	\end{equation}
+
+	A smaller loss means a better prediction. Learning amounts to choosing $\boldsymbol{\theta}$ so that predictions have low loss on the training data.
+
+	\vspace{0.5em}
+	For gradient-based learning, we usually choose losses that are \myalert{differentiable} with respect to the model parameters.
 	
 \end{frame}
 
