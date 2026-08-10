@@ -198,47 +198,21 @@
 \section{Linear models}
 \subsection{Linear models for regression}
 
-\begin{frame}{What is a linear model?}
-	
-	\begin{tcolorbox}
-	A linear model $f$ is defined as:
-	%
-	\begin{equation}
-		f(\vc{x}) = \langle \vc{w}, \vc{x} \rangle = \vc{w}^\top \vc{x} = \sum_j w_j x_j \,,
-	\end{equation}
-	
-	where $\vc{w}$ is a vector of adaptable parameters.
+\begin{frame}{A linear model}
+
+	\begin{tcolorbox}[boxsep=1mm,top=1mm,bottom=1mm]
+		\justifying
+		For an input $\vc{x}\in\mathbb{R}^{D}$, a scalar linear model is defined as:
+		\begin{equation}
+			f_{\boldsymbol{\theta}}(\vc{x})
+			= {\color{darkpastelblue}\vc{w}^{\top}\vc{x}}
+			  {\color{darkred}+\,b}
+			= \sum_{j=1}^{D}w_jx_j+b \,.
+		\end{equation}
+		The parameters are $\vc{w}\in\mathbb{R}^{D}$ and $b\in\mathbb{R}$, with $\boldsymbol{\theta}=\{\vc{w},b\}$. The scalar $b$ is the \myalert{bias}; we will sometimes omit it to simplify the notation. We call each component $x_j$ a \myalert{feature}, and datasets of this form \myalert{tabular}.
 	\end{tcolorbox}
 
-	This model is fundamental in many disciplines, ranging from econometrics to statistics.
-	
 \end{frame}
-
-\begin{frame}{Linear models with bias}
-	
-	A more general formulation considers the inclusion of an \myalert{offset} (bias) $b \in \mathbb{R}$:
-	
-	\begin{equation}
-		f(\vc{x}) = \vc{w}^\top \vc{x} + b \,.
-	\end{equation}
-	
-	Because we can always rewrite this as $\vc{w}^\top \bar{\vc{x}}$, with $\bar{\vc{x}} = \left[ \vc{x}; \,\, 1 \right]$, we can avoid writing the bias explicitly to simplify the notation.
-	
-	\begin{tcolorbox}
-	\textbf{Hint}: Everytime we write a linear model, mentally add an offset term whenever needed.
-	\end{tcolorbox}
-	
-\end{frame}
-
-	\begin{whiteframe}{Graphical representation}
-		
-		\begin{figure}
-			\centering
-			\includegraphics[width=0.3\columnwidth]{images/lecture_3/linear_model}
-			\caption{Each arrow represents a \textit{linear} influence on the destination, which sums the results.}
-		\end{figure}
-		
-	\end{whiteframe}
 
 \begin{frame}{Least-squares cost function}
 	

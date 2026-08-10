@@ -1,6 +1,6 @@
 PWD /Users/simonescardapane/GitHub/slides-nnds-2026/latex
 INPUT /usr/local/texlive/2022/texmf-var/web2c/luahbtex/lualatex.fmt
-INPUT /Users/simonescardapane/GitHub/slides-nnds-2026/latex/Lecture_3_supervised_learning.tex
+INPUT ./Lecture_3_supervised_learning.tex
 OUTPUT /Users/simonescardapane/GitHub/slides-nnds-2026/aux/Lecture_3_supervised_learning.log
 INPUT /usr/local/texlive/2022/texmf-dist/tex/latex/latexconfig/lualatexquotejobname.lua
 INPUT /usr/local/texlive/2022/texmf-dist/tex/latex/base/ltluatex.lua
@@ -684,9 +684,6 @@ INPUT /usr/local/texlive/2022/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm5
 INPUT ./images/lecture_3/loss_functions_regression.pdf
 INPUT ./images/lecture_3/loss_functions_regression.pdf
 INPUT ./images/lecture_3/loss_functions_regression.pdf
-INPUT ./images/lecture_3/linear_model.pdf
-INPUT ./images/lecture_3/linear_model.pdf
-INPUT ./images/lecture_3/linear_model.pdf
 OUTPUT /Users/simonescardapane/GitHub/slides-nnds-2026/aux/Lecture_3_supervised_learning.vrb
 INPUT /Users/simonescardapane/GitHub/slides-nnds-2026/aux/Lecture_3_supervised_learning.vrb
 INPUT /Users/simonescardapane/GitHub/slides-nnds-2026/aux/Lecture_3_supervised_learning.vrb
