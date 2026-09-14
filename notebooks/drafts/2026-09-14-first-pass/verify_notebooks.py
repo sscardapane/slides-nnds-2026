@@ -1,0 +1,116 @@
+"""Execute the two drafts and check reference, student, and incorrect paths.
+
+Usage: python verify_notebooks.py [--write-outputs]
+Requires nbformat, nbclient, nbconvert, ipykernel and the notebook dependencies.
+"""
+import argparse
+import copy
+import json
+import os
+from pathlib import Path
+import sys
+import tempfile
+
+import nbformat
+from nbclient import NotebookClient
+from nbconvert import HTMLExporter
+
+ROOT = Path(__file__).resolve().parent
+
+
+def execute(nb):
+    return NotebookClient(nb, timeout=180, kernel_name="nnds-validation",
+                          resources={"metadata": {"path": str(ROOT)}}).execute()
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--write-outputs", action="store_true")
+    args = parser.parse_args()
+    with tempfile.TemporaryDirectory(prefix="nnds-validation-") as temp:
+        root = Path(temp)
+        kernel = root / "kernels" / "nnds-validation"
+        kernel.mkdir(parents=True)
+        (kernel / "kernel.json").write_text(json.dumps({
+            "argv": [sys.executable, "-m", "ipykernel_launcher", "-f", "{connection_file}"],
+            "display_name": "NNDS validation", "language": "python"}))
+        os.environ.update(JUPYTER_PATH=str(root), JUPYTER_RUNTIME_DIR=str(root / "runtime"),
+                          IPYTHONDIR=str(root / "ipython"), MPLCONFIGDIR=str(root / "mpl"),
+                          OMP_NUM_THREADS="1", OPENBLAS_NUM_THREADS="1")
+        completed = {}
+        for path in sorted(ROOT.glob("PT*.ipynb")):
+            nb = nbformat.read(path, as_version=4)
+            nbformat.validate(nb)
+            executed = execute(nb)
+            assert not any(o.output_type == "error" for c in executed.cells
+                           for o in c.get("outputs", []))
+            completed[path.stem] = executed
+            if args.write_outputs:
+                # Keep a generic kernel name in the distributed notebooks.
+                executed.metadata.kernelspec = {"name": "python3", "display_name": "Python 3", "language": "python"}
+                nbformat.write(executed, path)
+                html, _ = HTMLExporter().from_notebook_node(executed)
+                path.with_suffix(".html").write_text(html)
+            print("PASS clean execution:", path.name, flush=True)
+
+        student = copy.deepcopy(completed["PT02_Logistic_regression"])
+        forward_checks = next(c.source for c in student.cells
+                              if c.cell_type == "code" and c.source.startswith("small_X ="))
+        step_checks = next(c.source for c in student.cells
+                           if c.cell_type == "code" and c.source.startswith("# Compare two consecutive"))
+        for cell in student.cells:
+            if cell.cell_type != "code":
+                continue
+            cell.outputs = []
+            cell.execution_count = None
+            if cell.source.startswith("def linear_logits("):
+                cell.source = "def linear_logits(X, W, b):\n    return torch.addmm(b, X, W.T)"
+            if cell.source.startswith("def training_step("):
+                cell.source = '''def training_step(model, X, y, lr):
+    model.zero_grad(set_to_none=True)
+    loss = cross_entropy(model(X), y)
+    loss.backward()
+    with torch.no_grad():
+        for p in model.parameters():
+            p.add_(p.grad, alpha=-lr)
+    return loss.item()'''
+        student.cells.append(nbformat.v4.new_code_cell('''
+# Split isolation and train-only preprocessing.
+assert not (set(train_idx) & set(val_idx) or set(train_idx) & set(test_idx) or set(val_idx) & set(test_idx))
+assert set(train_idx) | set(val_idx) | set(test_idx) == set(range(len(y)))
+torch.testing.assert_close(mean, X[train_idx].mean(dim=0))
+torch.testing.assert_close(scale, X[train_idx].std(dim=0, correction=0))
+assert history['train_loss'][-1] < history['train_loss'][0]
+assert all(np.isfinite(history[k]).all() for k in history)
+assert test_accuracy > baseline_accuracy
+
+# Exercise checks must reject plausible errors, not just accept the reference.
+def must_fail(check):
+    try:
+        check()
+    except (AssertionError, RuntimeError, TypeError):
+        return
+    raise AssertionError('The checks accepted an incorrect implementation')
+
+saved_forward = linear_logits
+linear_logits = lambda X, W, b: torch.zeros(X.shape[0], W.shape[0])
+must_fail(lambda: exec(FORWARD_CHECKS, globals()))
+linear_logits = saved_forward
+saved_step = training_step
+training_step = suspect_step
+must_fail(lambda: exec(STEP_CHECKS, globals()))
+
+def incomplete_step(model, X, y, lr):
+    reference_training_step(model, X, y, lr)
+    return None
+training_step = incomplete_step
+must_fail(lambda: run_step(LogisticRegression(4, 3), Xtrain, ytrain, 0.1))
+training_step = saved_step
+print('PASS student implementations, split isolation, and incorrect-code rejection')
+'''.replace("FORWARD_CHECKS", repr(forward_checks)).replace("STEP_CHECKS", repr(step_checks))))
+        execute(student)
+        print("PASS student implementations, split isolation, and incorrect-code rejection", flush=True)
+
+
+if __name__ == "__main__":
+    main()
