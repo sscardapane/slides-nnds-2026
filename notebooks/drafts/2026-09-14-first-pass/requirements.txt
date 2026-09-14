@@ -1,5 +1,6 @@
 # Notebook runtime; tested versions are recorded in README.md.
 torch>=2.3
+jaxtyping>=0.2.36
 numpy>=1.26
 pandas>=2.0
 scikit-learn>=1.3

@@ -65,6 +65,8 @@ def main():
             cell.execution_count = None
             if cell.source.startswith("def linear_logits("):
                 cell.source = "def linear_logits(X, W, b):\n    return torch.addmm(b, X, W.T)"
+            if cell.source.startswith("def student_cross_entropy("):
+                cell.source = "def student_cross_entropy(logits, targets):\n    selected = logits.gather(1, targets[:, None]).squeeze(1)\n    return (torch.logsumexp(logits, dim=1) - selected).mean()"
             if cell.source.startswith("def training_step("):
                 cell.source = '''def training_step(model, X, y, lr):
     model.zero_grad(set_to_none=True)
@@ -83,6 +85,18 @@ torch.testing.assert_close(scale, X[train_idx].std(dim=0, correction=0))
 assert history['train_loss'][-1] < history['train_loss'][0]
 assert all(np.isfinite(history[k]).all() for k in history)
 assert test_accuracy > baseline_accuracy
+assert batch_sizes == [32] * 6 + [13]
+assert mini_updates == 210
+assert mini_history['train_loss'][-1] < mini_history['train_loss'][0]
+assert selected_lr == min(learning_rates, key=lambda r: lr_histories[r]['val_loss'][-1])
+assert model is lr_models[selected_lr]
+# Full-size DataLoader batch must give the same parameter update.
+a, b = copy.deepcopy(initial_model), copy.deepcopy(initial_model)
+for bx, by in DataLoader(TensorDataset(Xtrain, ytrain), batch_size=len(ytrain)):
+    run_step(a, bx, by, 0.1)
+run_step(b, Xtrain, ytrain, 0.1)
+for pa, pb in zip(a.parameters(), b.parameters()):
+    torch.testing.assert_close(pa, pb)
 
 # Exercise checks must reject plausible errors, not just accept the reference.
 def must_fail(check):
@@ -92,6 +106,14 @@ def must_fail(check):
         return
     raise AssertionError('The checks accepted an incorrect implementation')
 
+saved_loss = student_cross_entropy
+student_cross_entropy = lambda logits, targets: F.cross_entropy(logits, targets, reduction="sum")
+def check_loss():
+    z = torch.tensor([[2., -1., 0.], [0., 1., -2.]], requires_grad=True)
+    t = torch.tensor([0, 2])
+    torch.testing.assert_close(cross_entropy(z, t), F.cross_entropy(z, t))
+must_fail(check_loss)
+student_cross_entropy = saved_loss
 saved_forward = linear_logits
 linear_logits = lambda X, W, b: torch.zeros(X.shape[0], W.shape[0])
 must_fail(lambda: exec(FORWARD_CHECKS, globals()))

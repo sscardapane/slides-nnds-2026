@@ -10,8 +10,9 @@ instructor has not yet accepted the detailed content or policy on agent use.
 
 - `PT01_Introduction_to_PyTorch.ipynb`: required preparation, with complete
   examples. Optional array operations and layout material follow the main path.
-- `PT02_Logistic_regression.ipynb`: guided penguin-classification lab with three
-  longer activities: forward computation, training, and investigation.
+- `PT02_Logistic_regression.ipynb`: guided penguin-classification lab with four
+  activities: forward computation, loss, training, and investigation, followed
+  by learning-rate and mini-batch experiments.
 - Matching `.html` files: executed reading previews; use the notebooks to edit
   or run code.
 - `data/penguins.csv`: unscaled Palmer Penguins data, supplied for offline use.
@@ -31,14 +32,23 @@ ends after the classification example. The optional examples preserve the
 original diagonal, normalization and cosine-similarity exercises as worked
 examples, with explicit edge cases.
 
-PT02 supplies data handling, plotting, the model class and a stable loss.
-Students write the batched forward pass and the training step, then investigate
+PT02 supplies data handling, plotting, the model class and accuracy.
+Students write the batched forward pass, a stable cross-entropy loss and the training step, then investigate
 a step that unintentionally accumulates gradients. References are in folded
 code cells. Folding depends on the notebook viewer; it does not hide solutions
 from a student who wants to read them. Empty activity functions return `None`
 and use a reference so the rest of the lab still runs. The displayed outputs
 were generated using those references, not by completing a student's work.
-The forward-pass output explicitly reports whether the reference is active.
+The forward-pass and loss outputs explicitly report whether their references are active.
+PT01 closes its required portion with a readiness check on broadcasting,
+gradient accumulation and shapes, with expandable answers.
+
+PT02 compares three learning rates from identical initial parameters over
+200 full-batch updates, selecting the final model by validation loss. A separate
+30-epoch mini-batch extension uses batches of 32, including a final batch of 13,
+and compares equal epoch counts while explaining the unequal update counts.
+Both notebooks use jaxtyping annotations with torch.Tensor at function boundaries;
+annotations document shapes without enabling runtime checking.
 
 The agent-use paragraph is a proposal: students document a hypothesis and test
 suggestions against observed behavior. It does not establish a course-wide
@@ -57,10 +67,10 @@ code, timing, and this paragraph should be discussed in the next review.
 | Backward-node traversal/counting cosines | Deferred to the later autodiff unit; no private graph attributes in the required path. |
 | PT02 penguin classification | Retained. Uses four unscaled numeric measurements with a fixed stratified split. |
 | Pre-normalized CSV | Replaced by the dataset maintainers' unscaled CSV; normalization uses the training split only. No claim that leakage in the old CSV was established. |
-| Model, loss, accuracy, training TODOs | Regrouped into three substantial activities, with continuous runnable sections and reference fallbacks. |
+| Model, loss, accuracy, training TODOs | Regrouped into four activities, with continuous runnable sections and reference fallbacks. |
 | Probability-based cross-entropy | Logits-based implementation, checked against built-in loss values and gradients. |
 | Training curves only | Adds validation curves, a diagnostic comparison, final test evaluation, a majority-class baseline, and a confusion matrix. |
-| Framework syntax and shape annotations | Plain tensor code with shapes in prose/comments; removes the extra jaxtyping installation for this first pass. |
+| Framework syntax and shape annotations | Restored jaxtyping at function boundaries after instructor review, using torch.Tensor rather than the JAX-specific Array alias. Shapes remain in prose/comments too. |
 
 The original informal, direct style informed the prose. Student-facing text was
 reviewed with the humanizer skill in embedded mode. No MLP extension or new
@@ -91,7 +101,7 @@ packages plus `nbformat`, `nbclient`, `nbconvert` and `ipykernel`. Add
 `--write-outputs` to refresh saved outputs and HTML previews. The script starts
 temporary local Jupyter kernels using the Python executable that invoked it.
 
-The first pass was checked on CPU with Python 3.9, PyTorch 2.3.0, NumPy 1.26.4,
+The updated pass was checked on CPU with Python 3.9, PyTorch 2.3.0, jaxtyping 0.2.36, NumPy 1.26.4,
 pandas 2.3.3, scikit-learn 1.6.1 and Matplotlib 3.8.3. Notebook checks use
 nbformat 5.10.4, nbclient 0.10.2 and nbconvert 7.17.1. The notebooks have not
 been run in Colab or on a GPU.
@@ -99,8 +109,9 @@ been run in Colab or on a GPU.
 The validation covers clean execution of both notebooks, filled student
 implementations, split isolation, train-only scaling, agreement with PyTorch,
 and rejection of incorrect forwards, uncleared gradients and partially
-completed updates. Plot inspection covers data, training/validation curves and
+completed updates. It also checks the loss exercise, mini-batch counts, validation-based
+selection and full-size-batch update equivalence. Plot inspection covers data, training/validation curves and
 the diagnostic comparison. The seeded reference run reports validation
-accuracy 67/68 and test accuracy 67/69, compared with a test majority baseline
+accuracy 68/68 for the selected learning rate (10.0), and test accuracy 67/69, compared with a test majority baseline
 of 31/69. These are example results, not thresholds students must reproduce to
 receive credit.
