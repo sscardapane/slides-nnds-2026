@@ -1,0 +1,84 @@
+
+
+\documentclass[12pt,aspectratio=169]{beamer}
+
+\input{style.tex}
+% The 2024 source used annotate-equations for optional visual labels.
+% Keep the deck portable when that package is unavailable.
+\newcommand{\eqnmarkbox}[3][]{#3}
+\newcommand{\annotate}[4][]{}
+\usepackage{subfig}
+
+% Colors
+\definecolor{titlecolor}{RGB}{245, 242, 238} 
+\definecolor{drawgray}{HTML}{666666}
+\definecolor{drawgray_l}{HTML}{F5F5F5}
+\definecolor{drawblue}{HTML}{6C8EBF}
+\definecolor{drawblue_l}{HTML}{DAE8FC}
+\definecolor{drawgreen}{HTML}{82B366}
+\definecolor{drawgreen_l}{HTML}{D5E8D4}
+\definecolor{draworange}{HTML}{D79B00}
+\definecolor{draworange_l}{HTML}{FFE6CC}
+\definecolor{drawyellow}{HTML}{D6B656}
+\definecolor{drawyellow_l}{HTML}{FFF2CC}
+\definecolor{drawred}{HTML}{B85450}
+\definecolor{drawred_l}{HTML}{EA6B66}
+\definecolor{drawviolet}{HTML}{9673A6}
+\definecolor{drawviolet_l}{HTML}{E1D5E7}
+
+\tcbset{
+	nndsblue/.style={colback=drawblue_l!35!white,colframe=drawblue,boxrule=0.8pt,arc=1mm},
+	nndsgreen/.style={colback=drawgreen_l!35!white,colframe=drawgreen,boxrule=0.8pt,arc=1mm},
+	nndsorange/.style={colback=draworange_l!35!white,colframe=draworange,boxrule=0.8pt,arc=1mm},
+	nndsred/.style={colback=drawred_l!12!white,colframe=drawred,boxrule=0.8pt,arc=1mm}
+}
+
+
+\begin{document}
+
+	{\usebackgroundtemplate{\tikz\node[opacity=0.4,inner sep=0]{\includegraphics[width=\paperwidth,height=\paperheight]{images/header}};}%
+	\begin{frame}[plain]
+		\vspace{0.5cm}
+		\title{\large \begin{spacing}{1.0}Neural Networks for Data Science\end{spacing}\vspace{0.25em}
+			\normalsize \begin{spacing}{1.0}\textbf{Master's Degree in Data Science}\end{spacing}\vspace{0.5em}}
+		\subtitle{\Large \textbf{Lecture 4: Fully-connected neural networks}}
+		\date{
+			{\includegraphics[scale=0.8]{images/Uniroma1}}
+		}
+		\author{
+			\setlength{\tabcolsep}{2pt}
+			\begin{tabular}{rl}
+				\textbf{Lecturer}: & S. Scardapane \\
+			\end{tabular}
+		}\titlepage
+	\end{frame}
+	}
+
+\begin{frame}{Linear models are limited}
+\begin{columns}[c,onlytextwidth]
+\begin{column}{0.57\textwidth}
+For binary classification, a linear model separates the two classes using:
+\[
+{\color{darkcerulean}\vc{w}^{\top}\vc{x}+b=0}\,.
+\]
+Such a \myalert{linear boundary} can only separate relatively simple datasets.
+
+\vspace{0.8em}
+Can we \myalert{learn a representation} of the data where a linear model is sufficient?
+\end{column}
+\begin{column}{0.39\textwidth}
+\centering
+\begin{tikzpicture}[scale=0.95]
+\draw[->,gray] (-1.7,0)--(1.8,0) node[right] {$x_1$};
+\draw[->,gray] (0,-1.7)--(0,1.8) node[above] {$x_2$};
+\draw[dashed,gray,thick] (-1.6,1.15)--(1.6,-0.45);
+\foreach \x/\y in {-1/1,1/-1}{\fill[darkcerulean] (\x,\y) circle (0.10);}
+\foreach \x/\y in {1/1,-1/-1}{\draw[darkred,very thick] (\x-0.09,\y-0.09)--(\x+0.09,\y+0.09);\draw[darkred,very thick] (\x-0.09,\y+0.09)--(\x+0.09,\y-0.09);}
+\end{tikzpicture}
+
+\small A simple non-linearly separable dataset (XOR).
+\end{column}
+\end{columns}
+\end{frame}
+
+\end{document}
