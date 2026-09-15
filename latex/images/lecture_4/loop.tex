@@ -1,0 +1,10 @@
+\begin{tikzpicture}
+			\node (x) at (0,0) {$\vc{h}^{(0)}$};
+\node[nnblock,minimum width=1.8cm] (f) at (2.1,0) {$f_{\boldsymbol{\theta}}$};
+\node (y) at (4.3,0) {$\vc{h}^{(L)}$};
+
+			\draw[nnedge] (x)--(f);
+\draw[nnedge] (f)--(y);
+\draw[nnedge] (3.2,0)--(3.2,1.05)--node[above,font=\scriptsize] {repeat $L$ times} (1,1.05)--(1,0);
+
+		\end{tikzpicture}

@@ -1,0 +1,21 @@
+\begin{tikzpicture}[x=1cm,y=1cm]
+			\node (x) at (0,0) {$\vc{x}$};
+\coordinate (split) at (0.65,0);
+
+			\node[nnblock] (f) at (2,0.75) {$f$};
+\node[nnother] (g) at (2,-0.75) {$\mathrm{id}$};
+
+			\node[nnmerge] (m) at (4,0) {$+$};
+\node (y) at (5.1,0) {$\vc{y}$};
+
+			\draw[thick,drawgray] (x)--(split);
+\fill[drawgray] (split) circle (1.5pt);
+
+			\draw[nnedge] (split)|-(f);
+\draw[nnedge] (split)|-(g);
+
+			\draw[nnedge] (f.east)--(3.25,0.75)-|(m.north);
+\draw[nnedge] (g.east)--(3.25,-0.75)-|(m.south);
+\draw[nnedge] (m)--(y);
+
+		\end{tikzpicture}

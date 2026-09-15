@@ -1,0 +1,9 @@
+\begin{tikzpicture}[x=0.8cm,y=0.8cm]
+			
+\foreach \i in {1,2,3}{\pgfmathtruncatemacro{\pos}{\i-1}\node (x\i) at (2.7*\i,1.05) {$\idx{\vc{X}}{\pos,:}$};
+\node[nnblock] (f\i) at (2.7*\i,0) {$f_{\boldsymbol{\theta}}$};
+\node (y\i) at (2.7*\i,-1.05) {$\idx{\vc{Y}}{\pos,:}$};
+\draw[nnedge] (x\i)--(f\i);
+\draw[nnedge] (f\i)--(y\i);
+}
+		\end{tikzpicture}

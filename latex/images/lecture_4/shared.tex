@@ -1,0 +1,10 @@
+\begin{tikzpicture}[x=0.83cm]\node (x) at (0,0) {$\vc{h}^{(0)}$};
+\node[nnblock] (b0) at (1.6,0) {$f_{\boldsymbol{\theta}}$};
+\node[nnblock] (b1) at (3.6,0) {$f_{\boldsymbol{\theta}}$};
+\node[nnblock] (b2) at (5.6,0) {$f_{\boldsymbol{\theta}}$};
+\node (y) at (7.3,0) {$\vc{h}^{(3)}$};
+\draw[nnedge] (x)--(b0);
+\draw[nnedge] (b0)--(b1);
+\draw[nnedge] (b1)--(b2);
+\draw[nnedge] (b2)--(y);
+\end{tikzpicture}

@@ -1,0 +1,18 @@
+\begin{tikzpicture}
+			\node (x) at (0,0) {$\vc{x}$};
+\node[nnblock] (u) at (1.8,0.65) {$\vc{W}_u$};
+\node[nnother] (g) at (1.8,-0.65) {$\vc{W}_g$};
+\node[nnother] (phi) at (3.5,-0.65) {$\phi$};
+\node[nnmerge] (m) at (5,0) {$\odot$};
+\node[nnblock] (o) at (6.5,0) {$\vc{W}_o$};
+\node (y) at (7.9,0) {$\vc{y}$};
+
+			\draw[nnedge] (x)|-(u);
+\draw[nnedge] (x)|-(g);
+\draw[nnedge] (g)--(phi);
+\draw[nnedge] (u.east)--(5,0.65)--(m.north);
+\draw[nnedge] (phi.east)-|(m.south);
+\draw[nnedge] (m)--(o);
+\draw[nnedge] (o)--(y);
+
+		\end{tikzpicture}

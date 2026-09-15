@@ -1,0 +1,15 @@
+\begin{tikzpicture}
+			\node (h0) at (0,0) {$\vc{h}_0$};
+
+			
+\foreach \i in {1,2,3}{\node[nnblock] (b\i) at (2*\i,0) {$f_{\boldsymbol{\theta}}$};
+\node (x\i) at (2*\i,0.95) {$\vc{x}_{\i}$};
+\draw[nnedge] (x\i)--(b\i);
+}
+			\node (h3) at (8,0) {$\vc{h}_3$};
+\draw[nnedge] (h0)--(b1);
+\draw[nnedge] (b1)--node[below,font=\scriptsize] {$\vc{h}_1$}(b2);
+\draw[nnedge] (b2)--node[below,font=\scriptsize] {$\vc{h}_2$}(b3);
+\draw[nnedge] (b3)--(h3);
+
+		\end{tikzpicture}
