@@ -3,7 +3,7 @@
 <html lang="en">
 <head><meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>PT02_Logistic_regression</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>PT02_Logistic_regression_solutions</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <style type="text/css">
     pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -7802,9 +7802,9 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="PT02:-Logistic-regression-in-PyTorch">PT02: Logistic regression in PyTorch<a class="anchor-link" href="#PT02:-Logistic-regression-in-PyTorch">¶</a></h1><p>Given a few measurements of a penguin, can we predict its species? We will build a linear classifier and follow its training through to evaluation.</p>
+<h1 id="PT02:-Logistic-regression-in-PyTorch-%E2%80%94-solutions">PT02: Logistic regression in PyTorch — solutions<a class="anchor-link" href="#PT02:-Logistic-regression-in-PyTorch-%E2%80%94-solutions">¶</a></h1><p>Given a few measurements of a penguin, can we predict its species? We will build a linear classifier and follow its training through to evaluation.</p>
 <p>Read PT01 before this session. We will use its tensor operations, <code>backward()</code>, and parameter updates. The data loading and plotting code are provided. There are four activities: the forward pass, the loss, the training step, and an investigation of a training run. We then compare learning rates and extend training to mini-batches.</p>
-<p>This is the student notebook. Complete each activity before continuing; an unfinished activity raises a clear error instead of silently using a reference implementation. Worked solutions are kept in the separate instructor notebook.</p>
+<p>This is the solutions notebook. Reference implementations are included directly, and unfinished activities fall back to them so that the full notebook remains runnable. The student notebook is distributed separately without these cells.</p>
 <blockquote>
 <p>Try to avoid AI coding assistants for these simple exercises.</p>
 </blockquote>
@@ -7977,12 +7977,26 @@ a.anchor-link {
 <div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">linear_logits</span><span class="p">(</span><span class="n">X</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">"batch features"</span><span class="p">],</span> <span class="n">W</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">"classes features"</span><span class="p">],</span> <span class="n">b</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">"classes"</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Float</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">"batch classes"</span><span class="p">]]:</span>
     <span class="c1"># Replace None with your batched computation.</span>
     <span class="k">return</span> <span class="kc">None</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs celltag_reference" id="cell-id=d4bcbb0d">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Reference used only when linear_logits returns None.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">reference_linear_logits</span><span class="p">(</span><span class="n">X</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">"batch features"</span><span class="p">],</span> <span class="n">W</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">"classes features"</span><span class="p">],</span> <span class="n">b</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">"classes"</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Float</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">"batch classes"</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="n">X</span> <span class="o">@</span> <span class="n">W</span><span class="o">.</span><span class="n">T</span> <span class="o">+</span> <span class="n">b</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">forward_logits</span><span class="p">(</span><span class="n">X</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">"batch features"</span><span class="p">],</span> <span class="n">W</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">"classes features"</span><span class="p">],</span> <span class="n">b</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">"classes"</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Float</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">"batch classes"</span><span class="p">]:</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">linear_logits</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"Complete Activity 1 before continuing."</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">result</span>
+    <span class="k">return</span> <span class="n">reference_linear_logits</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">result</span>
 </pre></div>
 </div>
 </div>
@@ -8001,7 +8015,7 @@ a.anchor-link {
 <span class="n">small_b</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.</span><span class="p">])</span>
 <span class="n">expected</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">2.</span><span class="p">],</span> <span class="p">[</span><span class="mf">3.5</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">,</span> <span class="mf">2.</span><span class="p">]])</span>
 <span class="n">torch</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_close</span><span class="p">(</span><span class="n">forward_logits</span><span class="p">(</span><span class="n">small_X</span><span class="p">,</span> <span class="n">small_W</span><span class="p">,</span> <span class="n">small_b</span><span class="p">),</span> <span class="n">expected</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Forward-pass check passed."</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Using"</span><span class="p">,</span> <span class="s2">"reference"</span> <span class="k">if</span> <span class="n">linear_logits</span><span class="p">(</span><span class="n">small_X</span><span class="p">,</span> <span class="n">small_W</span><span class="p">,</span> <span class="n">small_b</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">"your"</span><span class="p">,</span> <span class="s2">"forward pass"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -8069,12 +8083,27 @@ a.anchor-link {
 <div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">student_cross_entropy</span><span class="p">(</span><span class="n">logits</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">"batch classes"</span><span class="p">],</span> <span class="n">targets</span><span class="p">:</span> <span class="n">Int</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">"batch"</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Float</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">""</span><span class="p">]]:</span>
     <span class="c1"># Replace None with the batched loss.</span>
     <span class="k">return</span> <span class="kc">None</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs celltag_reference" id="cell-id=f90a471e">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Reference used only while the loss activity is unfilled.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">reference_cross_entropy</span><span class="p">(</span><span class="n">logits</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">"batch classes"</span><span class="p">],</span> <span class="n">targets</span><span class="p">:</span> <span class="n">Int</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">"batch"</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Float</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">""</span><span class="p">]:</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">targets</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="n">targets</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">logsumexp</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">logits</span><span class="p">[</span><span class="n">rows</span><span class="p">,</span> <span class="n">targets</span><span class="p">])</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">cross_entropy</span><span class="p">(</span><span class="n">logits</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">"batch classes"</span><span class="p">],</span> <span class="n">targets</span><span class="p">:</span> <span class="n">Int</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">"batch"</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Float</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">""</span><span class="p">]:</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">student_cross_entropy</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"Complete Activity 2 before continuing."</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">result</span>
+    <span class="k">return</span> <span class="n">reference_cross_entropy</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span> <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">result</span>
 </pre></div>
 </div>
 </div>
@@ -8096,7 +8125,7 @@ a.anchor-link {
 <span class="nb">print</span><span class="p">(</span><span class="s2">"Initial accuracy:"</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">ytrain</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
 <span class="c1"># Zero logits give uniform probabilities and loss log(C).</span>
 <span class="n">torch</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_close</span><span class="p">(</span><span class="n">cross_entropy</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">ytrain</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">3</span><span class="p">))))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Initial-loss check passed."</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Using"</span><span class="p">,</span> <span class="s2">"reference"</span> <span class="k">if</span> <span class="n">student_cross_entropy</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">ytrain</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">"your"</span><span class="p">,</span> <span class="s2">"loss"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -8199,13 +8228,37 @@ a.anchor-link {
 <div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">training_step</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">"batch features"</span><span class="p">],</span> <span class="n">y</span><span class="p">:</span> <span class="n">Int</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">"batch"</span><span class="p">],</span> <span class="n">lr</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
     <span class="c1"># Replace None with your training step.</span>
     <span class="k">return</span> <span class="kc">None</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs celltag_reference" id="cell-id=7b7b80ce">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">reference_training_step</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">"batch features"</span><span class="p">],</span> <span class="n">y</span><span class="p">:</span> <span class="n">Int</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">"batch"</span><span class="p">],</span> <span class="n">lr</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+        <span class="n">parameter</span><span class="o">.</span><span class="n">grad</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">cross_entropy</span><span class="p">(</span><span class="n">model</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">y</span><span class="p">)</span>
+    <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+            <span class="n">parameter</span> <span class="o">-=</span> <span class="n">lr</span> <span class="o">*</span> <span class="n">parameter</span><span class="o">.</span><span class="n">grad</span>
+    <span class="k">return</span> <span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">run_step</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">"batch features"</span><span class="p">],</span> <span class="n">y</span><span class="p">:</span> <span class="n">Int</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">"batch"</span><span class="p">],</span> <span class="n">lr</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="c1"># A skipped exercise returns None without modifying the model.</span>
+    <span class="n">before</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">()]</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">training_step</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">lr</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"Complete Activity 3 before continuing."</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"Return loss.item(), not a tensor."</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">equal</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">saved</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">saved</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">before</span><span class="p">)),</span> <span class="s2">"Your step changed parameters but returned None. Return loss.item()."</span>
+        <span class="c1"># Clear any gradients left by a partially completed exercise.</span>
+        <span class="k">return</span> <span class="n">reference_training_step</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">lr</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">result</span>
 
 <span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
@@ -8228,16 +8281,15 @@ a.anchor-link {
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Compare two consecutive updates: the second detects uncleared gradients.</span>
 <span class="n">check_model</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-<span class="n">first_loss</span> <span class="o">=</span> <span class="n">run_step</span><span class="p">(</span><span class="n">check_model</span><span class="p">,</span> <span class="n">Xtrain</span><span class="p">[:</span><span class="mi">16</span><span class="p">],</span> <span class="n">ytrain</span><span class="p">[:</span><span class="mi">16</span><span class="p">],</span> <span class="mf">0.1</span><span class="p">)</span>
-<span class="n">before_second</span> <span class="o">=</span> <span class="p">[</span><span class="n">parameter</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span> <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="n">check_model</span><span class="o">.</span><span class="n">parameters</span><span class="p">()]</span>
-<span class="n">expected_second_loss</span> <span class="o">=</span> <span class="n">cross_entropy</span><span class="p">(</span><span class="n">check_model</span><span class="p">(</span><span class="n">Xtrain</span><span class="p">[:</span><span class="mi">16</span><span class="p">]),</span> <span class="n">ytrain</span><span class="p">[:</span><span class="mi">16</span><span class="p">])</span>
-<span class="n">expected_second_gradients</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">expected_second_loss</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">check_model</span><span class="o">.</span><span class="n">parameters</span><span class="p">()))</span>
-<span class="n">second_loss</span> <span class="o">=</span> <span class="n">run_step</span><span class="p">(</span><span class="n">check_model</span><span class="p">,</span> <span class="n">Xtrain</span><span class="p">[:</span><span class="mi">16</span><span class="p">],</span> <span class="n">ytrain</span><span class="p">[:</span><span class="mi">16</span><span class="p">],</span> <span class="mf">0.1</span><span class="p">)</span>
-<span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">second_loss</span> <span class="o">-</span> <span class="n">expected_second_loss</span><span class="o">.</span><span class="n">item</span><span class="p">())</span> <span class="o">&lt;</span> <span class="mf">1e-6</span>
-<span class="k">for</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">before</span><span class="p">,</span> <span class="n">expected_gradient</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">check_model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">before_second</span><span class="p">,</span> <span class="n">expected_second_gradients</span><span class="p">):</span>
-    <span class="n">torch</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_close</span><span class="p">(</span><span class="n">parameter</span><span class="o">.</span><span class="n">grad</span><span class="p">,</span> <span class="n">expected_gradient</span><span class="p">)</span>
-    <span class="n">torch</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_close</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="n">before</span> <span class="o">-</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">expected_gradient</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Both updates passed the checks."</span><span class="p">)</span>
+<span class="n">reference_model</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">check_model</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+    <span class="n">actual</span> <span class="o">=</span> <span class="n">run_step</span><span class="p">(</span><span class="n">check_model</span><span class="p">,</span> <span class="n">Xtrain</span><span class="p">[:</span><span class="mi">16</span><span class="p">],</span> <span class="n">ytrain</span><span class="p">[:</span><span class="mi">16</span><span class="p">],</span> <span class="mf">0.1</span><span class="p">)</span>
+    <span class="n">expected_loss</span> <span class="o">=</span> <span class="n">reference_training_step</span><span class="p">(</span><span class="n">reference_model</span><span class="p">,</span> <span class="n">Xtrain</span><span class="p">[:</span><span class="mi">16</span><span class="p">],</span> <span class="n">ytrain</span><span class="p">[:</span><span class="mi">16</span><span class="p">],</span> <span class="mf">0.1</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">actual</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span> <span class="s2">"Return loss.item(), not a tensor."</span>
+    <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">actual</span> <span class="o">-</span> <span class="n">expected_loss</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-6</span>
+    <span class="k">for</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">expected_parameter</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">check_model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">reference_model</span><span class="o">.</span><span class="n">parameters</span><span class="p">()):</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_close</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="n">expected_parameter</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Both updates agree with the reference."</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -8403,6 +8455,27 @@ a.anchor-link {
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># What is wrong?</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs celltag_reference" id="cell-id=21fe67f8">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Reference probe: differentiate twice without updating the parameters.</span>
+<span class="n">probe_model</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">cross_entropy</span><span class="p">(</span><span class="n">probe_model</span><span class="p">(</span><span class="n">Xtrain</span><span class="p">),</span> <span class="n">ytrain</span><span class="p">)</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<span class="n">first</span> <span class="o">=</span> <span class="n">probe_model</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+<span class="n">cross_entropy</span><span class="p">(</span><span class="n">probe_model</span><span class="p">(</span><span class="n">Xtrain</span><span class="p">),</span> <span class="n">ytrain</span><span class="p">)</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_close</span><span class="p">(</span><span class="n">probe_model</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">grad</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">first</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Same parameters, same data, twice the stored gradient."</span><span class="p">)</span>
+<span class="c1"># Clear gradients at the start of suspect_step, as in reference_training_step.</span>
 </pre></div>
 </div>
 </div>

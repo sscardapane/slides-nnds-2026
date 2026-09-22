@@ -1,4 +1,4 @@
-"""Execute the two drafts and check reference, student, and incorrect paths.
+"""Execute the drafts and check solution, student, and incorrect paths.
 
 Usage: python verify_notebooks.py [--write-outputs]
 Requires nbformat, nbclient, nbconvert, ipykernel and the notebook dependencies.
@@ -38,7 +38,11 @@ def main():
                           IPYTHONDIR=str(root / "ipython"), MPLCONFIGDIR=str(root / "mpl"),
                           OMP_NUM_THREADS="1", OPENBLAS_NUM_THREADS="1")
         completed = {}
-        for path in sorted(ROOT.glob("PT*.ipynb")):
+        clean_paths = [
+            ROOT / "PT01_Introduction_to_PyTorch.ipynb",
+            ROOT / "PT02_Logistic_regression_solutions.ipynb",
+        ]
+        for path in clean_paths:
             nb = nbformat.read(path, as_version=4)
             nbformat.validate(nb)
             executed = execute(nb)
@@ -53,7 +57,11 @@ def main():
                 path.with_suffix(".html").write_text(html)
             print("PASS clean execution:", path.name, flush=True)
 
-        student = copy.deepcopy(completed["PT02_Logistic_regression"])
+        student_path = ROOT / "PT02_Logistic_regression.ipynb"
+        student = nbformat.read(student_path, as_version=4)
+        nbformat.validate(student)
+        assert not any("reference" in c.metadata.get("tags", []) for c in student.cells)
+        assert not any("def reference_" in c.source for c in student.cells if c.cell_type == "code")
         forward_checks = next(c.source for c in student.cells
                               if c.cell_type == "code" and c.source.startswith("small_X ="))
         step_checks = next(c.source for c in student.cells
@@ -64,18 +72,24 @@ def main():
             cell.outputs = []
             cell.execution_count = None
             if cell.source.startswith("def linear_logits("):
-                cell.source = "def linear_logits(X, W, b):\n    return torch.addmm(b, X, W.T)"
+                cell.source = cell.source.replace(
+                    "    # Replace None with your batched computation.\n    return None",
+                    "    return torch.addmm(b, X, W.T)", 1)
             if cell.source.startswith("def student_cross_entropy("):
-                cell.source = "def student_cross_entropy(logits, targets):\n    selected = logits.gather(1, targets[:, None]).squeeze(1)\n    return (torch.logsumexp(logits, dim=1) - selected).mean()"
+                cell.source = cell.source.replace(
+                    "    # Replace None with the batched loss.\n    return None",
+                    "    selected = logits.gather(1, targets[:, None]).squeeze(1)\n"
+                    "    return (torch.logsumexp(logits, dim=1) - selected).mean()", 1)
             if cell.source.startswith("def training_step("):
-                cell.source = '''def training_step(model, X, y, lr):
-    model.zero_grad(set_to_none=True)
+                cell.source = cell.source.replace(
+                    "    # Replace None with your training step.\n    return None",
+                    '''    model.zero_grad(set_to_none=True)
     loss = cross_entropy(model(X), y)
     loss.backward()
     with torch.no_grad():
         for p in model.parameters():
             p.add_(p.grad, alpha=-lr)
-    return loss.item()'''
+    return loss.item()''', 1)
         student.cells.append(nbformat.v4.new_code_cell('''
 # Split isolation and train-only preprocessing.
 assert not (set(train_idx) & set(val_idx) or set(train_idx) & set(test_idx) or set(val_idx) & set(test_idx))
@@ -123,7 +137,6 @@ training_step = suspect_step
 must_fail(lambda: exec(STEP_CHECKS, globals()))
 
 def incomplete_step(model, X, y, lr):
-    reference_training_step(model, X, y, lr)
     return None
 training_step = incomplete_step
 must_fail(lambda: run_step(LogisticRegression(4, 3), Xtrain, ytrain, 0.1))
@@ -131,7 +144,12 @@ training_step = saved_step
 print('PASS student implementations, split isolation, and incorrect-code rejection')
 '''.replace("FORWARD_CHECKS", repr(forward_checks)).replace("STEP_CHECKS", repr(step_checks))))
         execute(student)
-        print("PASS student implementations, split isolation, and incorrect-code rejection", flush=True)
+        print("PASS student notebook has no references and accepts correct implementations", flush=True)
+        if args.write_outputs:
+            # Export the unfilled student source, never the injected verification copy.
+            student_source = nbformat.read(student_path, as_version=4)
+            html, _ = HTMLExporter().from_notebook_node(student_source)
+            student_path.with_suffix(".html").write_text(html)
 
 
 if __name__ == "__main__":

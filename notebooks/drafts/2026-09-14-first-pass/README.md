@@ -10,11 +10,15 @@ instructor has not yet accepted the detailed content or policy on agent use.
 
 - `PT01_Introduction_to_PyTorch.ipynb`: required preparation, with complete
   examples. Optional array operations and layout material follow the main path.
-- `PT02_Logistic_regression.ipynb`: guided penguin-classification lab with four
-  activities: forward computation, loss, training, and investigation, followed
-  by learning-rate and mini-batch experiments.
-- Matching `.html` files: executed reading previews; use the notebooks to edit
-  or run code.
+- `PT02_Logistic_regression.ipynb`: student lab with four activities: forward
+  computation, loss, training, and investigation, followed by learning-rate
+  and mini-batch experiments. It contains no reference implementations.
+- `PT02_Logistic_regression_solutions.ipynb`: instructor copy with the four
+  reference cells and runnable fallbacks.
+- Matching `.html` files: reading previews; use the notebooks to edit or run
+  code.
+- `make_student_notebook.py`: reproducibly rebuilds the student notebook from
+  the solutions notebook while removing the reference cells and fallbacks.
 - `data/penguins.csv`: unscaled Palmer Penguins data, supplied for offline use.
 - `verify_notebooks.py`: reproducible execution and exercise-path checks.
 
@@ -34,12 +38,10 @@ examples, with explicit edge cases.
 
 PT02 supplies data handling, plotting, the model class and accuracy.
 Students write the batched forward pass, a stable cross-entropy loss and the training step, then investigate
-a step that unintentionally accumulates gradients. References are in folded
-code cells. Folding depends on the notebook viewer; it does not hide solutions
-from a student who wants to read them. Empty activity functions return `None`
-and use a reference so the rest of the lab still runs. The displayed outputs
-were generated using those references, not by completing a student's work.
-The forward-pass and loss outputs explicitly report whether their references are active.
+a step that unintentionally accumulates gradients. The student notebook stops
+with a clear error when an activity is unfinished. Reference implementations
+and automatic fallbacks exist only in the solutions notebook; they are not
+present in the student `.ipynb` or its HTML preview.
 PT01 closes its required portion with a readiness check on broadcasting,
 gradient accumulation and shapes, with expandable answers.
 
