@@ -1,5 +1,5 @@
 <template>
-  <section class="beamer-frame">
+  <section class="beamer-frame" :class="{ 'compact-formulas': compactFormulas }">
     <header>{{ title }}</header>
     <main><slot /></main>
     <footer>{{ displayedPage }}</footer>
@@ -14,6 +14,7 @@ const props = defineProps({
   title: { type: String, required: true },
   // Rare escape hatch. Normal slides should rely on Slidev's automatic page.
   page: { type: [String, Number], default: '' },
+  compactFormulas: { type: Boolean, default: false },
 })
 
 const { $page, $slidev } = useSlideContext()
@@ -128,6 +129,8 @@ const displayedPage = computed(() => props.page || $page.value + pageOffset.valu
   font-size: .76em;
 }
 .beamer-frame .katex-display { margin: .6em 0 1em; }
+.beamer-frame.compact-formulas p { margin-bottom: 12px; }
+.beamer-frame.compact-formulas .katex-display { margin: .45em 0 .65em; }
 .beamer-frame .katex { font-size: 1.08em; }
 .beamer-frame ul,
 .beamer-frame ol { margin: 9px 0 0 24px; }

@@ -140,7 +140,7 @@ layout: full
 import BeamerFrame from '../components/BeamerFrame.vue'
 </script>
 
-<BeamerFrame title="Scalars and vectors">
+<BeamerFrame title="Scalars and vectors" compact-formulas>
 
 $0$-axis tensors are called <span class="accent">scalars</span> (a physics terminology). Most scalars in this course are real-valued.
 
