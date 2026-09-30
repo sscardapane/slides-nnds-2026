@@ -515,7 +515,7 @@
 
 	\begin{tcolorbox}[nndsgreen,boxsep=1mm,top=1mm,bottom=1mm]
 		\justifying
-		Softmax and sigmoid are nonlinear, but the resulting decision boundaries are linear in the input. Curved boundaries require transforming or composing features, the topic of the next lecture.
+		Softmax and sigmoid are nonlinear, but the resulting decision boundaries are linear in the input. Transforming the inputs lets us construct nonlinear decision boundaries.
 	\end{tcolorbox}
 
 \end{frame}
@@ -570,6 +570,92 @@
 	This is a \myalert{reliability plot}, see the book for more details.
 
 \end{frame}
+\subsection{Fixed nonlinear features}
+
+% Ported from the instructor-edited NN slides, September 30, 2026.
+% Fixed nonlinear features bridge Lecture 3 to the MLP definition in Lecture 4.
+\begin{frame}{Linear in what?}
+	\small
+	\setlength{\parskip}{2pt}
+	\setlength{\abovedisplayskip}{5pt}\setlength{\belowdisplayskip}{5pt}
+	\begin{columns}[c,onlytextwidth]
+		\begin{column}{0.36\textwidth}
+			\centering
+			\begin{tikzpicture}[scale=0.95]
+				\draw[->,gray] (-1.6,0)--(1.7,0) node[right] {$x_1$};
+				\draw[->,gray] (0,-1.6)--(0,1.7) node[above] {$x_2$};
+				\foreach \x in {-1,1}{\node[below,gray] at (\x,0) {\scriptsize $\x$};}
+				\foreach \y in {-1,1}{\node[left,gray] at (0,\y) {\scriptsize $\y$};}
+				\foreach \x/\y in {-1/1,1/-1}{\fill[darkcerulean] (\x,\y) circle (0.10);}
+				\foreach \x/\y in {1/1,-1/-1}{\draw[darkred,very thick] (\x-0.09,\y-0.09)--(\x+0.09,\y+0.09);\draw[darkred,very thick] (\x-0.09,\y+0.09)--(\x+0.09,\y-0.09);}
+			\end{tikzpicture}
+
+			\small XOR: no single straight line separates the two classes.
+		\end{column}
+		\begin{column}{0.60\textwidth}
+			Suppose we add the interaction $x_1x_2$ as a feature:
+			\[
+				f_{\vc{w}}(\vc{x})=w_0+w_1x_1+w_2x_2+w_3x_1x_2.
+			\]
+			This model is \myalert{nonlinear in $\vc{x}$}, but \myalert{linear in $\vc{w}$}.
+
+			\medskip
+			For example, $\vc{w}=(0,0,0,-1)^{\top}$ gives
+			\[
+				f_{\vc{w}}(\vc{x})=-x_1x_2=
+				\begin{cases}
+					\phantom{-}1 & \text{\color{darkcerulean}blue circles},\\
+					-1 & \text{\color{darkred}red crosses}.
+				\end{cases}
+			\]
+			Thresholding this score at zero solves XOR.
+		\end{column}
+	\end{columns}
+
+	\vspace{0.8em}
+	\begin{tcolorbox}[nndsgreen,boxsep=1mm,top=1mm,bottom=1mm]
+		A linear model on transformed inputs can produce a nonlinear decision boundary in the original input space.
+	\end{tcolorbox}
+\end{frame}
+
+\begin{frame}{Fixed nonlinear features}
+	\small
+	\setlength{\parskip}{2pt}
+	\setlength{\abovedisplayskip}{4pt}\setlength{\belowdisplayskip}{4pt}
+	Generalizing this, we can fix a nonlinear feature map $\boldsymbol{\phi}$ and train only the coefficients:
+	\[
+		f_{\vc{w}}(\vc{x})=\vc{w}^{\top}\boldsymbol{\phi}(\vc{x}).
+	\]
+	\smallskip
+	However, \textbf{polynomial features grow quickly.} For $d$ inputs, degree-two terms alone
+	give $d(d+1)/2$ features. Higher degrees can make explicit enumeration infeasible.
+
+	\smallskip
+	\begin{columns}[T,onlytextwidth]
+		\begin{column}{0.48\textwidth}
+			\textbf{\color{darkcerulean}Random Fourier features}
+			\[
+				\phi_j(\vc{x})=\sqrt{2/m}\cos(\vc{a}_j^{\top}\vc{x}+b_j).
+			\]
+			Sample $m$ frequencies and phases once, then keep them fixed.
+		\end{column}
+		\begin{column}{0.48\textwidth}
+			\textbf{\color{darkcerulean}Kernel basis functions}
+			\[
+				\phi_j(\vc{x})=k(\vc{x},\vc{c}_j).
+			\]
+			Similarities to fixed centers $\vc{c}_j$, e.g., with a Gaussian kernel.
+		\end{column}
+	\end{columns}
+
+	\smallskip
+	\begin{tcolorbox}[nndsgreen,boxsep=1mm,top=1mm,bottom=1mm]
+		\textbf{Next lecture:} can we learn the features themselves?
+	\end{tcolorbox}
+	{\scriptsize\color{drawgray}Random Fourier features: Rahimi and Recht (2007),
+	\href{https://papers.nips.cc/paper/2007/hash/013a006f03dbc5392effeb8f18fda755-Abstract.html}{Random Features for Large-Scale Kernel Machines}.}
+\end{frame}
+
 \begin{frame}{Reading material}
 	
 	\begin{itemize}
