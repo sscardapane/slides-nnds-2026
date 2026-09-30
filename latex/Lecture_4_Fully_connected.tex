@@ -213,6 +213,47 @@
 \end{frame}
 
 
+% Instructor-approved port from NN, September 30, 2026.
+\begin{frame}{Training neural networks can be weird}
+	\footnotesize
+	\setlength{\parskip}{0pt}
+	Train a model (transformer, later in the course) to learn division modulo $97$. What happens?
+
+	\smallskip
+	\begin{columns}[T,onlytextwidth]
+		\begin{column}{0.49\textwidth}
+			\centering
+			\textbf{\color{darkcerulean}Loss over training}
+
+			\includegraphics[height=0.37\textheight,width=\linewidth,keepaspectratio]{images/lecture_4/grokking/grokking-loss.png}
+
+		\end{column}
+		\begin{column}{0.49\textwidth}
+			\centering
+			\textbf{\color{darkcerulean}Accuracy in the same experiment}
+
+			\includegraphics[height=0.37\textheight,width=\linewidth,keepaspectratio]{images/lecture_4/grokking/grokking-accuracy.png}
+
+		\end{column}
+	\end{columns}
+
+	\smallskip
+	\begin{tcolorbox}[nndsgreen,boxsep=1mm,top=1mm,bottom=1mm]
+		Definitely not intuitive: multiple descents for the validation loss, with accuracy improving long after perfect memorization (\textbf{grokking}).
+	\end{tcolorbox}
+
+	\smallskip
+	\footnotesize
+	Other surprising phenomena we have no time to cover:
+	\href{https://arxiv.org/abs/1611.03530}{fitting random labels},
+	\href{https://arxiv.org/abs/1812.11118}{double descent as model size grows}, and
+	\href{https://proceedings.mlr.press/v238/ferbach24a.html}{low-loss paths connecting different solutions}.
+
+	\vspace{-2pt}
+	{\scriptsize\color{drawgray}Original plots: Power et al. (2022),
+	\href{https://arxiv.org/abs/2201.02177}{Grokking}, Figs.~1 and~4.}
+\end{frame}
+
 \subsection{Activation functions}
 
 % Approved 2026-09-15: introduce sigmoid saturation and vanishing gradients
