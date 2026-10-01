@@ -8739,8 +8739,8 @@ MSE: tensor(5.778)
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>x requires_grad: True is_leaf: True grad_fn: None retains_grad: False
-h requires_grad: True is_leaf: False grad_fn: &lt;MulBackward0 object at 0x10e5f93f0&gt; retains_grad: False
-objective requires_grad: True is_leaf: False grad_fn: &lt;SumBackward0 object at 0x10e6400a0&gt; retains_grad: False
+h requires_grad: True is_leaf: False grad_fn: &lt;MulBackward0 object at 0x112684310&gt; retains_grad: False
+objective requires_grad: True is_leaf: False grad_fn: &lt;SumBackward0 object at 0x112686f80&gt; retains_grad: False
 x.grad before backward: None
 </pre>
 </div>
@@ -8864,7 +8864,7 @@ h is still a non-leaf: True
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>source requires_grad: True is_leaf: True grad_fn: None
-clone requires_grad: True is_leaf: False grad_fn: &lt;CloneBackward0 object at 0x10e62b0d0&gt;
+clone requires_grad: True is_leaf: False grad_fn: &lt;CloneBackward0 object at 0x1126cbb20&gt;
 detach requires_grad: False is_leaf: True grad_fn: None
 no_grad result requires_grad: False is_leaf: True grad_fn: None
 </pre>
@@ -8923,14 +8923,14 @@ no_grad result requires_grad: False is_leaf: True grad_fn: None
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>leaf: True None tensor([18., 36.])
-hidden: False &lt;MulBackward0 object at 0x10e5b2170&gt; None
+hidden: False &lt;MulBackward0 object at 0x1126cb250&gt; None
 </pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>/var/folders/w9/wt0x5nzx3jngfvpdt_2j15p00000gn/T/ipykernel_31297/1142738744.py:5: UserWarning: The .grad attribute of a Tensor that is not a leaf Tensor is being accessed. Its .grad attribute won't be populated during autograd.backward(). If you indeed want the .grad field to be populated for a non-leaf Tensor, use .retain_grad() on the non-leaf Tensor. If you access the non-leaf Tensor by mistake, make sure you access the leaf Tensor instead. See github.com/pytorch/pytorch/pull/30531 for more information. (Triggered internally at /Users/runner/work/pytorch/pytorch/build/aten/src/ATen/core/TensorBody.h:493.)
+<pre>/var/folders/w9/wt0x5nzx3jngfvpdt_2j15p00000gn/T/ipykernel_33012/1142738744.py:5: UserWarning: The .grad attribute of a Tensor that is not a leaf Tensor is being accessed. Its .grad attribute won't be populated during autograd.backward(). If you indeed want the .grad field to be populated for a non-leaf Tensor, use .retain_grad() on the non-leaf Tensor. If you access the non-leaf Tensor by mistake, make sure you access the leaf Tensor instead. See github.com/pytorch/pytorch/pull/30531 for more information. (Triggered internally at /Users/runner/work/pytorch/pytorch/build/aten/src/ATen/core/TensorBody.h:493.)
   print("hidden:", hidden.is_leaf, hidden.grad_fn, hidden.grad)
 </pre>
 </div>

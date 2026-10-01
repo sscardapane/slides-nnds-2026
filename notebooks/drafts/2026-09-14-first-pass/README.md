@@ -208,3 +208,10 @@ optional, with the image exercise last and framed as reusing the lab's training
 loop with an MLP; its storage and extrapolation questions are now an extension.
 A learning-rate instability demonstration belongs to the MLP material, since the
 penguin data cannot show one.
+
+PT02 Section 9 (Simone, October 1) trains a one-hidden-layer MLP on the penguins
+with the unchanged `fit`/`training_step` code, for use after the MLP lecture.
+Two questions, with instructor answers and asserted reference runs, show what
+the linear model hid: `lr=10` makes the MLP's loss explode (about 2e5 in the
+recorded run, NaN at 30), and zero initialization leaves every weight at zero,
+so only the output bias learns. The image exercise now builds on this section.
