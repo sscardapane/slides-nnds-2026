@@ -7802,9 +7802,9 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="PT01:-Introduction-to-PyTorch-%E2%80%94-solutions">PT01: Introduction to PyTorch — solutions<a class="anchor-link" href="#PT01:-Introduction-to-PyTorch-%E2%80%94-solutions">¶</a></h1><p>If you do not have prior exposure to PyTorch, read and run this notebook before PT02 (or at least go through the <a href="https://docs.pytorch.org/docs/2.14/index.html">basic documentation of PyTorch</a>). Knowledge of NumPy helps, since most of the array syntax should look familiar.</p>
-<p>We will use a small batch of examples to compute predictions, a loss, and its gradients, with additional material on the internals of PyTorch towards the end.</p>
-<p>Before running a cell, try to predict its output or at least its shape. If something is unexpected, change a small example and run it again.</p>
+<h1 id="PT01:-Introduction-to-PyTorch-(instructor-version)">PT01: Introduction to PyTorch (instructor version)<a class="anchor-link" href="#PT01:-Introduction-to-PyTorch-(instructor-version)">¶</a></h1><p>This notebook covers the PyTorch we need for the first labs: tensors, batched linear models, gradients and parameter updates. If you have used PyTorch before, skim Sections 1 to 5 and try the short check at the end of Section 5. If you have not, read and run everything up to that check before PT02 (the <a href="https://docs.pytorch.org/docs/2.14/index.html">PyTorch documentation</a> is a good companion). Knowing NumPy helps, since most of the array syntax is the same.</p>
+<p>Everything after the check is optional: a closer look at autograd, a few short debugging exercises, and how tensors are stored in memory. Two subsections inside Sections 3 and 4 are also marked optional; skip them on a first read.</p>
+<p>A good habit: before running a cell, predict its output, or at least its shape. If something surprises you, change the example and run it again.</p>
 </div>
 </div>
 </div>
@@ -7815,7 +7815,7 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput celltag_reference" data-mime-type="text/markdown">
-<p>This is the instructor notebook. The guided examples are shared with the student version; exercise diagnoses and executable repairs appear only here. Edit this source and rebuild the student notebook with <code>make_student_notebook.py</code>.</p>
+<p>This is the instructor notebook. The worked examples are shared with the student version; answers to the check and the exercises appear only here. Edit this file and rebuild the student notebook with <code>make_student_notebook.py</code>.</p>
 </div>
 </div>
 </div>
@@ -7826,7 +7826,7 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p><strong>Important</strong>: We use <code>jaxtyping</code> to annotate shapes for the inputs and outputs when feasible. For example, <code>Float[torch.Tensor, "batch features"]</code> means a floating-point tensor with two named axes. If the import fails, install <code>jaxtyping</code> with <code>%pip install jaxtyping</code> in a code cell, then rerun the imports.</p>
+<p>We annotate the shapes of function inputs and outputs with <code>jaxtyping</code>. For example, <code>Float[torch.Tensor, "batch features"]</code> is a floating-point tensor with two axes, named <code>batch</code> and <code>features</code>. The annotations are only documentation: nothing checks them when the code runs. The next cell installs the package, which you need on Colab.</p>
 </div>
 </div>
 </div>
@@ -7851,8 +7851,7 @@ a.anchor-link {
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre><span class="ansi-yellow-fg">WARNING: The directory '/Users/simonescardapane/Library/Caches/pip' or its parent directory is not owned or is not writable by the current user. The cache has been disabled. Check the permissions and owner of that directory. If executing pip with sudo, you should use sudo's -H flag.</span><span class="ansi-yellow-fg">
-</span>Requirement already satisfied: jaxtyping in /private/tmp/pt01-exercises-venv/lib/python3.12/site-packages (0.3.11)
+<pre>Requirement already satisfied: jaxtyping in /private/tmp/pt01-exercises-venv/lib/python3.12/site-packages (0.3.11)
 Requirement already satisfied: wadler-lindig&gt;=0.1.3 in /private/tmp/pt01-exercises-venv/lib/python3.12/site-packages (from jaxtyping) (0.1.7)
 </pre>
 </div>
@@ -7916,7 +7915,7 @@ Requirement already satisfied: wadler-lindig&gt;=0.1.3 in /private/tmp/pt01-exer
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="1.-Tensors">1. Tensors<a class="anchor-link" href="#1.-Tensors">¶</a></h2><p>The core array type is <code>torch.Tensor</code>. We can construct one with <code>torch.tensor</code>, or use functions such as <code>torch.zeros</code> and <code>torch.randn</code>. Here, each row is an example and each column is a feature: $X \sim (B,D)$, with $B=3$ and $D=2$.</p>
+<h2 id="1.-Tensors">1. Tensors<a class="anchor-link" href="#1.-Tensors">¶</a></h2><p>The basic data type is <code>torch.Tensor</code>, PyTorch's version of a NumPy array. We can build one from a list with <code>torch.tensor</code>, or with functions such as <code>torch.zeros</code> and <code>torch.randn</code>. In this course a batch of data has one example per row and one feature per column. Here $X \sim (B,D)$, with $B=3$ examples and $D=2$ features.</p>
 </div>
 </div>
 </div>
@@ -7963,8 +7962,8 @@ Device: cpu
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p><code>X.to(...)</code> can be used to move the data to a different device, but we don't need it for now.</p>
-<p>Indexing follows NumPy's zero-based convention. Compare the last two expressions below: selecting a column can remove its dimension.</p>
+<p>Every tensor also lives on a device (CPU or GPU). <code>X.to(...)</code> moves it to another one; we do not need this yet.</p>
+<p>Indexing works as in NumPy. Look at the last two lines: indexing a single column drops that axis, while slicing keeps it.</p>
 </div>
 </div>
 </div>
@@ -8013,9 +8012,9 @@ Last feature, keeping its axis:
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="2.-A-batch-of-linear-predictions">2. A batch of linear predictions<a class="anchor-link" href="#2.-A-batch-of-linear-predictions">¶</a></h2><p>For one example, our model is $z=Wx+b$. With examples stored in rows, the batched version is</p>
+<h2 id="2.-A-batch-of-linear-predictions">2. A batch of linear predictions<a class="anchor-link" href="#2.-A-batch-of-linear-predictions">¶</a></h2><p>For a single example $x$, a linear model with $C$ outputs computes $z=Wx+b$. With the examples stored as rows, we can process the whole batch at once:</p>
 <p>$$Z=XW^\top+b.$$</p>
-<p>Here $W\sim(C,D)$ and $Z\sim(B,C)$. The bias has shape $(C,)$ and is broadcast over the examples. <code>@</code> is matrix multiplication; <code>*</code> is elementwise multiplication.</p>
+<p>Here $W\sim(C,D)$, $b\sim(C,)$ and $Z\sim(B,C)$. The bias is a single vector, and PyTorch <em>broadcasts</em> it: it is added to every row. <code>@</code> is matrix multiplication, while <code>*</code> is elementwise multiplication. The last line checks the first row of <code>Z</code> against the single-example formula.</p>
 </div>
 </div>
 </div>
@@ -8059,8 +8058,8 @@ Last feature, keeping its axis:
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>Reductions remove an axis unless we ask to keep it (e.g., if the result should be used in another broadcast).</p>
-<p>For example, subtracting the mean of each feature requires reducing over the examples, not over the features. Try changing <code>dim=0</code> to <code>dim=1</code> below and inspect what gets centered.</p>
+<p>Reductions such as <code>sum</code> and <code>mean</code> remove the axis they reduce over. With <code>keepdim=True</code> the axis stays, with size one, which is what we need when the result is broadcast back against the original tensor.</p>
+<p>For example, to center each feature we average over the examples (<code>dim=0</code>), not over the features. Change <code>dim=0</code> to <code>dim=1</code> below: what gets centered now?</p>
 </div>
 </div>
 </div>
@@ -8105,7 +8104,7 @@ tensor([[-1.000, -0.333],
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="3.-Computing-gradients">3. Computing gradients<a class="anchor-link" href="#3.-Computing-gradients">¶</a></h2><p>Consider a regression model $\hat y=Xw+b$ with a mean squared error. We tell PyTorch which arrays need gradients (the parameters) using <code>requires_grad=True</code>. Before running the next cells, predict the shapes of the loss, <code>w.grad</code> and <code>bias.grad</code>.</p>
+<h2 id="3.-Computing-gradients">3. Computing gradients<a class="anchor-link" href="#3.-Computing-gradients">¶</a></h2><p>Take a regression model $\hat y=Xw+b$ with a mean squared error loss. We mark the tensors we want gradients for (the parameters) with <code>requires_grad=True</code>. Before running the next cell, predict the shapes of the loss, <code>w.grad</code> and <code>bias.grad</code>.</p>
 </div>
 </div>
 </div>
@@ -8158,8 +8157,8 @@ bias.grad: tensor(-1.)
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p><code>backward()</code> computes gradients of this scalar loss. By default, <code>.grad</code> is populated for the leaf tensors that require gradients, such as <code>w</code> and <code>bias</code>. An intermediate tensor can require gradients without storing them in its own <code>.grad</code> field.</p>
-<p>PyTorch records operations during the forward pass. Backward uses the saved information and normally releases the saved tensors afterward. To compute gradients for a new step, run a new forward pass. Reusing this same <code>loss</code> for another backward pass would require retaining its graph, which we do not need here.</p>
+<p>Calling <code>backward()</code> on the scalar loss computes its gradient with respect to the tensors we created with <code>requires_grad=True</code>, and stores it in their <code>.grad</code> field. These tensors are called <em>leaves</em>. Intermediate results such as <code>prediction</code> take part in the computation too, but their gradients are not stored.</p>
+<p>During the forward pass, PyTorch records the operations it runs; <code>backward()</code> goes back through this record. Afterwards most of the record is freed, so each new gradient needs a new forward pass. We will see how this works in detail when we study automatic differentiation.</p>
 </div>
 </div>
 </div>
@@ -8170,39 +8169,39 @@ bias.grad: tensor(-1.)
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="What-does-a-tensor-know-about-autograd?">What does a tensor know about autograd?<a class="anchor-link" href="#What-does-a-tensor-know-about-autograd?">¶</a></h3><p>The parameter <code>w</code> and the intermediate <code>prediction</code> both require gradients, but they play different roles. Inspecting a tensor tells us where it came from and whether it stores a gradient.</p>
+<h3 id="Optional:-what-a-tensor-knows-about-autograd">Optional: what a tensor knows about autograd<a class="anchor-link" href="#Optional:-what-a-tensor-knows-about-autograd">¶</a></h3><p>Skip this on a first read if PyTorch is new to you. A few attributes tell us how autograd sees a tensor:</p>
 <table>
 <thead>
 <tr>
 <th>Attribute</th>
-<th>What to look for</th>
+<th>Meaning</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>requires_grad</code></td>
-<td>Whether autograd tracks this tensor for differentiation. In ordinary grad mode, differentiable operations on tensors requiring gradients build a backward graph. This flag alone does not promise a populated <code>.grad</code>.</td>
+<td>Autograd records the operations that use this tensor.</td>
 </tr>
 <tr>
 <td><code>is_leaf</code></td>
-<td>For a tensor requiring gradients, <code>True</code> means it has no recorded operation creating it. Parameters we construct directly are leaves; recorded intermediate results are not. Tensors with <code>requires_grad=False</code> are leaves by convention.</td>
+<td>No recorded operation produced this tensor. Parameters we create ourselves are leaves. Tensors that do not require gradients are also leaves.</td>
 </tr>
 <tr>
 <td><code>grad_fn</code></td>
-<td>The backward node associated with the operation that produced this tensor, or <code>None</code> if there is no recorded creator. It is an entry point into the backward graph, not a numerical gradient.</td>
+<td>For a tensor produced by a recorded operation, the backward step of that operation. <code>None</code> for leaves. It is not a gradient.</td>
 </tr>
 <tr>
 <td><code>grad</code></td>
-<td>A gradient buffer, initially <code>None</code>. Ordinary <code>backward()</code> accumulates into the leaves requiring gradients that it reaches. Intermediate tensors need <code>retain_grad()</code> if we want their buffers too.</td>
+<td>Where <code>backward()</code> stores the gradient. It starts as <code>None</code> and, by default, is filled only for leaves.</td>
 </tr>
 <tr>
 <td><code>retains_grad</code></td>
-<td>Whether a non-leaf tensor was asked to keep its gradient. Leaves do not need this flag to store gradients.</td>
+<td>Whether an intermediate tensor was asked to keep its gradient with <code>retain_grad()</code>.</td>
 </tr>
 </tbody>
 </table>
-<p>Follow the small computation <code>x -&gt; h = 3*x -&gt; objective = sum(h**2)</code>. Predict the attributes before running it. The printed backward-node names are implementation details; the useful distinction is a node versus <code>None</code>.</p>
-<p>References: <a href="https://docs.pytorch.org/docs/stable/generated/torch.Tensor.is_leaf.html">tensor leaves</a>, <a href="https://docs.pytorch.org/tutorials/beginner/understanding_leaf_vs_nonleaf_tutorial.html">gradient retention</a>, and <a href="https://docs.pytorch.org/docs/stable/notes/autograd.html">autograd mechanics</a>.</p>
+<p>Consider the small computation $x \rightarrow h = 3x \rightarrow o = \sum_i h_i^2$. Predict the attributes of the three tensors before running the cell. The exact name printed for <code>grad_fn</code> does not matter; what matters is whether it is <code>None</code>.</p>
+<p>References: <a href="https://docs.pytorch.org/docs/stable/generated/torch.Tensor.is_leaf.html">leaf tensors</a>, <a href="https://docs.pytorch.org/tutorials/beginner/understanding_leaf_vs_nonleaf_tutorial.html">leaf and non-leaf gradients</a>, <a href="https://docs.pytorch.org/docs/stable/notes/autograd.html">autograd mechanics</a>.</p>
 </div>
 </div>
 </div>
@@ -8238,8 +8237,8 @@ bias.grad: tensor(-1.)
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>x requires_grad: True is_leaf: True grad_fn: None retains_grad: False
-h requires_grad: True is_leaf: False grad_fn: &lt;MulBackward0 object at 0x10dd32440&gt; retains_grad: False
-objective requires_grad: True is_leaf: False grad_fn: &lt;SumBackward0 object at 0x10dd33d60&gt; retains_grad: False
+h requires_grad: True is_leaf: False grad_fn: &lt;MulBackward0 object at 0x11266f430&gt; retains_grad: False
+objective requires_grad: True is_leaf: False grad_fn: &lt;SumBackward0 object at 0x10bd61e70&gt; retains_grad: False
 x.grad before backward: None
 </pre>
 </div>
@@ -8253,8 +8252,8 @@ x.grad before backward: None
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>The forward pass recorded how to propagate derivatives, but it has not populated <code>x.grad</code>. Backward starts at the scalar objective with derivative 1 and applies the chain rule toward <code>x</code>.</p>
-<p>For this example, the gradient with respect to <code>h</code> is <code>[6, 12]</code>, and the gradient with respect to <code>x</code> is <code>[18, 36]</code>. Ask to keep <code>h.grad</code> <strong>before</strong> backward. This changes which gradient we can inspect; it does not change the gradient reaching <code>x</code>.</p>
+<p>So far nothing has been differentiated, and <code>x.grad</code> is still <code>None</code>. Calling <code>backward()</code> starts from the objective, with derivative 1, and applies the chain rule back to <code>x</code>: here $\partial o/\partial h = 2h = [6, 12]$ and $\partial o/\partial x = 3 \cdot 2h = [18, 36]$.</p>
+<p>To see the gradient with respect to <code>h</code> as well, call <code>h.retain_grad()</code> <strong>before</strong> <code>backward()</code>. This only lets us look at it; the gradient that reaches <code>x</code> is the same either way.</p>
 </div>
 </div>
 </div>
@@ -8303,9 +8302,9 @@ h is still a non-leaf: True
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>A missing <code>.grad</code> does not mean a zero derivative. A tensor may not have been reached by backward, or its intermediate gradient may not have been retained. Even a reached leaf can have a numerical zero gradient: compare <code>None</code> with a tensor containing zeros.</p>
-<p>The graph and the gradient buffers have separate lifetimes. Setting <code>x.grad = None</code> clears the buffer; it does not rebuild a graph. Each forward execution records new operations. Backward normally releases the saved values those operations need, even though a tensor can still display a <code>grad_fn</code> afterward.</p>
-<p><code>h.retain_grad()</code> keeps the derivative with respect to <code>h</code>. <code>objective.backward(retain_graph=True)</code> instead preserves saved information for another backward through the same graph, using more memory. It does not clear gradients or arrange for intermediate <code>.grad</code> buffers to be kept. For ordinary training, compute a fresh forward pass each step. See <a href="https://docs.pytorch.org/docs/stable/generated/torch.Tensor.backward.html"><code>backward</code></a>.</p>
+<p>A <code>None</code> gradient is not a zero gradient. It means that <code>backward()</code> never reached the tensor, or that the tensor is an intermediate result whose gradient was not retained. A leaf that is reached always gets a tensor, possibly full of zeros.</p>
+<p>The stored gradients and the recorded computation are separate things. Setting <code>x.grad = None</code> clears the gradient and leaves the record alone. Each forward pass records new operations, and <code>backward()</code> normally frees what it needed from them (the tensor still shows a <code>grad_fn</code> afterwards).</p>
+<p>Do not confuse <code>h.retain_grad()</code> with <code>objective.backward(retain_graph=True)</code>. The first stores an intermediate gradient. The second keeps the record alive so that we can call <code>backward()</code> through it a second time, at the cost of memory; it does not clear or retain any <code>.grad</code>. In normal training we never need it, because each step runs a fresh forward pass. See <a href="https://docs.pytorch.org/docs/stable/generated/torch.Tensor.backward.html"><code>backward</code></a>.</p>
 </div>
 </div>
 </div>
@@ -8316,7 +8315,7 @@ h is still a non-leaf: True
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="4.-Updating-the-parameters">4. Updating the parameters<a class="anchor-link" href="#4.-Updating-the-parameters">¶</a></h2><p>Recall the update $\theta\leftarrow\theta-\eta\nabla L(\theta)$. The update of the parameters does not need gradients, so we perform it inside <code>torch.no_grad()</code> (this avoids storing intermediate quantities, as we will see when studying automatic differentiation). We then clear the gradients. <code>backward()</code> <strong>adds</strong> to existing gradients; it does not overwrite them.</p>
+<h2 id="4.-Updating-the-parameters">4. Updating the parameters<a class="anchor-link" href="#4.-Updating-the-parameters">¶</a></h2><p>A gradient descent step is $\theta\leftarrow\theta-\eta\nabla L(\theta)$. We run it inside <code>torch.no_grad()</code>: the update is not part of the model, so autograd should not record it (and PyTorch refuses to modify a leaf that requires gradients in place outside such a block). Then we clear the gradients, because <code>backward()</code> <strong>adds</strong> to <code>.grad</code> instead of overwriting it.</p>
 </div>
 </div>
 </div>
@@ -8364,7 +8363,7 @@ h is still a non-leaf: True
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>We can see accumulation without training anything. Keep the parameters fixed and differentiate the same function twice, rebuilding the forward computation each time.</p>
+<p>We can see this accumulation without training anything. Keep <code>a</code> fixed and differentiate the same function twice, with a new forward pass each time:</p>
 </div>
 </div>
 </div>
@@ -8410,8 +8409,8 @@ Second backward: tensor([4., 8.])
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>For logging, <code>loss.item()</code> gives a Python number. <code>tensor.detach()</code> gives a tensor disconnected from its gradient history. Use these when storing results that will not be differentiated later.</p>
-<p><code>torch.autograd.grad</code> is another interface: it returns gradients directly instead of accumulating them into <code>.grad</code>. We will use it again when studying autodiff.</p>
+<p>To log values during training, use <code>loss.item()</code>, which returns a plain Python number. If you need to keep a tensor, <code>tensor.detach()</code> returns one that is cut off from the recorded computation.</p>
+<p><code>torch.autograd.grad</code> is a second way to call autograd: it returns the gradients instead of adding them to <code>.grad</code>. We will use it again when we study automatic differentiation.</p>
 </div>
 </div>
 </div>
@@ -8452,8 +8451,13 @@ Second backward: tensor([4., 8.])
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="Cutting-a-connection">Cutting a connection<a class="anchor-link" href="#Cutting-a-connection">¶</a></h3><p><code>detach()</code> returns a tensor disconnected from its history. <code>torch.no_grad()</code> stops recording new operations inside its block; it leaves existing tensors' flags unchanged. Compare both with <code>clone()</code>, which copies data while preserving a differentiable connection.</p>
-<p>Calling <code>requires_grad_()</code> on a detached tensor starts a new leaf. It cannot recover the old connection. Also, detaching does not copy the data: the two tensors share storage. Use <code>detach().clone()</code> for an independent snapshot. See <a href="https://docs.pytorch.org/docs/stable/generated/torch.Tensor.detach.html"><code>detach</code></a>.</p>
+<h3 id="Optional:-cutting-a-connection">Optional: cutting a connection<a class="anchor-link" href="#Optional:-cutting-a-connection">¶</a></h3><p>Three operations that look similar but do different things:</p>
+<ul>
+<li><code>clone()</code> copies the data, and the copy stays connected: gradients flow back through it to the original.</li>
+<li><code>detach()</code> returns a tensor with no connection to the recorded computation. It does not copy anything: the two tensors share memory. Use <code>detach().clone()</code> for an independent snapshot.</li>
+<li>Inside a <code>torch.no_grad()</code> block, new operations are not recorded. Tensors that already exist are unchanged.</li>
+</ul>
+<p>Calling <code>requires_grad_()</code> on a detached tensor makes it a new leaf; it does not restore the old connection. See <a href="https://docs.pytorch.org/docs/stable/generated/torch.Tensor.detach.html"><code>detach</code></a>.</p>
 </div>
 </div>
 </div>
@@ -8494,7 +8498,7 @@ Second backward: tensor([4., 8.])
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>source requires_grad: True is_leaf: True grad_fn: None
-clone requires_grad: True is_leaf: False grad_fn: &lt;CloneBackward0 object at 0x10e503220&gt;
+clone requires_grad: True is_leaf: False grad_fn: &lt;CloneBackward0 object at 0x112161db0&gt;
 detach requires_grad: False is_leaf: True grad_fn: None
 no_grad result requires_grad: False is_leaf: True grad_fn: None
 </pre>
@@ -8509,8 +8513,8 @@ no_grad result requires_grad: False is_leaf: True grad_fn: None
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="5.-Classification-uses-the-same-steps">5. Classification uses the same steps<a class="anchor-link" href="#5.-Classification-uses-the-same-steps">¶</a></h2><p>For classification, $Z\sim(B,C)$ contains logits. The target $y\sim(B,)$ contains integer class indices. Softmax turns logits into probabilities when we need to inspect them.</p>
-<p>PyTorch's cross-entropy function takes <strong>logits directly</strong>. It combines the logarithm and normalization in a numerically stable form. Do not pass the probabilities to it.</p>
+<h2 id="5.-Classification-uses-the-same-steps">5. Classification uses the same steps<a class="anchor-link" href="#5.-Classification-uses-the-same-steps">¶</a></h2><p>For classification with $C$ classes, the model outputs $Z\sim(B,C)$. These unnormalized scores are called <em>logits</em>. The targets $y\sim(B,)$ are integer class indices. A softmax over each row turns the logits into probabilities, which is useful when we want to look at them.</p>
+<p><code>F.cross_entropy</code> takes the <strong>logits</strong>, not the probabilities. It applies the softmax and the logarithm internally, in a numerically stable way.</p>
 </div>
 </div>
 </div>
@@ -8558,9 +8562,9 @@ Gradient shape: torch.Size([2, 3])
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>For an ordinary training step we will clear gradients, compute predictions and a scalar loss, call <code>backward()</code>, then update the parameters. Evaluation needs predictions but does not need to build their gradient history.</p>
-<p><code>model.eval()</code> and <code>torch.no_grad()</code> do different things. The first changes the behavior of layers such as dropout and batch normalization. The second disables gradient recording. In PT02 we will use both when evaluating a model.</p>
-<p>Before PT02, make sure you can explain the bias broadcast, the shapes of the gradients, and what happens if we forget to clear them. The remaining examples are optional.</p>
+<p>Every training step has the same structure: clear the gradients, compute the predictions and a scalar loss, call <code>backward()</code>, update the parameters. For evaluation we only need the predictions, so there is no reason to record anything.</p>
+<p>Two tools are easy to confuse here. <code>model.eval()</code> changes how some layers behave, such as dropout and batch normalization, which we will see later. <code>torch.no_grad()</code> turns off recording. In PT02 we use both when evaluating a model.</p>
+<p>This is the end of the required part. Before PT02, make sure you can explain how the bias is broadcast, what shape each gradient has, and what happens if we forget to clear the gradients.</p>
 </div>
 </div>
 </div>
@@ -8571,13 +8575,13 @@ Gradient shape: torch.Size([2, 3])
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Before-PT02:-a-short-check">Before PT02: a short check<a class="anchor-link" href="#Before-PT02:-a-short-check">¶</a></h2><p>Try these without running code first. Use the next cell to try your answers.</p>
+<h2 id="Before-PT02:-a-short-check">Before PT02: a short check<a class="anchor-link" href="#Before-PT02:-a-short-check">¶</a></h2><p>Answer these without running code first, then use the next cell to test your answers.</p>
 <ol>
-<li><code>A</code> has shape <code>(3, 2)</code>. We want to center each row. What goes wrong with <code>A - A.mean(dim=1)</code>? Repair it and give the shape of the row means.</li>
-<li><code>a = torch.tensor([1., 2.], requires_grad=True)</code>. We call <code>a.square().sum().backward()</code> twice, rebuilding the forward computation each time and keeping <code>a</code> fixed. What is <code>a.grad</code> after each call? Where should we clear it if we want a fresh gradient?</li>
-<li>For <code>X @ W.T + b</code> with shapes <code>(5, 4)</code>, <code>(3, 4)</code> and <code>(3,)</code>, give the shapes of the logits, a mean cross-entropy loss, and the two parameter gradients.</li>
+<li><code>A</code> has shape <code>(3, 2)</code>. We want to center each row. What goes wrong with <code>A - A.mean(dim=1)</code>? Fix it, and give the shape of the row means.</li>
+<li><code>a = torch.tensor([1., 2.], requires_grad=True)</code>. We call <code>a.square().sum().backward()</code> twice, with a new forward pass each time and without changing <code>a</code>. What is <code>a.grad</code> after each call? Where should we clear it to get a fresh gradient?</li>
+<li>For <code>X @ W.T + b</code> with shapes <code>(5, 4)</code>, <code>(3, 4)</code> and <code>(3,)</code>, what are the shapes of the logits, of the mean cross-entropy loss, and of the two parameter gradients?</li>
 </ol>
-<p>If you cannot explain one of these, revisit the corresponding example before PT02.</p>
+<p>If one of these is unclear, go back to the corresponding example before PT02.</p>
 </div>
 </div>
 </div>
@@ -8602,10 +8606,10 @@ Gradient shape: torch.Size([2, 3])
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput celltag_reference" data-mime-type="text/markdown">
-<h3 id="Readiness-check:-answers">Readiness check: answers<a class="anchor-link" href="#Readiness-check:-answers">¶</a></h3><ol>
-<li>Reducing over <code>dim=1</code> gives <code>(3,)</code>, which cannot broadcast against <code>(3, 2)</code>. Use <code>A.mean(dim=1, keepdim=True)</code> to keep shape <code>(3, 1)</code>.</li>
-<li>The gradients are <code>[2., 4.]</code> and <code>[4., 8.]</code>. Set <code>a.grad = None</code> before each backward call when you want only the current gradient. A new forward pass does not clear it.</li>
-<li>Logits: <code>(5, 3)</code>; mean loss: <code>()</code>; weight gradient: <code>(3, 4)</code>; bias gradient: <code>(3,)</code>.</li>
+<h3 id="Check:-answers">Check: answers<a class="anchor-link" href="#Check:-answers">¶</a></h3><ol>
+<li>Reducing over <code>dim=1</code> gives shape <code>(3,)</code>, which does not broadcast against <code>(3, 2)</code>. Use <code>A.mean(dim=1, keepdim=True)</code>, with shape <code>(3, 1)</code>.</li>
+<li><code>[2., 4.]</code> after the first call and <code>[4., 8.]</code> after the second. Set <code>a.grad = None</code> before each backward call to get only the current gradient. A new forward pass does not clear it.</li>
+<li>Logits <code>(5, 3)</code>; mean loss <code>()</code>; weight gradient <code>(3, 4)</code>; bias gradient <code>(3,)</code>.</li>
 </ol>
 </div>
 </div>
@@ -8617,9 +8621,8 @@ Gradient shape: torch.Size([2, 3])
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Optional:-tensor-semantics-challenges">Optional: tensor semantics challenges<a class="anchor-link" href="#Optional:-tensor-semantics-challenges">¶</a></h2><p>These three short exercises use only tensor operations from Sections 1 and 2. You can work through them here or return to them during a lab.</p>
-<p>For each exercise, predict the shape and values of the suspect result before running the cell. Then explain the mistake, repair the expression, and write assertions for both the shape and the values. Check the expected values by hand. Show that at least one assertion rejects the original expression.</p>
-<p>All three expressions run. Does that mean they compute what we want?</p>
+<h2 id="Optional:-tensor-semantics-challenges">Optional: tensor semantics challenges<a class="anchor-link" href="#Optional:-tensor-semantics-challenges">¶</a></h2><p>Three short exercises that only need Sections 1 and 2. Each contains an expression that runs without errors but does not compute what we want. You can do them now or come back to them during a lab.</p>
+<p>For each one, predict the shape and values of the result before running the cell. Then explain the mistake and fix it. Finally, write assertions on the shape and on values you computed by hand, and check that at least one of them fails on the original expression.</p>
 </div>
 </div>
 </div>
@@ -8630,8 +8633,8 @@ Gradient shape: torch.Size([2, 3])
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="1.-One-error-per-example">1. One error per example<a class="anchor-link" href="#1.-One-error-per-example">¶</a></h3><p>We have three scalar predictions stored as a column and one target per example. We want the three prediction errors and their mean squared value.</p>
-<p>What does each entry of <code>suspect_errors</code> compare? Repair the subtraction while keeping one error per example in a tensor of shape <code>(3,)</code>. Would checking only that the final loss is a scalar catch this bug?</p>
+<h3 id="1.-One-error-per-example">1. One error per example<a class="anchor-link" href="#1.-One-error-per-example">¶</a></h3><p>We have three predictions stored as a column, with shape <code>(3, 1)</code>, and three targets with shape <code>(3,)</code>. We want the three prediction errors and their mean squared value.</p>
+<p>What does each entry of <code>suspect_errors</code> compare? Fix the subtraction so that there is one error per example, in a tensor of shape <code>(3,)</code>. Would checking that the loss is a scalar catch this bug?</p>
 </div>
 </div>
 </div>
@@ -8679,8 +8682,8 @@ MSE: tensor(5.778)
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="2.-Which-axis-contains-the-examples?">2. Which axis contains the examples?<a class="anchor-link" href="#2.-Which-axis-contains-the-examples?">¶</a></h3><p>Each row of <code>batch</code> is an example with two features. The model computes the first feature plus ten times the second, giving one prediction per row.</p>
-<p>The batch happens to be square, so both <code>batch @ weights</code> and <code>batch.T @ weights</code> are legal. Predict the values of <code>suspect_predictions</code>, then repair it and check your answer. Explain why a shape assertion alone cannot catch the mistake. As a second check, append the example <code>[5., 6.]</code> and predict what happens to each expression.</p>
+<h3 id="2.-Which-axis-contains-the-examples?">2. Which axis contains the examples?<a class="anchor-link" href="#2.-Which-axis-contains-the-examples?">¶</a></h3><p>Each row of <code>batch</code> is an example with two features. The model predicts the first feature plus ten times the second, giving one prediction per row.</p>
+<p>The batch is square, so both <code>batch @ weights</code> and <code>batch.T @ weights</code> run. Predict <code>suspect_predictions</code>, then fix it and check your answer. Why can a shape assertion not catch this mistake? As a second test, add a third example <code>[5., 6.]</code> and predict what happens to each expression.</p>
 </div>
 </div>
 </div>
@@ -8724,8 +8727,8 @@ MSE: tensor(5.778)
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="3.-Center-each-feature">3. Center each feature<a class="anchor-link" href="#3.-Center-each-feature">¶</a></h3><p>We want each feature to have mean zero across the batch. Rows are examples and columns are features.</p>
-<p>Predict <code>suspect_centered</code> and explain which quantities actually have mean zero. Repair the reduction, then check both the complete result and the mean of each feature. Why do the original and repaired results have the same shape?</p>
+<h3 id="3.-Center-each-feature">3. Center each feature<a class="anchor-link" href="#3.-Center-each-feature">¶</a></h3><p>We want each feature (column) to have mean zero across the batch.</p>
+<p>Predict <code>suspect_centered</code>. Which quantities actually have mean zero? Fix the reduction, then check both the full result and the mean of each feature. Why do the wrong and the correct result have the same shape?</p>
 </div>
 </div>
 </div>
@@ -8875,8 +8878,8 @@ MSE: tensor(5.778)
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Optional:-autograd-detective">Optional: autograd detective<a class="anchor-link" href="#Optional:-autograd-detective">¶</a></h2><p>Use the tensor attributes from Sections 3 and 4 to explain each case. Before running it, predict whether you will see an error, a missing gradient, or a numerical gradient. Decide whether that outcome matches the stated intention; some code is correct as written.</p>
-<p>Afterward, make the smallest repair if one is needed and add an assertion for the intended gradient. Each case creates fresh tensors, so you can rerun it independently after importing PyTorch. The final case catches its expected error so Run All can continue.</p>
+<h2 id="Optional:-autograd-detective">Optional: autograd detective<a class="anchor-link" href="#Optional:-autograd-detective">¶</a></h2><p>Four short cases that use the optional material in Sections 3 and 4. For each one, predict what happens before running it: an error, a missing (<code>None</code>) gradient, or a number. Then decide whether that is what the author wanted. Not every case is a bug.</p>
+<p>If a fix is needed, make the smallest one and add an assertion on the gradient you expect. Each case creates its own tensors, so you can run it on its own. The last case catches its error, so that running the whole notebook does not stop there.</p>
 </div>
 </div>
 </div>
@@ -8887,7 +8890,7 @@ MSE: tensor(5.778)
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="1.-Did-the-gradient-stop-at-the-intermediate-tensor?">1. Did the gradient stop at the intermediate tensor?<a class="anchor-link" href="#1.-Did-the-gradient-stop-at-the-intermediate-tensor?">¶</a></h3><p>We want the derivative of <code>sum(hidden**2)</code> with respect to both <code>leaf</code> and <code>hidden</code>. Predict their <code>grad_fn</code>, <code>is_leaf</code>, and <code>.grad</code> after backward. Does <code>hidden.grad is None</code> mean that backward failed to pass through <code>hidden</code>? Rebuild the computation and make both gradients available. PyTorch's warning when reading the unretained gradient is part of the observation.</p>
+<h3 id="1.-Did-the-gradient-stop-at-the-intermediate-tensor?">1. Did the gradient stop at the intermediate tensor?<a class="anchor-link" href="#1.-Did-the-gradient-stop-at-the-intermediate-tensor?">¶</a></h3><p>We want the gradient of <code>sum(hidden**2)</code> with respect to both <code>leaf</code> and <code>hidden</code>. After <code>backward()</code>, what are <code>grad_fn</code>, <code>is_leaf</code> and <code>.grad</code> for each of them? Does <code>hidden.grad is None</code> mean that the gradient did not flow through <code>hidden</code>? Rebuild the computation so that both gradients are available. PyTorch prints a warning when we read <code>hidden.grad</code>; the warning is part of the answer.</p>
 </div>
 </div>
 </div>
@@ -8919,14 +8922,14 @@ MSE: tensor(5.778)
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>leaf: True None tensor([18., 36.])
-hidden: False &lt;MulBackward0 object at 0x10d22dea0&gt; None
+hidden: False &lt;MulBackward0 object at 0x111f5df60&gt; None
 </pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>/var/folders/w9/wt0x5nzx3jngfvpdt_2j15p00000gn/T/ipykernel_24889/1142738744.py:5: UserWarning: The .grad attribute of a Tensor that is not a leaf Tensor is being accessed. Its .grad attribute won't be populated during autograd.backward(). If you indeed want the .grad field to be populated for a non-leaf Tensor, use .retain_grad() on the non-leaf Tensor. If you access the non-leaf Tensor by mistake, make sure you access the leaf Tensor instead. See github.com/pytorch/pytorch/pull/30531 for more information. (Triggered internally at /Users/runner/work/pytorch/pytorch/build/aten/src/ATen/core/TensorBody.h:493.)
+<pre>/var/folders/w9/wt0x5nzx3jngfvpdt_2j15p00000gn/T/ipykernel_27085/1142738744.py:5: UserWarning: The .grad attribute of a Tensor that is not a leaf Tensor is being accessed. Its .grad attribute won't be populated during autograd.backward(). If you indeed want the .grad field to be populated for a non-leaf Tensor, use .retain_grad() on the non-leaf Tensor. If you access the non-leaf Tensor by mistake, make sure you access the leaf Tensor instead. See github.com/pytorch/pytorch/pull/30531 for more information. (Triggered internally at /Users/runner/work/pytorch/pytorch/build/aten/src/ATen/core/TensorBody.h:493.)
   print("hidden:", hidden.is_leaf, hidden.grad_fn, hidden.grad)
 </pre>
 </div>
@@ -8940,7 +8943,7 @@ hidden: False &lt;MulBackward0 object at 0x10d22dea0&gt; None
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="2.-Can-we-reconnect-a-detached-tensor?">2. Can we reconnect a detached tensor?<a class="anchor-link" href="#2.-Can-we-reconnect-a-detached-tensor?">¶</a></h3><p>We want a gradient with respect to <code>original</code>. Someone detached an intermediate value, then enabled gradients again. Will backward raise an error? Which leaf receives a gradient? Repair the computation so the gradient reaches <code>original</code>.</p>
+<h3 id="2.-Can-we-reconnect-a-detached-tensor?">2. Can we reconnect a detached tensor?<a class="anchor-link" href="#2.-Can-we-reconnect-a-detached-tensor?">¶</a></h3><p>We want the gradient with respect to <code>original</code>. Someone detached an intermediate result, then turned gradients back on. Will <code>backward()</code> fail? Which tensor receives a gradient? Fix the code so that the gradient reaches <code>original</code>.</p>
 </div>
 </div>
 </div>
@@ -8985,8 +8988,8 @@ original.grad: None
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="3.-Is-accumulation-always-a-mistake?">3. Is accumulation always a mistake?<a class="anchor-link" href="#3.-Is-accumulation-always-a-mistake?">¶</a></h3><p>We want the gradient of the <strong>mean squared error over all three examples</strong>, but process them in two microbatches of different sizes. The parameter stays fixed until both backward calls finish.</p>
-<p>Predict <code>parameter.grad</code> after each call. Should we clear it between microbatches? Compare with one backward on the full batch. Then try replacing the normalization by <code>errors.square().mean() / len(microbatches)</code> and explain why that changes the objective here.</p>
+<h3 id="3.-Is-accumulation-always-a-mistake?">3. Is accumulation always a mistake?<a class="anchor-link" href="#3.-Is-accumulation-always-a-mistake?">¶</a></h3><p>We want the gradient of the mean squared error over <strong>all three examples</strong>, but we process them in two microbatches of different sizes. The parameter does not change between the two <code>backward()</code> calls.</p>
+<p>Predict <code>parameter.grad</code> after each call. Should we clear it between the microbatches? Compare with a single <code>backward()</code> on the full batch. Then replace the normalization with <code>errors.square().mean() / len(microbatches)</code>: why does the result change here?</p>
 </div>
 </div>
 </div>
@@ -9033,8 +9036,8 @@ Accumulated gradient: tensor(9.333)
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="4.-Does-no_grad-make-every-in-place-change-safe?">4. Does no_grad make every in-place change safe?<a class="anchor-link" href="#4.-Does-no_grad-make-every-in-place-change-safe?">¶</a></h3><p>The forward pass needs the original value of <code>mutable</code> to differentiate its square. Predict what happens if we change that value before backward, even inside <code>no_grad</code>. Repair the order so we take a gradient step with learning rate 0.1 from the original value.</p>
-<p>As a follow-up, try changing <code>mutable.detach()</code> in place before backward. Would detaching protect the original data?</p>
+<h3 id="4.-Is-every-in-place-change-safe-inside-no_grad?">4. Is every in-place change safe inside <code>no_grad</code>?<a class="anchor-link" href="#4.-Is-every-in-place-change-safe-inside-no_grad?">¶</a></h3><p>To differentiate a square, autograd needs the original value of <code>mutable</code>. What happens if we change that value before calling <code>backward()</code>, even inside <code>no_grad</code>? Reorder the code so that it takes one gradient step, with learning rate 0.1, from the original value.</p>
+<p>Then try modifying <code>mutable.detach()</code> in place before <code>backward()</code>. Does detaching protect the original data?</p>
 </div>
 </div>
 </div>
@@ -9081,7 +9084,7 @@ Accumulated gradient: tensor(9.333)
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput celltag_reference" data-mime-type="text/markdown">
-<h3 id="Autograd-detective:-diagnoses-and-repairs">Autograd detective: diagnoses and repairs<a class="anchor-link" href="#Autograd-detective:-diagnoses-and-repairs">¶</a></h3><p><strong>1. The gradient passed through <code>hidden</code>.</strong> <code>leaf</code> is a leaf with <code>grad_fn=None</code> and gradient <code>[18, 36]</code>. <code>hidden</code> is a non-leaf with a backward node. Its derivative <code>[6, 12]</code> was needed along the way, but its <code>.grad</code> buffer was not retained. Request retention before backward on a fresh computation.</p>
+<h3 id="Autograd-detective:-diagnoses-and-repairs">Autograd detective: diagnoses and repairs<a class="anchor-link" href="#Autograd-detective:-diagnoses-and-repairs">¶</a></h3><p><strong>1. The gradient did pass through <code>hidden</code>.</strong> <code>leaf</code> is a leaf, with <code>grad_fn=None</code> and gradient <code>[18, 36]</code>. <code>hidden</code> is not a leaf and has a backward node. Its gradient <code>[6, 12]</code> was computed along the way, but not stored. Call <code>retain_grad()</code> before backward, on a fresh computation.</p>
 </div>
 </div>
 </div>
@@ -9112,7 +9115,7 @@ Accumulated gradient: tensor(9.333)
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput celltag_reference" data-mime-type="text/markdown">
-<p><strong>2. Backward succeeds on the new leaf.</strong> <code>restart.grad</code> is <code>[6, 12]</code>, while <code>original.grad</code> remains <code>None</code>. Enabling gradients after detaching does not restore the operation that connected them. Keep that operation in the recorded computation.</p>
+<p><strong>2. Backward succeeds, on the wrong leaf.</strong> <code>restart.grad</code> is <code>[6, 12]</code>, while <code>original.grad</code> stays <code>None</code>. Turning gradients back on after <code>detach()</code> does not restore the operation that connected the two tensors. Keep that operation in the recorded computation.</p>
 </div>
 </div>
 </div>
@@ -9140,7 +9143,7 @@ Accumulated gradient: tensor(9.333)
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput celltag_reference" data-mime-type="text/markdown">
-<p><strong>3. Accumulation is intentional.</strong> The successive buffers contain <code>10/3</code> and <code>28/3</code>. Each microbatch contributes its sum of squared errors divided by the total number of examples. Clearing between calls would discard the first contribution. Dividing each microbatch mean by two instead would give gradient <code>11.5</code>, weighting the single-example microbatch as heavily as the two-example one.</p>
+<p><strong>3. Here accumulation is intended.</strong> The gradient is <code>10/3</code> after the first call and <code>28/3</code> after the second. Each microbatch contributes its sum of squared errors divided by the total number of examples, so clearing between the calls would throw away the first contribution. Dividing each microbatch mean by two instead gives <code>11.5</code>: the microbatch with one example then counts as much as the one with two.</p>
 </div>
 </div>
 </div>
@@ -9169,7 +9172,7 @@ Accumulated gradient: tensor(9.333)
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput celltag_reference" data-mime-type="text/markdown">
-<p><strong>4. Backward raises an error.</strong> The in-place update changed a value saved for backward. Autograd detects the modification; <code>no_grad</code> only prevents recording the update. Move the update after backward. An in-place change through <code>mutable.detach()</code> would also modify the original storage and cause this example to fail.</p>
+<p><strong>4. Backward raises an error.</strong> The in-place update changed a value that backward needs. Autograd detects this; <code>no_grad</code> only means the update itself is not recorded. Move the update after <code>backward()</code>. Modifying <code>mutable.detach()</code> in place would change the same memory and fail in the same way.</p>
 </div>
 </div>
 </div>
@@ -9201,7 +9204,7 @@ Accumulated gradient: tensor(9.333)
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Optional:-views,-copies-and-in-place-operations">Optional: views, copies and in-place operations<a class="anchor-link" href="#Optional:-views,-copies-and-in-place-operations">¶</a></h2><p>Some indexing operations return a view, while others return a copy, as shown below.</p>
+<h2 id="Optional:-views,-copies-and-in-place-operations">Optional: views, copies and in-place operations<a class="anchor-link" href="#Optional:-views,-copies-and-in-place-operations">¶</a></h2><p>Some indexing operations return a <em>view</em>, which shares memory with the original tensor; others return a copy. Slicing gives a view, while indexing with a list gives a copy:</p>
 </div>
 </div>
 </div>
@@ -9258,8 +9261,8 @@ tensor([[-9.,  2.],
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>In-place changes deserve more care when autograd is involved: backward may need a value that the operation overwrites. The explicit parameter update above is a controlled use after backward.</p>
-<p>For dense strided tensors, a transpose changes the strides without moving the underlying data. <code>reshape</code> returns a view when possible and otherwise copies. We will return to layout when it matters for performance.</p>
+<p>In-place operations need care when autograd is involved: <code>backward()</code> may need a value that the operation overwrites (see case 4 of the autograd detective). The update in Section 4 is safe because it runs after <code>backward()</code>.</p>
+<p>A tensor is stored as a flat block of memory plus <em>strides</em>: how many elements to skip to move one step along each axis. A transpose swaps the strides without moving any data, so the result is no longer <em>contiguous</em>. <code>reshape</code> returns a view when it can and copies otherwise. We will come back to memory layout when we talk about performance.</p>
 </div>
 </div>
 </div>
@@ -9302,7 +9305,8 @@ Flattened transpose: tensor([0., 2., 4., 1., 3., 5.])
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Optional:-a-few-array-operations">Optional: a few array operations<a class="anchor-link" href="#Optional:-a-few-array-operations">¶</a></h2><p>This is a collection of short examples - you can try writing the function yourself before looking at the implementation. First, sum the main diagonal and the antidiagonal. For an odd-sized matrix, count the center once in each diagonal, so it contributes twice to the sum.</p>
+<h2 id="Optional:-a-few-array-operations">Optional: a few array operations<a class="anchor-link" href="#Optional:-a-few-array-operations">¶</a></h2><p>Three short functions. Try writing each one yourself before reading the implementation.</p>
+<p>First, sum the main diagonal and the anti-diagonal of a square matrix. When the size is odd, the center element is on both diagonals, so it is counted twice.</p>
 </div>
 </div>
 </div>
@@ -9345,7 +9349,7 @@ Flattened transpose: tensor([0., 2., 4., 1., 3., 5.])
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>Next, normalize each row to have mean zero and variance one. Here variance means the average squared deviation (<code>correction=0</code>). A constant row becomes zero; there is no way to give it unit variance by rescaling its deviations.</p>
+<p>Next, normalize each row to mean zero and variance one. Variance here is the average squared deviation (<code>correction=0</code>). A constant row cannot be rescaled to unit variance, so it becomes all zeros.</p>
 </div>
 </div>
 </div>
@@ -9393,8 +9397,8 @@ Flattened transpose: tensor([0., 2., 4., 1., 3., 5.])
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>Finally, compute all pairwise cosine similarities. Normalize the rows and multiply by the transpose. This operation will return when we discuss attention-based layers.</p>
-<p>Cosine similarity is undefined for a zero vector. For this implementation we assign zero to comparisons involving a zero vector, matching PyTorch's normalization convention below.</p>
+<p>Finally, compute the cosine similarity between every pair of rows: normalize each row to unit length, then multiply by the transpose. We will meet this operation again with attention layers.</p>
+<p>Cosine similarity is undefined for a zero vector. Following <code>F.normalize</code>, we leave zero vectors at zero, so their similarity with every row is zero.</p>
 </div>
 </div>
 </div>

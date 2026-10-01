@@ -187,3 +187,14 @@ fixed Fourier buffers, held-out image metrics and storage accounting. All four
 image configurations improve their training MSE; no particular held-out ranking
 is required to pass. Plot review covers the gradient diagnostic, sparse image
 samples, reconstruction checkpoints, learning curves and dense queries.
+
+The October 1 readability pass rewrote the markdown of both instructor notebooks
+and the generated student introductions for shorter, plainer prose; code cells
+are unchanged. Required and optional parts of PT01 are now signposted, including
+the two optional autograd subsections inside Sections 3 and 4. PT02 gains one
+discussion cell after the learning-rate comparison: the training set is linearly
+separable or nearly so, so the largest rate (10.0) wins and students are pointed to
+larger rates to see the unstable first updates. Corrected the PT01 reason for
+updating under `no_grad`: in-place updates of leaves that require gradients are
+refused outside it. The full verifier passed with the October 1 environment, and
+the cited reference results did not change.

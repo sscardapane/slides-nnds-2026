@@ -36,8 +36,8 @@ def build_pt01():
                          if "reference" not in cell.get("metadata", {}).get("tags", [])]
     notebook["cells"][0]["source"][0] = "# PT01: Introduction to PyTorch\n"
     notebook["cells"][0]["source"] += lines(
-        "\nThis is the student notebook. Exercise answers and runnable repairs are "
-        "in the separate instructor notebook; the guided examples are included here.\n")
+        "\nThis is the student version: answers to the check and to the optional "
+        "exercises are not included.\n")
     return clear_execution(notebook)
 
 
@@ -65,15 +65,15 @@ def build_pt02():
     cell_by_id(notebook, "b8ce2774")["source"] = lines(
         """# PT02: Logistic regression in PyTorch
 
-Given a few measurements of a penguin, can we predict its species? We will build a linear classifier and follow its training through to evaluation.
+Given a few measurements of a penguin, can we predict its species? In this lab we build a linear classifier, train it with gradient descent and evaluate it.
 
-Read PT01 before this session. We will use its tensor operations, `backward()`, and parameter updates. The data loading and plotting code are provided. There are four activities: the forward pass, the loss, the training step, and an investigation of a training run. We then compare learning rates and extend training to mini-batches.
+You should be comfortable with PT01 up to its short check: tensor operations, `backward()` and parameter updates. Data loading and plotting are provided. You write four pieces yourself: the forward pass, the loss, the training step, and a diagnosis of a faulty training step. We then compare learning rates, switch to PyTorch's standard components and train on mini-batches.
 
-Optional material at the end uses per-example gradients to inspect the classifier. A coordinate-to-RGB exercise is left for after the MLP lecture.
+Two optional sections close the notebook. The first uses per-example gradients to look inside the trained classifier. The second is an exercise on fitting an image with an MLP, for after the MLP lecture.
 
-This is the student notebook. Complete each activity before continuing; an unfinished activity raises a clear error instead of silently using a reference implementation. Worked solutions are kept in the separate instructor notebook.
+Complete each activity before moving on: if you run a later cell first, you get an error that names the missing activity. Solutions are not included in this version.
 
-> Try to avoid AI coding assistants for these simple exercises."""
+> Try to solve these exercises without AI coding assistants."""
     )
 
     cell_by_id(notebook, "81f5c4d5")["source"] = lines(

@@ -7802,12 +7802,12 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="PT02:-Logistic-regression-in-PyTorch-%E2%80%94-solutions">PT02: Logistic regression in PyTorch — solutions<a class="anchor-link" href="#PT02:-Logistic-regression-in-PyTorch-%E2%80%94-solutions">¶</a></h1><p>Given a few measurements of a penguin, can we predict its species? We will build a linear classifier and follow its training through to evaluation.</p>
-<p>Read PT01 before this session. We will use its tensor operations, <code>backward()</code>, and parameter updates. The data loading and plotting code are provided. There are four activities: the forward pass, the loss, the training step, and an investigation of a training run. We then compare learning rates and extend training to mini-batches.</p>
-<p>Optional material at the end uses per-example gradients to inspect the classifier. A coordinate-to-RGB exercise and instructor reference are included for after the MLP lecture.</p>
-<p>This is the solutions notebook. Reference implementations are included directly, and unfinished activities fall back to them so that the full notebook remains runnable. The student notebook is distributed separately without these cells.</p>
+<h1 id="PT02:-Logistic-regression-in-PyTorch-(instructor-version)">PT02: Logistic regression in PyTorch (instructor version)<a class="anchor-link" href="#PT02:-Logistic-regression-in-PyTorch-(instructor-version)">¶</a></h1><p>Given a few measurements of a penguin, can we predict its species? In this lab we build a linear classifier, train it with gradient descent and evaluate it.</p>
+<p>You should be comfortable with PT01 up to its short check: tensor operations, <code>backward()</code> and parameter updates. Data loading and plotting are provided. You write four pieces yourself: the forward pass, the loss, the training step, and a diagnosis of a faulty training step. We then compare learning rates, switch to PyTorch's standard components and train on mini-batches.</p>
+<p>Two optional sections close the notebook. The first uses per-example gradients to look inside the trained classifier. The second is an exercise on fitting an image with an MLP, for after the MLP lecture.</p>
+<p>This is the instructor version. Reference implementations are included, and unfinished activities fall back to them, so the whole notebook runs. The student version does not contain these cells.</p>
 <blockquote>
-<p>Try to avoid AI coding assistants for these simple exercises.</p>
+<p>Try to solve these exercises without AI coding assistants.</p>
 </blockquote>
 </div>
 </div>
@@ -7819,8 +7819,8 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>We use <code>jaxtyping</code> to annotate shapes at function boundaries. For example, <code>Float[torch.Tensor, "batch features"]</code> means a floating-point tensor with two named axes. These annotations document the expected inputs and outputs; they do not enable runtime checking on their own. You still need to work out the intermediate shapes.</p>
-<p>If the import fails, install <code>jaxtyping</code> with <code>%pip install jaxtyping</code> in a code cell, then rerun the imports.</p>
+<p>As in PT01, <code>jaxtyping</code> annotations document the shapes of function inputs and outputs, for example <code>Float[torch.Tensor, "batch features"]</code>. Nothing checks them at runtime, and they say nothing about intermediate shapes: those you have to work out yourself.</p>
+<p>If the import fails, run <code>%pip install jaxtyping</code> in a new cell, then rerun the imports.</p>
 </div>
 </div>
 </div>
@@ -7879,7 +7879,7 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="1.-The-data">1. The data<a class="anchor-link" href="#1.-The-data">¶</a></h2><p>We use the <a href="https://allisonhorst.github.io/palmerpenguins/">Palmer Penguins dataset</a>, with four numeric measurements and three species: Adelie, Chinstrap and Gentoo. Each row corresponds to a penguin. We omit the two rows with missing measurements.</p>
+<h2 id="1.-The-data">1. The data<a class="anchor-link" href="#1.-The-data">¶</a></h2><p>We use the <a href="https://allisonhorst.github.io/palmerpenguins/">Palmer Penguins dataset</a>: four measurements (bill length, bill depth, flipper length and body mass) for penguins of three species, Adelie, Chinstrap and Gentoo. Each row is one penguin. We drop the two rows with missing measurements. The next cell reads the copy in <code>data/</code> if it exists, and downloads it otherwise.</p>
 </div>
 </div>
 </div>
@@ -7999,7 +7999,8 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>We split the data before estimating any means or scales. Training uses 60% of the examples, validation roughly 20%, and the remaining examples are held out for the final test. Stratification preserves approximately the same class proportions in each split.</p>
+<p>We split the data into a training set (60%), a validation set (about 20%) and a test set (the remaining 20%). The split is <em>stratified</em>: each set has roughly the same class proportions.</p>
+<p>The features have very different scales (body mass is in grams, the others in millimeters), so we standardize them. The mean and standard deviation come from the training set only, and are then applied to all three sets. This way the validation and test examples do not influence anything we compute during training.</p>
 </div>
 </div>
 </div>
@@ -8086,10 +8087,10 @@ Training means: tensor([-0.000, -0.000,  0.000, -0.000])
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="2.-The-model">2. The model<a class="anchor-link" href="#2.-The-model">¶</a></h2><p>Recall the batched linear model</p>
+<h2 id="2.-The-model">2. The model<a class="anchor-link" href="#2.-The-model">¶</a></h2><p>Recall the batched linear model from PT01,</p>
 <p>$$Z=XW^\top+b,$$</p>
-<p>with $X\sim(B,D)$, $W\sim(C,D)$, $b\sim(C,)$ and $Z\sim(B,C)$. Here $D=4$ and $C=3$. The outputs are logits; softmax is needed only when we want probabilities.</p>
-<h3 id="Activity-1:-a-batched-forward-pass">Activity 1: a batched forward pass<a class="anchor-link" href="#Activity-1:-a-batched-forward-pass">¶</a></h3><p>Implement <code>linear_logits</code> using tensor operations. Check it on the small example below, then explain how the bias is applied to every example. The model class is provided so we can concentrate on the computation.</p>
+<p>with $X\sim(B,D)$, $W\sim(C,D)$, $b\sim(C,)$ and $Z\sim(B,C)$. Here $D=4$ features and $C=3$ classes. The outputs are logits; we apply a softmax only when we need probabilities.</p>
+<h3 id="Activity-1:-a-batched-forward-pass">Activity 1: a batched forward pass<a class="anchor-link" href="#Activity-1:-a-batched-forward-pass">¶</a></h3><p>Implement <code>linear_logits</code> with tensor operations and run the check on the small example. How is the bias added to each example? The model class that uses your function is provided after the check.</p>
 </div>
 </div>
 </div>
@@ -8168,7 +8169,7 @@ Training means: tensor([-0.000, -0.000,  0.000, -0.000])
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p><code>nn.Module</code> collects the parameters of a model. Wrapping a tensor in <code>nn.Parameter</code> registers it as a parameter and enables gradients by default. We use zero initialization here: for a linear classifier this is fine. The same choice would need reconsideration for hidden units in an MLP.</p>
+<p>A <code>torch.nn.Module</code> keeps track of the parameters of a model. Wrapping a tensor in <code>nn.Parameter</code> registers it as a parameter and sets <code>requires_grad=True</code>. We initialize everything to zero. This is fine for a linear classifier, but it would not work for the hidden layers of an MLP, as we will see.</p>
 </div>
 </div>
 </div>
@@ -8219,10 +8220,10 @@ Trainable scalar parameters: 15
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="3.-Loss-and-accuracy">3. Loss and accuracy<a class="anchor-link" href="#3.-Loss-and-accuracy">¶</a></h2><p>For logits $z$ and class index $y$, cross-entropy can be written as</p>
+<h2 id="3.-Loss-and-accuracy">3. Loss and accuracy<a class="anchor-link" href="#3.-Loss-and-accuracy">¶</a></h2><p>For a vector of logits $z$ and correct class $y$, the cross-entropy is</p>
 <p>$$\ell(z,y)=\log\sum_c\exp(z_c)-z_y.$$</p>
-<h3 id="Activity-2:-the-loss">Activity 2: the loss<a class="anchor-link" href="#Activity-2:-the-loss">¶</a></h3><p>Implement <code>student_cross_entropy</code> from the formula above. Use <code>torch.logsumexp</code> for the normalization term, select the correct-class logit from each row, and average over examples. Do not call <code>F.cross_entropy</code> inside your implementation; we will use it to check the result.</p>
-<p>Before coding, give the shapes of the normalization term, the selected logits and the final loss. Accuracy is supplied.</p>
+<h3 id="Activity-2:-the-loss">Activity 2: the loss<a class="anchor-link" href="#Activity-2:-the-loss">¶</a></h3><p>Implement <code>student_cross_entropy</code> from this formula, averaged over the examples in the batch. Use <code>torch.logsumexp</code> for the first term, and select the logit of the correct class from each row. Do not call <code>F.cross_entropy</code>: we use it below to check your result.</p>
+<p>Before writing code, work out the shapes of the first term, of the selected logits and of the final loss. The accuracy function is provided.</p>
 </div>
 </div>
 </div>
@@ -8307,8 +8308,8 @@ Using reference loss
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>At initialization all logits are zero. The probabilities are uniform, but <code>argmax</code> resolves a tie by selecting the first class. Initial accuracy is therefore the fraction of that class, not necessarily one third.</p>
-<p>Compare both the loss and its gradients with PyTorch. We also use large logits, where a direct <code>log(softmax(...))</code> can lose numerical stability.</p>
+<p>At initialization all logits are zero, so the predicted probabilities are uniform and the loss is $\log 3$. The accuracy is not one third, though: <code>argmax</code> breaks ties by picking the first class (Adelie), so the initial accuracy is the fraction of Adelie penguins in the training set.</p>
+<p>The next cell compares your loss and its gradient with PyTorch's. The second test uses very large logits, where computing <code>log(softmax(...))</code> directly would give infinite values.</p>
 </div>
 </div>
 </div>
@@ -8358,7 +8359,7 @@ Using reference loss
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="4.-One-training-step">4. One training step<a class="anchor-link" href="#4.-One-training-step">¶</a></h2><p>We first carry out one step explicitly. Notice the order: clear gradients, compute the loss, differentiate, update. The update runs under <code>no_grad</code>; the forward pass does not.</p>
+<h2 id="4.-One-training-step">4. One training step<a class="anchor-link" href="#4.-One-training-step">¶</a></h2><p>Here is one gradient descent step written out in full. The order is: clear the gradients, compute the loss, call <code>backward()</code>, update. Only the update runs inside <code>no_grad</code>.</p>
 </div>
 </div>
 </div>
@@ -8410,8 +8411,8 @@ Loss after: 0.9933529496192932
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="Activity-3:-train-the-classifier">Activity 3: train the classifier<a class="anchor-link" href="#Activity-3:-train-the-classifier">¶</a></h3><p>Put the update into <code>training_step</code>. It should update the model in place and return the loss <strong>before</strong> the update as a Python number. Data are arguments, so the function can later receive a mini-batch without using global variables.</p>
-<p>Run the checks and the complete training loop. Inspect the training and validation curves together. Keep the test split for the end; we will compare learning rates below.</p>
+<h3 id="Activity-3:-train-the-classifier">Activity 3: train the classifier<a class="anchor-link" href="#Activity-3:-train-the-classifier">¶</a></h3><p>Move this update into <code>training_step</code>. The function changes the model in place and returns the loss computed <strong>before</strong> the update, as a Python number. The data are arguments rather than global variables, so later we can call the same function on mini-batches.</p>
+<p>The next cell checks your function over two consecutive steps; the second step catches gradients that were not cleared. Then run the training loop and look at the training and validation curves together. Leave the test set alone until the end.</p>
 </div>
 </div>
 </div>
@@ -8571,8 +8572,8 @@ Loss after: 0.9933529496192932
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>Here each update uses the full training set, so one update is also one epoch. For mini-batch training, an epoch contains several updates.</p>
-<p>Loss can decrease while accuracy stays unchanged: the probabilities can improve without changing the largest logit. Look for an interval in your curves where this happens.</p>
+<p>Each update uses the whole training set, so here one update is one epoch (one pass through the data). With mini-batches, an epoch contains several updates.</p>
+<p>The loss can go down while the accuracy stays flat: the probability of the correct class can grow without changing which class has the largest logit. Can you find such an interval in your curves?</p>
 </div>
 </div>
 </div>
@@ -8583,8 +8584,8 @@ Loss after: 0.9933529496192932
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="Comparing-learning-rates">Comparing learning rates<a class="anchor-link" href="#Comparing-learning-rates">¶</a></h3><p>Before running this cell, predict how the curves will differ for <code>0.001</code>, <code>0.1</code> and <code>10.0</code>. Every run starts from the same parameters and receives 200 full-batch updates. Only the learning rate changes.</p>
-<p>Compare the loss curves as well as the final validation values. Does the largest rate make faster progress throughout? Does accuracy tell the same story? Select a run using validation loss; do not inspect the test set yet.</p>
+<h3 id="Comparing-learning-rates">Comparing learning rates<a class="anchor-link" href="#Comparing-learning-rates">¶</a></h3><p>Every run starts from the same parameters and makes 200 full-batch updates; only the learning rate changes. Before running the cell, predict how the curves for <code>0.001</code>, <code>0.1</code> and <code>10.0</code> will differ. Does accuracy tell the same story as the loss?</p>
+<p>We keep the run with the lowest final validation loss. The test set plays no part in this choice.</p>
 </div>
 </div>
 </div>
@@ -8661,14 +8662,26 @@ Loss after: 0.9933529496192932
 </div>
 </div>
 </div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=lr-discussion">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>On this dataset the largest rate wins clearly. Do not read this as a general rule. With these four features the three species are linearly separable on the training set, or very nearly so. When that happens, the cross-entropy keeps decreasing as the weights grow, and a larger step simply gets there faster. You can check it by printing <code>model.weight.norm()</code> for each run.</p>
+<p>Try larger rates, such as 100 or 1000, and look at the first few updates. With a hidden layer or a harder problem, rates this large usually make training unstable.</p>
+</div>
+</div>
+</div>
+</div>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=3b5d1689">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="5.-Investigating-a-training-run">5. Investigating a training run<a class="anchor-link" href="#5.-Investigating-a-training-run">¶</a></h2><h3 id="Activity-4:-a-different-training-run">Activity 4: a different training run<a class="anchor-link" href="#Activity-4:-a-different-training-run">¶</a></h3><p>A colleague gives you the function below. It runs, and its loss may even decrease faster at first. Does it implement the same gradient descent procedure?</p>
-<p>Compare it with your working step using identical initial parameters and data. Find a small experiment that distinguishes the two procedures. Write down what you expect, run it, then repair the function. A falling loss alone is not enough to decide.</p>
+<h2 id="5.-Investigating-a-training-run">5. Investigating a training run<a class="anchor-link" href="#5.-Investigating-a-training-run">¶</a></h2><h3 id="Activity-4:-a-different-training-step">Activity 4: a different training step<a class="anchor-link" href="#Activity-4:-a-different-training-step">¶</a></h3><p>A colleague gives you the function below. It runs, and at first its loss may even fall faster than yours. Is it the same gradient descent?</p>
+<p>Compare it with your <code>training_step</code>, starting from the same parameters and data. Design a small experiment that tells the two apart: write down what you expect, run it, then fix the function. A decreasing loss alone does not settle the question.</p>
 </div>
 </div>
 </div>
@@ -8784,9 +8797,9 @@ Loss after: 0.9933529496192932
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <details>
-<summary>Discussion after the investigation</summary>
-<p>The suspect step accumulates gradients from earlier steps. After parameters change, those earlier gradients are evaluated at different points. The update is therefore no longer the intended gradient descent step. It may still reduce the loss, which is why looking only at the loss curve can miss the problem.</p>
-<p>Accumulation can be intentional when combining mini-batches before one update, with the loss scaling chosen appropriately. Here we update after every backward pass and never clear the gradients.</p>
+<summary>Discussion (open after the investigation)</summary>
+<p><code>suspect_step</code> never clears the gradients, so each update uses the sum of all gradients computed so far, most of them at older parameter values. This is no longer gradient descent. The loss can still go down, which is why the loss curve alone does not reveal the bug.</p>
+<p>Accumulating gradients is sometimes what we want, for example to combine several mini-batches into one update, as long as the loss is scaled correctly (see case 3 of the autograd detective in PT01). Here, instead, we update after every <code>backward()</code> and never clear.</p>
 </details>
 </div>
 </div>
@@ -8798,8 +8811,8 @@ Loss after: 0.9933529496192932
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="6.-Using-the-standard-components">6. Using the standard components<a class="anchor-link" href="#6.-Using-the-standard-components">¶</a></h2><p>We can now replace the explicit matrix parameters with <code>nn.Linear</code>, the loss with <code>F.cross_entropy</code>, and the update with an optimizer. These abstractions should implement the same computation.</p>
-<p>To compare them, start with identical parameters. Comparing independently initialized models would mix implementation differences with initialization differences.</p>
+<h2 id="6.-Using-the-standard-components">6. Using the standard components<a class="anchor-link" href="#6.-Using-the-standard-components">¶</a></h2><p>In practice we do not write these pieces ourselves: <code>nn.Linear</code> holds the weight and bias, <code>F.cross_entropy</code> computes the loss, and an optimizer such as <code>torch.optim.SGD</code> performs the update. They should compute exactly what our code computes.</p>
+<p>To check it, we copy the parameters of our model into the standard one and compare a single update. If the two models started from different random parameters, we could not tell implementation differences apart from initialization differences.</p>
 </div>
 </div>
 </div>
@@ -8853,9 +8866,9 @@ Loss after: 0.9933529496192932
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="7.-From-full-batches-to-mini-batches">7. From full batches to mini-batches<a class="anchor-link" href="#7.-From-full-batches-to-mini-batches">¶</a></h2><p>A <code>TensorDataset</code> pairs each feature row with its label. A <code>DataLoader</code> groups these pairs into batches and can shuffle their order each epoch.</p>
-<p>Before running: with 205 examples and batches of 32, how many updates are there in one epoch? How many examples are in the final batch?</p>
-<p>We start a separate model from the same initial parameters and use <code>lr=0.1</code>. Compare it with the full-batch run at that rate. Equal epoch counts mean equal passes through the data, but different numbers of parameter updates; this is not a comparison at equal update counts.</p>
+<h2 id="7.-From-full-batches-to-mini-batches">7. From full batches to mini-batches<a class="anchor-link" href="#7.-From-full-batches-to-mini-batches">¶</a></h2><p>A <code>TensorDataset</code> pairs each row of features with its label. A <code>DataLoader</code> splits the dataset into batches and, with <code>shuffle=True</code>, uses a new order in every epoch.</p>
+<p>Before running: with 205 training examples and batches of 32, how many updates are there in one epoch? How large is the last batch?</p>
+<p>We train a new model from the same initial parameters with <code>lr=0.1</code> and compare it with the full-batch run at the same rate. After the same number of epochs, both models have seen the data equally often, but the mini-batch model has made many more updates.</p>
 </div>
 </div>
 </div>
@@ -8928,7 +8941,7 @@ Epochs: 30; updates: 210
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>Why can two batches give different gradients at the same parameter values? What changes if you set <code>batch_size=len(ytrain)</code>? Check that one such update agrees with the full-batch update, starting from identical parameters.</p>
+<p>Why do two batches give different gradients for the same parameters? What changes if you set <code>batch_size=len(ytrain)</code>? Check that one update with this batch size matches the full-batch update, starting from the same parameters.</p>
 </div>
 </div>
 </div>
@@ -8939,8 +8952,8 @@ Epochs: 30; updates: 210
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="8.-Final-evaluation">8. Final evaluation<a class="anchor-link" href="#8.-Final-evaluation">¶</a></h2><p>The model named <code>model</code> is the full-batch run selected by final validation loss in the learning-rate experiment and is evaluated here on the test split.</p>
-<p>Compare its accuracy with always predicting the most common training class. The confusion matrix shows which species it confuses. If you use the test result to change the model again, it is no longer a final held-out evaluation.</p>
+<h2 id="8.-Final-evaluation">8. Final evaluation<a class="anchor-link" href="#8.-Final-evaluation">¶</a></h2><p>We now evaluate <code>model</code>, the full-batch run selected by validation loss, on the test set. This is the first time we use the test set.</p>
+<p>For reference, we compare its accuracy with a trivial baseline that always predicts the most common class in the training set. The confusion matrix shows which species are mistaken for which. If you go back and change the model after seeing these numbers, the test set no longer gives a fair final evaluation.</p>
 </div>
 </div>
 </div>
@@ -9049,8 +9062,8 @@ Majority-class accuracy: 0.449
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>Before leaving the notebook, pick one incorrect prediction and inspect its logits or probabilities. What can you conclude from them? What would require more evidence?</p>
-<p>The same training procedure will work when we replace the linear model with an MLP. We will make that change after discussing hidden representations.</p>
+<p>Pick one misclassified penguin and look at its logits or probabilities. Was the model confident? What can you conclude from a single example, and what would need more evidence?</p>
+<p>The same training loop works unchanged when we replace the linear model with an MLP. We will do that after discussing hidden layers.</p>
 </div>
 </div>
 </div>
@@ -9061,9 +9074,9 @@ Majority-class accuracy: 0.449
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Optional:-which-examples-drive-the-update?">Optional: which examples drive the update?<a class="anchor-link" href="#Optional:-which-examples-drive-the-update?">¶</a></h2><p>Autodiff can help us inspect a model, as well as train it. At fixed parameters, compute a separate gradient $g_i=\nabla_\theta\ell_i$ for every training example. For the mean training loss, the gradient is $\bar g=\frac{1}{N}\sum_i g_i$. A full-batch gradient descent step follows $-\bar g$.</p>
-<p>Use a copy of the earlier run with learning rate 0.1, after 200 updates. This snapshot still has enough loss to inspect. Keep the model and all labels fixed while measuring the clean gradients. We use only training examples; this analysis does not select or retrain the model used for final evaluation.</p>
-<p>Start with a loop. <code>torch.autograd.grad</code> returns each gradient directly without accumulating into parameter <code>.grad</code> buffers. Flatten the weight and bias gradients in a consistent order, giving one row per example and one column per scalar parameter.</p>
+<h2 id="Optional:-which-examples-drive-the-update?">Optional: which examples drive the update?<a class="anchor-link" href="#Optional:-which-examples-drive-the-update?">¶</a></h2><p>Autodiff is also useful to inspect a model, not only to train it. Fix the parameters and compute one gradient per training example, $g_i=\nabla_\theta\ell_i$. The gradient of the mean training loss is their average, $\bar g=\frac{1}{N}\sum_i g_i$, and a full-batch step moves along $-\bar g$. The individual $g_i$ show which examples pull the parameters, and in which direction.</p>
+<p>We use a copy of the <code>lr=0.1</code> run after 200 updates, whose loss is still far enough from zero to be interesting. We use only training examples, and nothing here changes the model evaluated above.</p>
+<p>The simplest approach is a loop over the examples. <code>torch.autograd.grad</code> returns each gradient without touching the <code>.grad</code> fields. We flatten the weight and bias gradients into one vector, which gives a matrix with one row per example and one column per parameter.</p>
 </div>
 </div>
 </div>
@@ -9124,9 +9137,13 @@ Majority-class accuracy: 0.449
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="Express-the-same-computation-with-function-transforms">Express the same computation with function transforms<a class="anchor-link" href="#Express-the-same-computation-with-function-transforms">¶</a></h3><p><code>functional_call</code> evaluates the module using an explicit parameter dictionary. <code>grad(single_example_loss)</code> makes a function that differentiates with respect to that dictionary. <code>vmap</code> applies it across examples while sharing the parameters: <code>None</code> in <code>in_dims</code> means shared, and <code>0</code> means map over the first axis.</p>
-<p>The result has one extra leading example axis for every parameter tensor. Concatenating those tensors must give the same matrix as the loop. This model has no buffers, dropout or batch-dependent layers. For models with such state, account for buffers and randomness explicitly; a one-example loss need not describe a batch-dependent computation. We make no timing claim for this small model.</p>
-<p>See <a href="https://docs.pytorch.org/tutorials/intermediate/per_sample_grads.html">PyTorch's per-sample-gradient tutorial</a>.</p>
+<h3 id="The-same-computation-with-function-transforms">The same computation with function transforms<a class="anchor-link" href="#The-same-computation-with-function-transforms">¶</a></h3><p><code>torch.func</code> lets us write the gradient for one example and apply it to the whole batch:</p>
+<ul>
+<li><code>functional_call(model, params, inputs)</code> runs the model with an explicit dictionary of parameters;</li>
+<li><code>grad(f)</code> returns a function that computes the gradient of <code>f</code> with respect to its first argument;</li>
+<li><code>vmap(f, in_dims=(None, 0, 0))</code> applies <code>f</code> to each example. <code>None</code> means that the argument (here, the parameters) is shared; <code>0</code> means that we map over the first axis of the argument.</li>
+</ul>
+<p>The result has an extra leading axis for the examples. After concatenating, it must match the loop. This works directly because our model has no dropout, batch normalization or other layers that depend on the whole batch; for such models, a one-example loss may not describe what the model computes on a batch. We do not compare timings for this small model. See <a href="https://docs.pytorch.org/tutorials/intermediate/per_sample_grads.html">PyTorch's per-sample-gradient tutorial</a>.</p>
 </div>
 </div>
 </div>
@@ -9183,8 +9200,8 @@ Majority-class accuracy: 0.449
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="Magnitude-and-direction">Magnitude and direction<a class="anchor-link" href="#Magnitude-and-direction">¶</a></h3><p>The norm $\lVert g_i\rVert$ measures how strongly one example pulls on the parameters at this snapshot. The cosine $g_i^\top\bar g/(\lVert g_i\rVert\lVert\bar g\rVert)$ measures alignment with the clean mean gradient. Positive alignment means a sufficiently small step along $-\bar g$ decreases that example's loss to first order; negative alignment means it increases it. This is a local statement, not a prediction about a whole training run. A cosine is undefined when either vector is zero.</p>
-<p>Here, "easy" and "difficult" mean low and high loss for the original label at this snapshot. Pick an easy correctly classified example and change <strong>only its label</strong>, without updating the model. Predict how its gradient will move in the plot. The changed label is synthetic; it is not evidence of an error in the dataset.</p>
+<h3 id="Magnitude-and-direction">Magnitude and direction<a class="anchor-link" href="#Magnitude-and-direction">¶</a></h3><p>Two numbers summarize each $g_i$. The norm $\lVert g_i\rVert$ measures how strongly this example pulls on the parameters. The cosine $g_i^\top\bar g/(\lVert g_i\rVert\lVert\bar g\rVert)$ measures whether it agrees with the average. If the cosine is positive, a small enough step along $-\bar g$ lowers this example's loss; if it is negative, the step raises it. This holds only locally, for small steps from the current parameters, and the cosine is undefined when either vector is zero.</p>
+<p>We highlight an <em>easy</em> example (correctly classified, with low loss) and a <em>difficult</em> one (the highest loss). Then we take the easy example and change <strong>only its label</strong>, keeping the model fixed. Before running, predict where this relabeled example will land in the two plots.</p>
 </div>
 </div>
 </div>
@@ -9280,8 +9297,8 @@ easy, changed label            84    Adelie 7.3561         4.0911               
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>Which examples dominate the mean gradient: those with large norms, those aligned with the mean, or both? Can large individual gradients cancel? Explain why this plot alone cannot identify mislabeled examples. Consider model error, ambiguous inputs, feature scales and the current parameter values.</p>
-<p>Try a different saved learning-rate run, keeping its parameters fixed during the comparison. Would you expect the ranking to stay the same? Do not remove or relabel real training examples based only on this diagnostic.</p>
+<p>Which examples dominate the mean gradient: those with a large norm, those aligned with the mean, or both? Can large gradients cancel each other out?</p>
+<p>A large gradient norm does not mean that an example is mislabeled. What else could produce one? Think about ambiguous measurements, the limits of a linear model and the current parameter values. Repeat the analysis with another run from the learning-rate comparison: do the same examples stand out?</p>
 </div>
 </div>
 </div>
@@ -9292,9 +9309,8 @@ easy, changed label            84    Adelie 7.3561         4.0911               
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput celltag_reference" data-mime-type="text/markdown">
-<h3 id="Instructor-discussion">Instructor discussion<a class="anchor-link" href="#Instructor-discussion">¶</a></h3><p>The loop and transforms compute the same derivatives; the mean-row check connects the diagnostic back to the update already taught. <code>torch.func.grad</code> differentiates a function of explicit parameters even though the supplied values were detached. It does not fill the module's <code>.grad</code> fields.</p>
-<p>The controlled comparison holds the input and parameters fixed and changes the target. Its effect is visible in both gradient magnitude and direction. A large norm is not a label-quality test: a valid hard example can also disagree strongly with the current model. Alignment must be interpreted relative to the specified clean mean gradient; changing the reference direction changes the question. Near a stationary point that mean may be tiny, making its direction unstable or undefined.</p>
-<p>There is no claim here about identifying causal training influence after retraining. To study that, we would need a different experiment. Keep the focus on using autodiff to measure a model's local behavior.</p>
+<h3 id="Instructor-discussion">Instructor discussion<a class="anchor-link" href="#Instructor-discussion">¶</a></h3><p>The loop and the transforms compute the same derivatives, and the check against the mean links the per-example view back to the full-batch update. <code>torch.func.grad</code> differentiates with respect to the explicit parameter dictionary, even though its values are detached, and it does not fill the module's <code>.grad</code> fields.</p>
+<p>Changing only the label changes both the size and the direction of the gradient. Still, a large norm is not a test of label quality: a correctly labeled but hard example can also disagree strongly with the current model. The cosine is always relative to the mean gradient. Near a minimum the mean gets small and its direction becomes unreliable. Measuring how much one example influences the final trained model would need retraining, which is a different experiment.</p>
 </div>
 </div>
 </div>
@@ -9305,16 +9321,16 @@ easy, changed label            84    Adelie 7.3561         4.0911               
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Optional-reader-exercise:-store-an-image-in-an-MLP">Optional reader exercise: store an image in an MLP<a class="anchor-link" href="#Optional-reader-exercise:-store-an-image-in-an-MLP">¶</a></h2><p>Return to this exercise after studying MLPs. It starts a different problem from penguin classification, so it is not part of the required PT02 path. Fit a function that maps a pixel coordinate <code>(x, y)</code> to its three RGB values. The small image below is generated locally; no extra download is needed.</p>
+<h2 id="Optional-exercise:-store-an-image-in-an-MLP">Optional exercise: store an image in an MLP<a class="anchor-link" href="#Optional-exercise:-store-an-image-in-an-MLP">¶</a></h2><p>Come back to this after the MLP lecture; it is a separate problem from the penguins. We fit a function that maps a pixel position <code>(x, y)</code> to its color <code>(r, g, b)</code>, so that the network itself stores the image. The next cell generates a small target image, so no download is needed.</p>
 <ol>
-<li>Build an MLP with two ReLU hidden layers and three sigmoid outputs. Train with mean squared error on <code>image_train_mask</code> only. Use coordinates scaled to <code>[-1, 1]</code>; the targets are in <code>[0, 1]</code>.</li>
-<li>Compare raw coordinates with fixed Fourier features: concatenate <code>sin(2*pi*coordinates @ frequencies.T)</code> and <code>cos(...)</code>. Use 16 frequency vectors drawn once from a normal distribution with standard deviation 1.5. Keep those vectors fixed during training.</li>
-<li>Use widths 16 and 32, seed 7, Adam with learning rate 0.01, and 400 full-batch updates for each encoding. Record training and held-out pixel MSE and reconstructions at updates 0, 100 and 400. Keep this initial comparison fixed before looking at held-out results. The same width does not imply the same parameter count when the input encoding changes.</li>
-<li>Show reconstruction quality versus trainable parameter count. Estimate the float32 storage for weights <strong>and the fixed frequency matrix</strong>, and compare it with the original RGB image stored with one byte per channel. State what this estimate omits.</li>
-<li>Query your network on a denser 64 by 64 coordinate grid. Explain why a larger rendered image does not establish that the network recovered missing detail. Optionally inspect coordinates outside <code>[-1, 1]</code>, treating this as extrapolation.</li>
+<li>Build an MLP with two ReLU hidden layers and three sigmoid outputs. Train it with the mean squared error, using only the pixels in <code>image_train_mask</code> (one pixel in four). Coordinates are in <code>[-1, 1]</code> and colors in <code>[0, 1]</code>.</li>
+<li>Compare two inputs: the raw coordinates, and <em>Fourier features</em>, the concatenation of <code>sin(2*pi*coordinates @ frequencies.T)</code> and <code>cos(...)</code>. Here <code>frequencies</code> is a fixed matrix of 16 two-dimensional vectors, drawn once from a normal distribution with standard deviation 1.5 and never trained.</li>
+<li>For each input, try hidden widths 16 and 32, with seed 7, Adam with learning rate 0.01 and 400 full-batch updates. Record the error on the training pixels and on the held-out pixels, and save the reconstructions at updates 0, 100 and 400. Fix these settings before you look at held-out results.</li>
+<li>Plot the held-out error against the number of trainable parameters; at the same width, the two inputs give different counts. Estimate the float32 storage of the network, including the frequency matrix, and compare it with the original image at one byte per channel. What does this estimate leave out?</li>
+<li>Evaluate the network on a finer 64 by 64 grid. Does the larger image contain detail that the network could not have seen? You can also try coordinates outside <code>[-1, 1]</code>, where the network is extrapolating.</li>
 </ol>
-<p>Report the reconstructions, learning curves and a small comparison table. Held-out pixels test interpolation within this one image, not generalization to new images. If you tune choices using them, reserve another set for final evaluation. Storing colors in weights is not by itself evidence of beating a conventional image codec.</p>
-<p>The reference experiment is in the instructor notebook. Background: <a href="https://bmild.github.io/fourfeat/">Tancik et al., Fourier Features Let Networks Learn High Frequency Functions in Low Dimensional Domains</a>.</p>
+<p>The held-out pixels test interpolation inside this one image, not generalization to new images. If you tune your choices on them, keep another set of pixels for the final evaluation. And storing an image in a network says nothing yet about beating a real image format.</p>
+<p>The instructor version contains a reference solution. Background: <a href="https://bmild.github.io/fourfeat/">Tancik et al., Fourier Features Let Networks Learn High Frequency Functions in Low Dimensional Domains</a>.</p>
 </div>
 </div>
 </div>
@@ -9398,8 +9414,8 @@ easy, changed label            84    Adelie 7.3561         4.0911               
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput celltag_reference" data-mime-type="text/markdown">
-<h3 id="Instructor-reference-experiment">Instructor reference experiment<a class="anchor-link" href="#Instructor-reference-experiment">¶</a></h3><p>The four configurations below use the prescribed seed and update budget on CPU. The frequency matrix is a registered buffer, so optimizers do not train it but the model state includes it. The RGB generator is only a source of target pixels; the MLP never receives its formula.</p>
-<p>This is a compact teaching run, not a tuned image codec. Inspect both the sampled-pixel fit and held-out interpolation. A single seed does not establish a general ranking of encodings or widths.</p>
+<h3 id="Instructor-reference-experiment">Instructor reference experiment<a class="anchor-link" href="#Instructor-reference-experiment">¶</a></h3><p>The four configurations use the prescribed settings and run on CPU. The frequency matrix is a registered buffer: the optimizer does not update it, but it is saved with the model. The network never sees the formula that generated the image, only pixel values.</p>
+<p>This is a small teaching run with one seed, not a tuned comparison of encodings or widths.</p>
 </div>
 </div>
 </div>
@@ -9568,10 +9584,9 @@ Original uint8 RGB payload bytes: 3072
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput celltag_reference" data-mime-type="text/markdown">
-<h3 id="Reading-the-image-experiment">Reading the image experiment<a class="anchor-link" href="#Reading-the-image-experiment">¶</a></h3><p>The training pixels constrain the function at only one quarter of the original grid. The other pixels measure interpolation within the same image. If a model fits the observed pixels but invents structure between them, training MSE alone will miss that failure. Compare the images with the held-out curves before attributing any improvement to Fourier features.</p>
-<p>The storage column counts every parameter and buffer at its actual dtype, including the Fourier matrix. It omits the decoder program, architecture metadata and file-format overhead. It compares uncompressed payloads, not JPEG or PNG files. A smaller parameter count is therefore not a compression result; even a payload smaller than RGB bytes would need a quality-matched codec comparison.</p>
-<p>The dense render samples the fitted function more often. It supplies no new observations, and extrapolation outside the training domain is even less constrained. Different seeds, image content or Fourier scales can change the result. These are suitable follow-up questions, rather than claims supported by this four-run example.</p>
-<p>In the recorded CPU run, Fourier features fit the training pixels more closely, while the raw-coordinate width-32 model has the lowest held-out MSE of these four configurations. This is a useful example of the difference between fitting observed pixels and interpolating unobserved ones.</p>
+<h3 id="Reading-the-image-experiment">Reading the image experiment<a class="anchor-link" href="#Reading-the-image-experiment">¶</a></h3><p>The network sees only a quarter of the pixels; the others measure how well it interpolates. In the recorded CPU run, Fourier features fit the training pixels much more closely, while the raw-coordinate model with width 32 has the lowest held-out error. Fitting the observed pixels and filling in the missing ones are different things, and the training error alone cannot tell them apart. Compare the images and the held-out curves before giving Fourier features the credit for any improvement.</p>
+<p>The storage column counts every parameter and buffer, including the frequency matrix. It leaves out the code needed to decode the image, the architecture description and any file format overhead. It compares uncompressed sizes, not PNG or JPEG files, so even a network smaller than the raw image would not be a compression result without a codec comparison at equal quality.</p>
+<p>The 64 by 64 render evaluates the same function at more points; it adds no information, and outside the training range the function is even less constrained. Other seeds, images or Fourier scales may change the ranking. These are good follow-up questions, not conclusions of this four-run example.</p>
 </div>
 </div>
 </div>
