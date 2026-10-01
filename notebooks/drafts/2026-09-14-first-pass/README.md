@@ -1,15 +1,20 @@
-# PT01 and PT02: first revision
+# PT01 and PT02: shared course notebooks
 
 > [!note] Written by Codex (2026-09-14)
 
-Separate local drafts for Simone's review. The original Colab notebooks and
-Notion page were not modified. These copies propose a teaching format; the
-instructor has not yet accepted the detailed content or policy on agent use.
+PT01 and PT02 are maintained here as one shared set for all courses, including
+NN and NNDS (Simone's decision, October 1, 2026). Lectures can select different
+sections from the same notebooks; additions do not require course-specific copies.
+The directory retains its original draft name for stable links. The original Colab
+notebooks and Notion page were not modified. This choice does not establish a
+course-wide policy on agent use.
 
 ## Files
 
 - `PT01_Introduction_to_PyTorch.ipynb`: required preparation, with complete
-  examples. Optional array operations and layout material follow the main path.
+  examples. Optional tensor-semantics exercises, array operations and layout
+  material follow the main path. Exercise answers are in a collapsed Markdown
+  section, separate from the student work cells.
 - `PT02_Logistic_regression.ipynb`: student lab with four activities: forward
   computation, loss, training, and investigation, followed by learning-rate
   and mini-batch experiments. It contains no reference implementations.
@@ -44,6 +49,12 @@ and automatic fallbacks exist only in the solutions notebook; they are not
 present in the student `.ipynb` or its HTML preview.
 PT01 closes its required portion with a readiness check on broadcasting,
 gradient accumulation and shapes, with expandable answers.
+
+The optional tensor-semantics section implements item 25 of the shared additions
+menu: students predict, diagnose and repair a broadcasted regression error, a
+transposed batch and centering over the wrong axis. Each uses hand-checkable
+values and asks for assertions that reject the original computation. The section
+can also be used after Section 2; it needs no autograd or PT02 material.
 
 PT02 compares three learning rates from identical initial parameters over
 200 full-batch updates, selecting the final model by validation loss. A separate
@@ -111,9 +122,20 @@ been run in Colab or on a GPU.
 The validation covers clean execution of both notebooks, filled student
 implementations, split isolation, train-only scaling, agreement with PyTorch,
 and rejection of incorrect forwards, uncleared gradients and partially
-completed updates. It also checks the loss exercise, mini-batch counts, validation-based
+completed updates. It executes the displayed PT01 exercise solutions and checks
+that they reject all three original mistakes, including cases where shapes match.
+It also checks the loss exercise, mini-batch counts, validation-based
 selection and full-size-batch update equivalence. Plot inspection covers data, training/validation curves and
 the diagnostic comparison. The seeded reference run reports validation
 accuracy 68/68 for the selected learning rate (10.0), and test accuracy 67/69, compared with a test majority baseline
 of 31/69. These are example results, not thresholds students must reproduce to
 receive credit.
+
+The October 1 tensor-semantics addition passed the full verifier on CPU with
+Python 3.12.4, PyTorch 2.14.1, jaxtyping 0.3.11, NumPy 2.5.3, pandas 3.0.6,
+scikit-learn 1.9.1 and Matplotlib 3.11.2 (nbformat 5.11.1, nbclient 0.11.0,
+nbconvert 7.17.1, ipykernel 7.4.0). All notebook and exercise checks passed;
+the sandbox reported process-inspection warnings during kernel shutdown.
+The PT01 HTML preview was regenerated and its collapsed solution blocks checked.
+Saved example outputs from the earlier pass were retained; the new exercise
+cells have no saved outputs so students can predict them before execution.

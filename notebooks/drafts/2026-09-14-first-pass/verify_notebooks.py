@@ -8,6 +8,7 @@ import copy
 import json
 import os
 from pathlib import Path
+import re
 import sys
 import tempfile
 
@@ -56,6 +57,45 @@ def main():
                 html, _ = HTMLExporter().from_notebook_node(executed)
                 path.with_suffix(".html").write_text(html)
             print("PASS clean execution:", path.name, flush=True)
+
+        # Execute the displayed PT01 answers, then check that their assertions
+        # distinguish the intended computations from the runnable mistakes.
+        pt01 = completed["PT01_Introduction_to_PyTorch"]
+        answers = next(c for c in pt01.cells if c.id == "tensor-challenge-solutions")
+        snippets = re.findall(r"```python\n(.*?)```", answers.source, re.DOTALL)
+        assert len(snippets) == 3
+        setups = [next(c.source for c in pt01.cells
+                       if c.id == f"tensor-challenge-{i}-code") for i in range(1, 4)]
+        checks = nbformat.v4.new_notebook(cells=[
+            nbformat.v4.new_code_cell("import torch"),
+            nbformat.v4.new_code_cell("\n\n".join(setups + snippets)),
+            nbformat.v4.new_code_cell('''
+def must_reject(actual, expected):
+    try:
+        torch.testing.assert_close(actual, expected)
+    except AssertionError:
+        return
+    raise AssertionError("The check accepted the original tensor-semantics bug")
+
+must_reject(suspect_errors, torch.tensor([1., 0., -1.]))
+must_reject(suspect_mse, torch.tensor(2. / 3.))
+assert suspect_predictions.shape == row_predictions.shape
+must_reject(suspect_predictions, torch.tensor([21., 43.]))
+assert suspect_centered.shape == feature_centered.shape
+must_reject(suspect_centered, torch.tensor([[-2., -10.], [0., 0.], [2., 10.]]))
+must_reject(suspect_centered.mean(dim=0), torch.zeros(2))
+try:
+    larger_batch.T @ weights
+except RuntimeError:
+    pass
+else:
+    raise AssertionError("The transposed three-example batch should fail")
+single_error = predictions[:1].squeeze(-1) - targets[:1]
+assert single_error.shape == (1,)
+torch.testing.assert_close(single_error, torch.tensor([1.]))
+''')])
+        execute(checks)
+        print("PASS PT01 displayed solutions and rejection of all three original bugs", flush=True)
 
         student_path = ROOT / "PT02_Logistic_regression.ipynb"
         student = nbformat.read(student_path, as_version=4)
