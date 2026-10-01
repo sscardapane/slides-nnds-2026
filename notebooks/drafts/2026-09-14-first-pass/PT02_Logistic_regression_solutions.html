@@ -7804,7 +7804,7 @@ a.anchor-link {
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <h1 id="PT02:-Logistic-regression-in-PyTorch-(instructor-version)">PT02: Logistic regression in PyTorch (instructor version)<a class="anchor-link" href="#PT02:-Logistic-regression-in-PyTorch-(instructor-version)">¶</a></h1><p>Given a few measurements of a penguin, can we predict its species? In this lab we build a linear classifier, train it with gradient descent and evaluate it.</p>
 <p>You should be comfortable with PT01 up to its short check: tensor operations, <code>backward()</code> and parameter updates. Data loading and plotting are provided. You write four pieces yourself: the forward pass, the loss, the training step, and a diagnosis of a faulty training step. We then compare learning rates, switch to PyTorch's standard components and train on mini-batches.</p>
-<p>Two optional sections close the notebook. The first uses per-example gradients to look inside the trained classifier. The second is an exercise on fitting an image with an MLP, for after the MLP lecture.</p>
+<p>Two optional sections close the notebook. The first uses per-example gradients to look inside the trained classifier. The second is an exercise for after the MLP lecture, where we reuse the same training loop with an MLP to fit an image.</p>
 <p>This is the instructor version. Reference implementations are included, and unfinished activities fall back to them, so the whole notebook runs. The student version does not contain these cells.</p>
 <blockquote>
 <p>Try to solve these exercises without AI coding assistants.</p>
@@ -9063,7 +9063,7 @@ Majority-class accuracy: 0.449
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <p>Pick one misclassified penguin and look at its logits or probabilities. Was the model confident? What can you conclude from a single example, and what would need more evidence?</p>
-<p>The same training loop works unchanged when we replace the linear model with an MLP. We will do that after discussing hidden layers.</p>
+<p>This is the end of the core lab. The same training loop works unchanged when we replace the linear model with an MLP: the optional exercise at the end of the notebook does exactly that, once we have discussed hidden layers.</p>
 </div>
 </div>
 </div>
@@ -9074,7 +9074,8 @@ Majority-class accuracy: 0.449
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Optional:-which-examples-drive-the-update?">Optional: which examples drive the update?<a class="anchor-link" href="#Optional:-which-examples-drive-the-update?">¶</a></h2><p>Autodiff is also useful to inspect a model, not only to train it. Fix the parameters and compute one gradient per training example, $g_i=\nabla_\theta\ell_i$. The gradient of the mean training loss is their average, $\bar g=\frac{1}{N}\sum_i g_i$, and a full-batch step moves along $-\bar g$. The individual $g_i$ show which examples pull the parameters, and in which direction.</p>
+<h2 id="Optional:-which-examples-drive-the-update?">Optional: which examples drive the update?<a class="anchor-link" href="#Optional:-which-examples-drive-the-update?">¶</a></h2><p>Nothing later in the notebook depends on this section, so you can skip it.</p>
+<p>Autodiff is also useful to inspect a model, not only to train it. Fix the parameters and compute one gradient per training example, $g_i=\nabla_\theta\ell_i$. The gradient of the mean training loss is their average, $\bar g=\frac{1}{N}\sum_i g_i$, and a full-batch step moves along $-\bar g$. The individual $g_i$ show which examples pull the parameters, and in which direction.</p>
 <p>We use a copy of the <code>lr=0.1</code> run after 200 updates, whose loss is still far enough from zero to be interesting. We use only training examples, and nothing here changes the model evaluated above.</p>
 <p>The simplest approach is a loop over the examples. <code>torch.autograd.grad</code> returns each gradient without touching the <code>.grad</code> fields. We flatten the weight and bias gradients into one vector, which gives a matrix with one row per example and one column per parameter.</p>
 </div>
@@ -9321,15 +9322,15 @@ easy, changed label            84    Adelie 7.3561         4.0911               
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Optional-exercise:-store-an-image-in-an-MLP">Optional exercise: store an image in an MLP<a class="anchor-link" href="#Optional-exercise:-store-an-image-in-an-MLP">¶</a></h2><p>Come back to this after the MLP lecture; it is a separate problem from the penguins. We fit a function that maps a pixel position <code>(x, y)</code> to its color <code>(r, g, b)</code>, so that the network itself stores the image. The next cell generates a small target image, so no download is needed.</p>
+<h2 id="Optional-exercise-(after-the-MLP-lecture):-store-an-image-in-an-MLP">Optional exercise (after the MLP lecture): store an image in an MLP<a class="anchor-link" href="#Optional-exercise-(after-the-MLP-lecture):-store-an-image-in-an-MLP">¶</a></h2><p>Once we have seen MLPs, we can reuse everything from this lab on a different problem: replace the linear model with an MLP, keep the same kind of training loop, and change the loss. Here we fit a function that maps a pixel position <code>(x, y)</code> to its color <code>(r, g, b)</code>, so that the network itself stores the image. The next cell generates a small target image, so no download is needed.</p>
 <ol>
 <li>Build an MLP with two ReLU hidden layers and three sigmoid outputs. Train it with the mean squared error, using only the pixels in <code>image_train_mask</code> (one pixel in four). Coordinates are in <code>[-1, 1]</code> and colors in <code>[0, 1]</code>.</li>
 <li>Compare two inputs: the raw coordinates, and <em>Fourier features</em>, the concatenation of <code>sin(2*pi*coordinates @ frequencies.T)</code> and <code>cos(...)</code>. Here <code>frequencies</code> is a fixed matrix of 16 two-dimensional vectors, drawn once from a normal distribution with standard deviation 1.5 and never trained.</li>
 <li>For each input, try hidden widths 16 and 32, with seed 7, Adam with learning rate 0.01 and 400 full-batch updates. Record the error on the training pixels and on the held-out pixels, and save the reconstructions at updates 0, 100 and 400. Fix these settings before you look at held-out results.</li>
-<li>Plot the held-out error against the number of trainable parameters; at the same width, the two inputs give different counts. Estimate the float32 storage of the network, including the frequency matrix, and compare it with the original image at one byte per channel. What does this estimate leave out?</li>
-<li>Evaluate the network on a finer 64 by 64 grid. Does the larger image contain detail that the network could not have seen? You can also try coordinates outside <code>[-1, 1]</code>, where the network is extrapolating.</li>
+<li>Evaluate the network on a finer 64 by 64 grid. Does the larger image contain detail that the network could not have seen?</li>
 </ol>
-<p>The held-out pixels test interpolation inside this one image, not generalization to new images. If you tune your choices on them, keep another set of pixels for the final evaluation. And storing an image in a network says nothing yet about beating a real image format.</p>
+<p>The held-out pixels test interpolation inside this one image, not generalization to new images. If you tune your choices on them, keep another set of pixels for the final evaluation.</p>
+<p>If you want to go further: plot the held-out error against the number of trainable parameters (at the same width, the two inputs give different counts), and compare the float32 size of the network, including the frequency matrix, with the original image at one byte per channel. What does this comparison leave out? You can also query coordinates outside <code>[-1, 1]</code>, where the network is extrapolating.</p>
 <p>The instructor version contains a reference solution. Background: <a href="https://bmild.github.io/fourfeat/">Tancik et al., Fourier Features Let Networks Learn High Frequency Functions in Low Dimensional Domains</a>.</p>
 </div>
 </div>

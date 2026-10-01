@@ -69,7 +69,7 @@ Given a few measurements of a penguin, can we predict its species? In this lab w
 
 You should be comfortable with PT01 up to its short check: tensor operations, `backward()` and parameter updates. Data loading and plotting are provided. You write four pieces yourself: the forward pass, the loss, the training step, and a diagnosis of a faulty training step. We then compare learning rates, switch to PyTorch's standard components and train on mini-batches.
 
-Two optional sections close the notebook. The first uses per-example gradients to look inside the trained classifier. The second is an exercise on fitting an image with an MLP, for after the MLP lecture.
+Two optional sections close the notebook. The first uses per-example gradients to look inside the trained classifier. The second is an exercise for after the MLP lecture, where we reuse the same training loop with an MLP to fit an image.
 
 Complete each activity before moving on: if you run a later cell first, you get an error that names the missing activity. Solutions are not included in this version.
 

@@ -198,3 +198,13 @@ larger rates to see the unstable first updates. Corrected the PT01 reason for
 updating under `no_grad`: in-place updates of leaves that require gradients are
 refused outside it. The full verifier passed with the October 1 environment, and
 the cited reference results did not change.
+
+Follow-up (Simone, October 1): PT01's tensor-level autograd material (attribute
+table, `x -> h -> o` walkthrough, graph lifetime, cutting a connection) moved out
+of Sections 3 and 4 into an optional "closer look at autograd" section just
+before the autograd detective, so the required path runs straight through
+Sections 1 to 5. Detective case 3 stays. In PT02 both closing sections are
+optional, with the image exercise last and framed as reusing the lab's training
+loop with an MLP; its storage and extrapolation questions are now an extension.
+A learning-rate instability demonstration belongs to the MLP material, since the
+penguin data cannot show one.

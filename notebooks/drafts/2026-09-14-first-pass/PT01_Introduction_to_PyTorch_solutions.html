@@ -7803,7 +7803,7 @@ a.anchor-link {
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <h1 id="PT01:-Introduction-to-PyTorch-(instructor-version)">PT01: Introduction to PyTorch (instructor version)<a class="anchor-link" href="#PT01:-Introduction-to-PyTorch-(instructor-version)">¶</a></h1><p>This notebook covers the PyTorch we need for the first labs: tensors, batched linear models, gradients and parameter updates. If you have used PyTorch before, skim Sections 1 to 5 and try the short check at the end of Section 5. If you have not, read and run everything up to that check before PT02 (the <a href="https://docs.pytorch.org/docs/2.14/index.html">PyTorch documentation</a> is a good companion). Knowing NumPy helps, since most of the array syntax is the same.</p>
-<p>Everything after the check is optional: a closer look at autograd, a few short debugging exercises, and how tensors are stored in memory. Two subsections inside Sections 3 and 4 are also marked optional; skip them on a first read.</p>
+<p>Everything after the check is optional: a few short tensor exercises, a closer look at autograd with some debugging cases, and how tensors are stored in memory. You can come back to these later.</p>
 <p>A good habit: before running a cell, predict its output, or at least its shape. If something surprises you, change the example and run it again.</p>
 </div>
 </div>
@@ -8163,152 +8163,6 @@ bias.grad: tensor(-1.)
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=autograd-tensor-fields">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="Optional:-what-a-tensor-knows-about-autograd">Optional: what a tensor knows about autograd<a class="anchor-link" href="#Optional:-what-a-tensor-knows-about-autograd">¶</a></h3><p>Skip this on a first read if PyTorch is new to you. A few attributes tell us how autograd sees a tensor:</p>
-<table>
-<thead>
-<tr>
-<th>Attribute</th>
-<th>Meaning</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>requires_grad</code></td>
-<td>Autograd records the operations that use this tensor.</td>
-</tr>
-<tr>
-<td><code>is_leaf</code></td>
-<td>No recorded operation produced this tensor. Parameters we create ourselves are leaves. Tensors that do not require gradients are also leaves.</td>
-</tr>
-<tr>
-<td><code>grad_fn</code></td>
-<td>For a tensor produced by a recorded operation, the backward step of that operation. <code>None</code> for leaves. It is not a gradient.</td>
-</tr>
-<tr>
-<td><code>grad</code></td>
-<td>Where <code>backward()</code> stores the gradient. It starts as <code>None</code> and, by default, is filled only for leaves.</td>
-</tr>
-<tr>
-<td><code>retains_grad</code></td>
-<td>Whether an intermediate tensor was asked to keep its gradient with <code>retain_grad()</code>.</td>
-</tr>
-</tbody>
-</table>
-<p>Consider the small computation $x \rightarrow h = 3x \rightarrow o = \sum_i h_i^2$. Predict the attributes of the three tensors before running the cell. The exact name printed for <code>grad_fn</code> does not matter; what matters is whether it is <code>None</code>.</p>
-<p>References: <a href="https://docs.pytorch.org/docs/stable/generated/torch.Tensor.is_leaf.html">leaf tensors</a>, <a href="https://docs.pytorch.org/tutorials/beginner/understanding_leaf_vs_nonleaf_tutorial.html">leaf and non-leaf gradients</a>, <a href="https://docs.pytorch.org/docs/stable/notes/autograd.html">autograd mechanics</a>.</p>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=autograd-tensor-forward">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [8]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">tensor_x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">tensor_h</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">tensor_x</span>
-<span class="n">tensor_objective</span> <span class="o">=</span> <span class="n">tensor_h</span><span class="o">.</span><span class="n">square</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-
-<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="p">[(</span><span class="s2">"x"</span><span class="p">,</span> <span class="n">tensor_x</span><span class="p">),</span> <span class="p">(</span><span class="s2">"h"</span><span class="p">,</span> <span class="n">tensor_h</span><span class="p">),</span> <span class="p">(</span><span class="s2">"objective"</span><span class="p">,</span> <span class="n">tensor_objective</span><span class="p">)]:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s2">"requires_grad:"</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">,</span> <span class="s2">"is_leaf:"</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">is_leaf</span><span class="p">,</span>
-          <span class="s2">"grad_fn:"</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">grad_fn</span><span class="p">,</span> <span class="s2">"retains_grad:"</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">retains_grad</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"x.grad before backward:"</span><span class="p">,</span> <span class="n">tensor_x</span><span class="o">.</span><span class="n">grad</span><span class="p">)</span>
-<span class="k">assert</span> <span class="n">tensor_x</span><span class="o">.</span><span class="n">is_leaf</span> <span class="ow">and</span> <span class="n">tensor_x</span><span class="o">.</span><span class="n">grad_fn</span> <span class="ow">is</span> <span class="kc">None</span>
-<span class="k">assert</span> <span class="ow">not</span> <span class="n">tensor_h</span><span class="o">.</span><span class="n">is_leaf</span> <span class="ow">and</span> <span class="n">tensor_h</span><span class="o">.</span><span class="n">grad_fn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-<span class="k">assert</span> <span class="n">tensor_x</span><span class="o">.</span><span class="n">grad</span> <span class="ow">is</span> <span class="kc">None</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>x requires_grad: True is_leaf: True grad_fn: None retains_grad: False
-h requires_grad: True is_leaf: False grad_fn: &lt;MulBackward0 object at 0x11266f430&gt; retains_grad: False
-objective requires_grad: True is_leaf: False grad_fn: &lt;SumBackward0 object at 0x10bd61e70&gt; retains_grad: False
-x.grad before backward: None
-</pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=autograd-tensor-backward-text">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>So far nothing has been differentiated, and <code>x.grad</code> is still <code>None</code>. Calling <code>backward()</code> starts from the objective, with derivative 1, and applies the chain rule back to <code>x</code>: here $\partial o/\partial h = 2h = [6, 12]$ and $\partial o/\partial x = 3 \cdot 2h = [18, 36]$.</p>
-<p>To see the gradient with respect to <code>h</code> as well, call <code>h.retain_grad()</code> <strong>before</strong> <code>backward()</code>. This only lets us look at it; the gradient that reaches <code>x</code> is the same either way.</p>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=autograd-tensor-backward">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [9]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">tensor_h</span><span class="o">.</span><span class="n">retain_grad</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Before backward:"</span><span class="p">,</span> <span class="n">tensor_x</span><span class="o">.</span><span class="n">grad</span><span class="p">,</span> <span class="n">tensor_h</span><span class="o">.</span><span class="n">grad</span><span class="p">)</span>
-<span class="n">tensor_objective</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"After backward, x.grad:"</span><span class="p">,</span> <span class="n">tensor_x</span><span class="o">.</span><span class="n">grad</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"After backward, h.grad:"</span><span class="p">,</span> <span class="n">tensor_h</span><span class="o">.</span><span class="n">grad</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"h is still a non-leaf:"</span><span class="p">,</span> <span class="ow">not</span> <span class="n">tensor_h</span><span class="o">.</span><span class="n">is_leaf</span><span class="p">)</span>
-<span class="k">assert</span> <span class="n">tensor_h</span><span class="o">.</span><span class="n">retains_grad</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">tensor_x</span><span class="o">.</span><span class="n">retains_grad</span>
-<span class="n">torch</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_close</span><span class="p">(</span><span class="n">tensor_h</span><span class="o">.</span><span class="n">grad</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">6.</span><span class="p">,</span> <span class="mf">12.</span><span class="p">]))</span>
-<span class="n">torch</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_close</span><span class="p">(</span><span class="n">tensor_x</span><span class="o">.</span><span class="n">grad</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">18.</span><span class="p">,</span> <span class="mf">36.</span><span class="p">]))</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Before backward: None None
-After backward, x.grad: tensor([18., 36.])
-After backward, h.grad: tensor([ 6., 12.])
-h is still a non-leaf: True
-</pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=autograd-tensor-lifetime">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>A <code>None</code> gradient is not a zero gradient. It means that <code>backward()</code> never reached the tensor, or that the tensor is an intermediate result whose gradient was not retained. A leaf that is reached always gets a tensor, possibly full of zeros.</p>
-<p>The stored gradients and the recorded computation are separate things. Setting <code>x.grad = None</code> clears the gradient and leaves the record alone. Each forward pass records new operations, and <code>backward()</code> normally frees what it needed from them (the tensor still shows a <code>grad_fn</code> afterwards).</p>
-<p>Do not confuse <code>h.retain_grad()</code> with <code>objective.backward(retain_graph=True)</code>. The first stores an intermediate gradient. The second keeps the record alive so that we can call <code>backward()</code> through it a second time, at the cost of memory; it does not clear or retain any <code>.grad</code>. In normal training we never need it, because each step runs a fresh forward pass. See <a href="https://docs.pytorch.org/docs/stable/generated/torch.Tensor.backward.html"><code>backward</code></a>.</p>
-</div>
-</div>
-</div>
-</div>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=3d4c998c">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
@@ -8324,7 +8178,7 @@ h is still a non-leaf: True
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [10]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [8]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">lr</span> <span class="o">=</span> <span class="mf">0.01</span>
@@ -8372,7 +8226,7 @@ h is still a non-leaf: True
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [11]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [9]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -8419,7 +8273,7 @@ Second backward: tensor([4., 8.])
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [12]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [10]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -8445,68 +8299,6 @@ Second backward: tensor([4., 8.])
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=autograd-disconnect-text">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="Optional:-cutting-a-connection">Optional: cutting a connection<a class="anchor-link" href="#Optional:-cutting-a-connection">¶</a></h3><p>Three operations that look similar but do different things:</p>
-<ul>
-<li><code>clone()</code> copies the data, and the copy stays connected: gradients flow back through it to the original.</li>
-<li><code>detach()</code> returns a tensor with no connection to the recorded computation. It does not copy anything: the two tensors share memory. Use <code>detach().clone()</code> for an independent snapshot.</li>
-<li>Inside a <code>torch.no_grad()</code> block, new operations are not recorded. Tensors that already exist are unchanged.</li>
-</ul>
-<p>Calling <code>requires_grad_()</code> on a detached tensor makes it a new leaf; it does not restore the old connection. See <a href="https://docs.pytorch.org/docs/stable/generated/torch.Tensor.detach.html"><code>detach</code></a>.</p>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=autograd-disconnect-code">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [13]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">source</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">connected_copy</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
-<span class="n">detached</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
-<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
-    <span class="n">untracked</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">source</span>
-
-<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="p">[(</span><span class="s2">"source"</span><span class="p">,</span> <span class="n">source</span><span class="p">),</span> <span class="p">(</span><span class="s2">"clone"</span><span class="p">,</span> <span class="n">connected_copy</span><span class="p">),</span>
-                <span class="p">(</span><span class="s2">"detach"</span><span class="p">,</span> <span class="n">detached</span><span class="p">),</span> <span class="p">(</span><span class="s2">"no_grad result"</span><span class="p">,</span> <span class="n">untracked</span><span class="p">)]:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s2">"requires_grad:"</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">,</span> <span class="s2">"is_leaf:"</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">is_leaf</span><span class="p">,</span>
-          <span class="s2">"grad_fn:"</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">grad_fn</span><span class="p">)</span>
-<span class="k">assert</span> <span class="n">source</span><span class="o">.</span><span class="n">requires_grad</span>
-<span class="k">assert</span> <span class="n">connected_copy</span><span class="o">.</span><span class="n">grad_fn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-<span class="k">assert</span> <span class="n">detached</span><span class="o">.</span><span class="n">grad_fn</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">detached</span><span class="o">.</span><span class="n">requires_grad</span>
-<span class="k">assert</span> <span class="n">untracked</span><span class="o">.</span><span class="n">grad_fn</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">untracked</span><span class="o">.</span><span class="n">requires_grad</span>
-<span class="n">connected_copy</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
-<span class="n">torch</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_close</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">grad</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>source requires_grad: True is_leaf: True grad_fn: None
-clone requires_grad: True is_leaf: False grad_fn: &lt;CloneBackward0 object at 0x112161db0&gt;
-detach requires_grad: False is_leaf: True grad_fn: None
-no_grad result requires_grad: False is_leaf: True grad_fn: None
-</pre>
-</div>
-</div>
-</div>
-</div>
-</div>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=b353a924">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
@@ -8523,7 +8315,7 @@ no_grad result requires_grad: False is_leaf: True grad_fn: None
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [14]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [11]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">logits</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">]],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -8590,7 +8382,7 @@ Gradient shape: torch.Size([2, 3])
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [15]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [12]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Try your repairs and shape predictions here.</span>
@@ -8643,7 +8435,7 @@ Gradient shape: torch.Size([2, 3])
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [16]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [13]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">predictions</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">1.</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.</span><span class="p">]])</span>  <span class="c1"># (B, 1)</span>
@@ -8692,7 +8484,7 @@ MSE: tensor(5.778)
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [17]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [14]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">batch</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">],</span> <span class="p">[</span><span class="mf">3.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">]])</span>  <span class="c1"># (B, D)</span>
@@ -8737,7 +8529,7 @@ MSE: tensor(5.778)
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [18]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [15]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">measurements</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">],</span> <span class="p">[</span><span class="mf">3.</span><span class="p">,</span> <span class="mf">20.</span><span class="p">],</span> <span class="p">[</span><span class="mf">5.</span><span class="p">,</span> <span class="mf">30.</span><span class="p">]])</span>  <span class="c1"># (B, D)</span>
@@ -8781,7 +8573,7 @@ MSE: tensor(5.778)
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [19]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [16]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">errors</span> <span class="o">=</span> <span class="n">predictions</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">targets</span>
@@ -8811,7 +8603,7 @@ MSE: tensor(5.778)
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [20]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [17]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">row_predictions</span> <span class="o">=</span> <span class="n">batch</span> <span class="o">@</span> <span class="n">weights</span>
@@ -8844,7 +8636,7 @@ MSE: tensor(5.778)
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [21]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [18]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">feature_centered</span> <span class="o">=</span> <span class="n">measurements</span> <span class="o">-</span> <span class="n">measurements</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -8872,13 +8664,222 @@ MSE: tensor(5.778)
 </div>
 </div>
 </div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=autograd-tensor-fields">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Optional:-a-closer-look-at-autograd">Optional: a closer look at autograd<a class="anchor-link" href="#Optional:-a-closer-look-at-autograd">¶</a></h2><p>This section goes deeper into Sections 3 and 4: what autograd stores on each tensor, and how to cut a tensor off from the recorded computation. The autograd detective cases after it build on this material.</p>
+<h3 id="What-a-tensor-knows-about-autograd">What a tensor knows about autograd<a class="anchor-link" href="#What-a-tensor-knows-about-autograd">¶</a></h3><p>A few attributes tell us how autograd sees a tensor:</p>
+<table>
+<thead>
+<tr>
+<th>Attribute</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>requires_grad</code></td>
+<td>Autograd records the operations that use this tensor.</td>
+</tr>
+<tr>
+<td><code>is_leaf</code></td>
+<td>No recorded operation produced this tensor. Parameters we create ourselves are leaves. Tensors that do not require gradients are also leaves.</td>
+</tr>
+<tr>
+<td><code>grad_fn</code></td>
+<td>For a tensor produced by a recorded operation, the backward step of that operation. <code>None</code> for leaves. It is not a gradient.</td>
+</tr>
+<tr>
+<td><code>grad</code></td>
+<td>Where <code>backward()</code> stores the gradient. It starts as <code>None</code> and, by default, is filled only for leaves.</td>
+</tr>
+<tr>
+<td><code>retains_grad</code></td>
+<td>Whether an intermediate tensor was asked to keep its gradient with <code>retain_grad()</code>.</td>
+</tr>
+</tbody>
+</table>
+<p>Consider the small computation $x \rightarrow h = 3x \rightarrow o = \sum_i h_i^2$. Predict the attributes of the three tensors before running the cell. The exact name printed for <code>grad_fn</code> does not matter; what matters is whether it is <code>None</code>.</p>
+<p>References: <a href="https://docs.pytorch.org/docs/stable/generated/torch.Tensor.is_leaf.html">leaf tensors</a>, <a href="https://docs.pytorch.org/tutorials/beginner/understanding_leaf_vs_nonleaf_tutorial.html">leaf and non-leaf gradients</a>, <a href="https://docs.pytorch.org/docs/stable/notes/autograd.html">autograd mechanics</a>.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=autograd-tensor-forward">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [19]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">tensor_x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">tensor_h</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">tensor_x</span>
+<span class="n">tensor_objective</span> <span class="o">=</span> <span class="n">tensor_h</span><span class="o">.</span><span class="n">square</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="p">[(</span><span class="s2">"x"</span><span class="p">,</span> <span class="n">tensor_x</span><span class="p">),</span> <span class="p">(</span><span class="s2">"h"</span><span class="p">,</span> <span class="n">tensor_h</span><span class="p">),</span> <span class="p">(</span><span class="s2">"objective"</span><span class="p">,</span> <span class="n">tensor_objective</span><span class="p">)]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s2">"requires_grad:"</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">,</span> <span class="s2">"is_leaf:"</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">is_leaf</span><span class="p">,</span>
+          <span class="s2">"grad_fn:"</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">grad_fn</span><span class="p">,</span> <span class="s2">"retains_grad:"</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">retains_grad</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"x.grad before backward:"</span><span class="p">,</span> <span class="n">tensor_x</span><span class="o">.</span><span class="n">grad</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">tensor_x</span><span class="o">.</span><span class="n">is_leaf</span> <span class="ow">and</span> <span class="n">tensor_x</span><span class="o">.</span><span class="n">grad_fn</span> <span class="ow">is</span> <span class="kc">None</span>
+<span class="k">assert</span> <span class="ow">not</span> <span class="n">tensor_h</span><span class="o">.</span><span class="n">is_leaf</span> <span class="ow">and</span> <span class="n">tensor_h</span><span class="o">.</span><span class="n">grad_fn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+<span class="k">assert</span> <span class="n">tensor_x</span><span class="o">.</span><span class="n">grad</span> <span class="ow">is</span> <span class="kc">None</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>x requires_grad: True is_leaf: True grad_fn: None retains_grad: False
+h requires_grad: True is_leaf: False grad_fn: &lt;MulBackward0 object at 0x10e5f93f0&gt; retains_grad: False
+objective requires_grad: True is_leaf: False grad_fn: &lt;SumBackward0 object at 0x10e6400a0&gt; retains_grad: False
+x.grad before backward: None
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=autograd-tensor-backward-text">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>So far nothing has been differentiated, and <code>x.grad</code> is still <code>None</code>. Calling <code>backward()</code> starts from the objective, with derivative 1, and applies the chain rule back to <code>x</code>: here $\partial o/\partial h = 2h = [6, 12]$ and $\partial o/\partial x = 3 \cdot 2h = [18, 36]$.</p>
+<p>To see the gradient with respect to <code>h</code> as well, call <code>h.retain_grad()</code> <strong>before</strong> <code>backward()</code>. This only lets us look at it; the gradient that reaches <code>x</code> is the same either way.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=autograd-tensor-backward">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [20]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">tensor_h</span><span class="o">.</span><span class="n">retain_grad</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Before backward:"</span><span class="p">,</span> <span class="n">tensor_x</span><span class="o">.</span><span class="n">grad</span><span class="p">,</span> <span class="n">tensor_h</span><span class="o">.</span><span class="n">grad</span><span class="p">)</span>
+<span class="n">tensor_objective</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"After backward, x.grad:"</span><span class="p">,</span> <span class="n">tensor_x</span><span class="o">.</span><span class="n">grad</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"After backward, h.grad:"</span><span class="p">,</span> <span class="n">tensor_h</span><span class="o">.</span><span class="n">grad</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"h is still a non-leaf:"</span><span class="p">,</span> <span class="ow">not</span> <span class="n">tensor_h</span><span class="o">.</span><span class="n">is_leaf</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">tensor_h</span><span class="o">.</span><span class="n">retains_grad</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">tensor_x</span><span class="o">.</span><span class="n">retains_grad</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_close</span><span class="p">(</span><span class="n">tensor_h</span><span class="o">.</span><span class="n">grad</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">6.</span><span class="p">,</span> <span class="mf">12.</span><span class="p">]))</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_close</span><span class="p">(</span><span class="n">tensor_x</span><span class="o">.</span><span class="n">grad</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">18.</span><span class="p">,</span> <span class="mf">36.</span><span class="p">]))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Before backward: None None
+After backward, x.grad: tensor([18., 36.])
+After backward, h.grad: tensor([ 6., 12.])
+h is still a non-leaf: True
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=autograd-tensor-lifetime">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>A <code>None</code> gradient is not a zero gradient. It means that <code>backward()</code> never reached the tensor, or that the tensor is an intermediate result whose gradient was not retained. A leaf that is reached always gets a tensor, possibly full of zeros.</p>
+<p>The stored gradients and the recorded computation are separate things. Setting <code>x.grad = None</code> clears the gradient and leaves the record alone. Each forward pass records new operations, and <code>backward()</code> normally frees what it needed from them (the tensor still shows a <code>grad_fn</code> afterwards).</p>
+<p>Do not confuse <code>h.retain_grad()</code> with <code>objective.backward(retain_graph=True)</code>. The first stores an intermediate gradient. The second keeps the record alive so that we can call <code>backward()</code> through it a second time, at the cost of memory; it does not clear or retain any <code>.grad</code>. In normal training we never need it, because each step runs a fresh forward pass. See <a href="https://docs.pytorch.org/docs/stable/generated/torch.Tensor.backward.html"><code>backward</code></a>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=autograd-disconnect-text">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="Cutting-a-connection">Cutting a connection<a class="anchor-link" href="#Cutting-a-connection">¶</a></h3><p>Three operations that look similar but do different things:</p>
+<ul>
+<li><code>clone()</code> copies the data, and the copy stays connected: gradients flow back through it to the original.</li>
+<li><code>detach()</code> returns a tensor with no connection to the recorded computation. It does not copy anything: the two tensors share memory. Use <code>detach().clone()</code> for an independent snapshot.</li>
+<li>Inside a <code>torch.no_grad()</code> block, new operations are not recorded. Tensors that already exist are unchanged.</li>
+</ul>
+<p>Calling <code>requires_grad_()</code> on a detached tensor makes it a new leaf; it does not restore the old connection. See <a href="https://docs.pytorch.org/docs/stable/generated/torch.Tensor.detach.html"><code>detach</code></a>.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=autograd-disconnect-code">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [21]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">source</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">connected_copy</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+<span class="n">detached</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+    <span class="n">untracked</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">source</span>
+
+<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="p">[(</span><span class="s2">"source"</span><span class="p">,</span> <span class="n">source</span><span class="p">),</span> <span class="p">(</span><span class="s2">"clone"</span><span class="p">,</span> <span class="n">connected_copy</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">"detach"</span><span class="p">,</span> <span class="n">detached</span><span class="p">),</span> <span class="p">(</span><span class="s2">"no_grad result"</span><span class="p">,</span> <span class="n">untracked</span><span class="p">)]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s2">"requires_grad:"</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">,</span> <span class="s2">"is_leaf:"</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">is_leaf</span><span class="p">,</span>
+          <span class="s2">"grad_fn:"</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">grad_fn</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">source</span><span class="o">.</span><span class="n">requires_grad</span>
+<span class="k">assert</span> <span class="n">connected_copy</span><span class="o">.</span><span class="n">grad_fn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+<span class="k">assert</span> <span class="n">detached</span><span class="o">.</span><span class="n">grad_fn</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">detached</span><span class="o">.</span><span class="n">requires_grad</span>
+<span class="k">assert</span> <span class="n">untracked</span><span class="o">.</span><span class="n">grad_fn</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">untracked</span><span class="o">.</span><span class="n">requires_grad</span>
+<span class="n">connected_copy</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_close</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">grad</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>source requires_grad: True is_leaf: True grad_fn: None
+clone requires_grad: True is_leaf: False grad_fn: &lt;CloneBackward0 object at 0x10e62b0d0&gt;
+detach requires_grad: False is_leaf: True grad_fn: None
+no_grad result requires_grad: False is_leaf: True grad_fn: None
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=autograd-detective">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Optional:-autograd-detective">Optional: autograd detective<a class="anchor-link" href="#Optional:-autograd-detective">¶</a></h2><p>Four short cases that use the optional material in Sections 3 and 4. For each one, predict what happens before running it: an error, a missing (<code>None</code>) gradient, or a number. Then decide whether that is what the author wanted. Not every case is a bug.</p>
+<h2 id="Optional:-autograd-detective">Optional: autograd detective<a class="anchor-link" href="#Optional:-autograd-detective">¶</a></h2><p>Four short cases that use the previous section. For each one, predict what happens before running it: an error, a missing (<code>None</code>) gradient, or a number. Then decide whether that is what the author wanted. Not every case is a bug.</p>
 <p>If a fix is needed, make the smallest one and add an assertion on the gradient you expect. Each case creates its own tensors, so you can run it on its own. The last case catches its error, so that running the whole notebook does not stop there.</p>
 </div>
 </div>
@@ -8922,14 +8923,14 @@ MSE: tensor(5.778)
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>leaf: True None tensor([18., 36.])
-hidden: False &lt;MulBackward0 object at 0x111f5df60&gt; None
+hidden: False &lt;MulBackward0 object at 0x10e5b2170&gt; None
 </pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>/var/folders/w9/wt0x5nzx3jngfvpdt_2j15p00000gn/T/ipykernel_27085/1142738744.py:5: UserWarning: The .grad attribute of a Tensor that is not a leaf Tensor is being accessed. Its .grad attribute won't be populated during autograd.backward(). If you indeed want the .grad field to be populated for a non-leaf Tensor, use .retain_grad() on the non-leaf Tensor. If you access the non-leaf Tensor by mistake, make sure you access the leaf Tensor instead. See github.com/pytorch/pytorch/pull/30531 for more information. (Triggered internally at /Users/runner/work/pytorch/pytorch/build/aten/src/ATen/core/TensorBody.h:493.)
+<pre>/var/folders/w9/wt0x5nzx3jngfvpdt_2j15p00000gn/T/ipykernel_31297/1142738744.py:5: UserWarning: The .grad attribute of a Tensor that is not a leaf Tensor is being accessed. Its .grad attribute won't be populated during autograd.backward(). If you indeed want the .grad field to be populated for a non-leaf Tensor, use .retain_grad() on the non-leaf Tensor. If you access the non-leaf Tensor by mistake, make sure you access the leaf Tensor instead. See github.com/pytorch/pytorch/pull/30531 for more information. (Triggered internally at /Users/runner/work/pytorch/pytorch/build/aten/src/ATen/core/TensorBody.h:493.)
   print("hidden:", hidden.is_leaf, hidden.grad_fn, hidden.grad)
 </pre>
 </div>
