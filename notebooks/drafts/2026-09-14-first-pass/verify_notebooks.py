@@ -97,6 +97,69 @@ torch.testing.assert_close(single_error, torch.tensor([1.]))
         execute(checks)
         print("PASS PT01 displayed solutions and rejection of all three original bugs", flush=True)
 
+        detective = next(c for c in pt01.cells if c.id == "autograd-detective-solutions")
+        repairs = re.findall(r"```python\n(.*?)```", detective.source, re.DOTALL)
+        assert len(repairs) == 4
+        cases = [next(c.source for c in pt01.cells if c.id == f"autograd-case-{i}")
+                 for i in range(1, 5)]
+        original_checks = '''
+import warnings
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore", UserWarning)
+    assert hidden.grad is None
+torch.testing.assert_close(leaf.grad, torch.tensor([18., 36.]))
+assert restart.is_leaf and restart.grad_fn is None and original.grad is None
+torch.testing.assert_close(restart.grad, torch.tensor([6., 12.]))
+torch.testing.assert_close(parameter.grad, torch.tensor(28. / 3.))
+
+def must_raise_runtime_error(fn):
+    try:
+        fn()
+    except RuntimeError:
+        return
+    raise AssertionError("Expected autograd to reject this operation")
+
+must_raise_runtime_error(stale_loss.backward)
+alias_source = torch.tensor([1., 2.], requires_grad=True)
+alias_loss = alias_source.square().sum()
+alias_source.detach().add_(1.)
+must_raise_runtime_error(alias_loss.backward)
+
+# None differs from a computed zero gradient.
+zero_leaf = torch.tensor(0., requires_grad=True)
+assert zero_leaf.grad is None
+zero_leaf.square().backward()
+torch.testing.assert_close(zero_leaf.grad, torch.tensor(0.))
+
+# Retaining an intermediate gradient does not retain the graph.
+graph_leaf = torch.tensor([1., 2.], requires_grad=True)
+intermediate = 3 * graph_leaf
+intermediate.retain_grad()
+graph_loss = intermediate.square().sum()
+graph_loss.backward()
+assert intermediate.grad is not None and graph_loss.grad_fn is not None
+must_raise_runtime_error(graph_loss.backward)
+
+# Conversely, retaining the graph still accumulates leaf gradients.
+graph_leaf = torch.tensor([1., 2.], requires_grad=True)
+graph_loss = graph_leaf.square().sum()
+graph_loss.backward(retain_graph=True)
+graph_loss.backward()
+torch.testing.assert_close(graph_leaf.grad, torch.tensor([4., 8.]))
+
+unequal_parameter = torch.tensor(1., requires_grad=True)
+for values in microbatches:
+    ((unequal_parameter * values).square().mean() / len(microbatches)).backward()
+torch.testing.assert_close(unequal_parameter.grad, torch.tensor(11.5))
+'''
+        execute(nbformat.v4.new_notebook(cells=[
+            nbformat.v4.new_code_cell("import torch"),
+            nbformat.v4.new_code_cell("\n\n".join(cases)),
+            nbformat.v4.new_code_cell(original_checks),
+            nbformat.v4.new_code_cell("\n\n".join(repairs)),
+        ]))
+        print("PASS PT01 autograd diagnoses, displayed repairs, and graph lifetime checks", flush=True)
+
         student_path = ROOT / "PT02_Logistic_regression.ipynb"
         student = nbformat.read(student_path, as_version=4)
         nbformat.validate(student)

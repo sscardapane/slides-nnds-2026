@@ -12,7 +12,8 @@ course-wide policy on agent use.
 ## Files
 
 - `PT01_Introduction_to_PyTorch.ipynb`: required preparation, with complete
-  examples. Optional tensor-semantics exercises, array operations and layout
+  examples, including a walkthrough of a tensor's autograd attributes.
+  Optional tensor-semantics and autograd exercises, array operations and layout
   material follow the main path. Exercise answers are in a collapsed Markdown
   section, separate from the student work cells.
 - `PT02_Logistic_regression.ipynb`: student lab with four activities: forward
@@ -55,6 +56,18 @@ menu: students predict, diagnose and repair a broadcasted regression error, a
 transposed batch and centering over the wrong axis. Each uses hand-checkable
 values and asks for assertions that reject the original computation. The section
 can also be used after Section 2; it needs no autograd or PT02 material.
+
+Item 26 extends Sections 3 and 4 with a tensor-level view of autograd:
+`requires_grad`, `is_leaf`, `grad_fn`, `grad`, and `retains_grad`, followed by
+`retain_grad()`, graph lifetime, `detach()` and `no_grad()`. Worked examples show
+the attributes before and after backward. Four optional detective cases ask
+students to explain missing intermediate gradients, a detached new leaf,
+intentional accumulation over unequal microbatches, and an in-place mutation
+before backward. Expandable diagnoses and repairs follow the student cells.
+The verifier executes those answers and checks the failures, accumulation weights,
+shared storage after detaching, and the distinction between retaining gradients
+and retaining the graph. The prose follows the linked PyTorch documentation and
+received the same humanizer pass as the other student-facing material.
 
 PT02 compares three learning rates from identical initial parameters over
 200 full-batch updates, selecting the final model by validation loss. A separate
@@ -139,3 +152,6 @@ the sandbox reported process-inspection warnings during kernel shutdown.
 The PT01 HTML preview was regenerated and its collapsed solution blocks checked.
 Saved example outputs from the earlier pass were retained; the new exercise
 cells have no saved outputs so students can predict them before execution.
+The subsequent item 26 pass uses the same environment and saves outputs for the
+new guided autograd examples while leaving the detective cells unexecuted in the
+distributed notebook. The full verifier also runs those cells in fresh kernels.
