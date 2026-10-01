@@ -7804,7 +7804,8 @@ a.anchor-link {
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <h1 id="PT01:-Introduction-to-PyTorch">PT01: Introduction to PyTorch<a class="anchor-link" href="#PT01:-Introduction-to-PyTorch">¶</a></h1><p>If you do not have prior exposure to PyTorch, read and run this notebook before PT02 (or at least go through the <a href="https://docs.pytorch.org/docs/2.14/index.html">basic documentation of PyTorch</a>). Knowledge of NumPy helps, since most of the array syntax should look familiar.</p>
 <p>We will use a small batch of examples to compute predictions, a loss, and its gradients, with additional material on the internals of PyTorch towards the end.</p>
-<p>Before running a cell, try to predict its output or at least its shape. If something is unexpected, change a small example and run it again.</p>
+<p>Before running a cell, try to predict its output or at least its shape. If something is unexpected, change a small example and run it again.
+This is the student notebook. Exercise answers and runnable repairs are in the separate instructor notebook; the guided examples are included here.</p>
 </div>
 </div>
 </div>
@@ -8064,12 +8065,12 @@ a.anchor-link {
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=autograd-tensor-forward">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=autograd-tensor-forward">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [8]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">tensor_x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -8088,22 +8089,6 @@ a.anchor-link {
 </div>
 </div>
 </div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>x requires_grad: True is_leaf: True grad_fn: None retains_grad: False
-h requires_grad: True is_leaf: False grad_fn: &lt;MulBackward0 object at 0x111298970&gt; retains_grad: False
-objective requires_grad: True is_leaf: False grad_fn: &lt;SumBackward0 object at 0x1112988e0&gt; retains_grad: False
-x.grad before backward: None
-</pre>
-</div>
-</div>
-</div>
-</div>
 </div>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=autograd-tensor-backward-text">
 <div class="jp-Cell-inputWrapper" tabindex="0">
@@ -8116,12 +8101,12 @@ x.grad before backward: None
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=autograd-tensor-backward">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=autograd-tensor-backward">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [9]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">tensor_h</span><span class="o">.</span><span class="n">retain_grad</span><span class="p">()</span>
@@ -8134,22 +8119,6 @@ x.grad before backward: None
 <span class="n">torch</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_close</span><span class="p">(</span><span class="n">tensor_h</span><span class="o">.</span><span class="n">grad</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">6.</span><span class="p">,</span> <span class="mf">12.</span><span class="p">]))</span>
 <span class="n">torch</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_close</span><span class="p">(</span><span class="n">tensor_x</span><span class="o">.</span><span class="n">grad</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">18.</span><span class="p">,</span> <span class="mf">36.</span><span class="p">]))</span>
 </pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Before backward: None None
-After backward, x.grad: tensor([18., 36.])
-After backward, h.grad: tensor([ 6., 12.])
-h is still a non-leaf: True
-</pre>
 </div>
 </div>
 </div>
@@ -8275,12 +8244,12 @@ h is still a non-leaf: True
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=autograd-disconnect-code">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=autograd-disconnect-code">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [13]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">source</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -8300,22 +8269,6 @@ h is still a non-leaf: True
 <span class="n">connected_copy</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
 <span class="n">torch</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_close</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">grad</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
 </pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>source requires_grad: True is_leaf: True grad_fn: None
-clone requires_grad: True is_leaf: False grad_fn: &lt;CloneBackward0 object at 0x112abe500&gt;
-detach requires_grad: False is_leaf: True grad_fn: None
-no_grad result requires_grad: False is_leaf: True grad_fn: None
-</pre>
 </div>
 </div>
 </div>
@@ -8372,7 +8325,7 @@ no_grad result requires_grad: False is_leaf: True grad_fn: None
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Before-PT02:-a-short-check">Before PT02: a short check<a class="anchor-link" href="#Before-PT02:-a-short-check">¶</a></h2><p>Try these without running code first. Then use the next cell to check your reasoning.</p>
+<h2 id="Before-PT02:-a-short-check">Before PT02: a short check<a class="anchor-link" href="#Before-PT02:-a-short-check">¶</a></h2><p>Try these without running code first. Use the next cell to try your answers.</p>
 <ol>
 <li><code>A</code> has shape <code>(3, 2)</code>. We want to center each row. What goes wrong with <code>A - A.mean(dim=1)</code>? Repair it and give the shape of the row means.</li>
 <li><code>a = torch.tensor([1., 2.], requires_grad=True)</code>. We call <code>a.square().sum().backward()</code> twice, rebuilding the forward computation each time and keeping <code>a</code> fixed. What is <code>a.grad</code> after each call? Where should we clear it if we want a fresh gradient?</li>
@@ -8393,24 +8346,6 @@ no_grad result requires_grad: False is_leaf: True grad_fn: None
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Try your repairs and shape predictions here.</span>
 </pre></div>
 </div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=6876cd0e">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<details>
-<summary>Check your reasoning</summary>
-<ol>
-<li>Reducing over <code>dim=1</code> gives <code>(3,)</code>, which cannot broadcast against <code>(3, 2)</code>. Use <code>A.mean(dim=1, keepdim=True)</code> to keep shape <code>(3, 1)</code>.</li>
-<li>The gradients are <code>[2., 4.]</code> and <code>[4., 8.]</code>. Set <code>a.grad = None</code> before each backward call when you want only the current gradient. A new forward pass does not clear it.</li>
-<li>Logits: <code>(5, 3)</code>; mean loss: <code>()</code>; weight gradient: <code>(3, 4)</code>; bias gradient: <code>(3,)</code>.</li>
-</ol>
-</details>
 </div>
 </div>
 </div>
@@ -8519,49 +8454,6 @@ no_grad result requires_grad: False is_leaf: True grad_fn: None
 <span class="c1"># Center each feature across the examples, then add your assertions.</span>
 </pre></div>
 </div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=tensor-challenge-solutions">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<details>
-<summary>Solutions: open after trying the exercises</summary>
-<p><strong>1. One error per example.</strong> Broadcasting produces a <code>(3, 3)</code> matrix: entry <code>(i, j)</code> compares prediction <code>i</code> with target <code>j</code>. Its rows are <code>[1, -1, -4]</code>, <code>[2, 0, -3]</code>, and <code>[4, 2, -1]</code>. Averaging all nine squared entries gives <code>52/9</code>, but the intended errors are <code>[1, 0, -1]</code>, with MSE <code>2/3</code>. Both losses are scalars.</p>
-<div class="highlight"><pre><span></span><span class="n">errors</span> <span class="o">=</span> <span class="n">predictions</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">targets</span>
-<span class="n">mse</span> <span class="o">=</span> <span class="n">errors</span><span class="o">.</span><span class="n">square</span><span class="p">()</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-<span class="k">assert</span> <span class="n">errors</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">targets</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">3</span><span class="p">,)</span>
-<span class="n">torch</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_close</span><span class="p">(</span><span class="n">errors</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">]))</span>
-<span class="n">torch</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_close</span><span class="p">(</span><span class="n">mse</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">2.</span> <span class="o">/</span> <span class="mf">3.</span><span class="p">))</span>
-</pre></div>
-<p>The shape assertion rejects <code>suspect_errors</code>; the loss-value assertion rejects <code>suspect_mse</code>. <code>squeeze(-1)</code> removes only the last axis, so a batch of size one still has its batch axis.</p>
-<p><strong>2. Which axis contains the examples?</strong> The original computes <code>[31, 42]</code> by combining different examples. Its shape <code>(2,)</code> looks right. The intended predictions are <code>[21, 43]</code>.</p>
-<div class="highlight"><pre><span></span><span class="n">row_predictions</span> <span class="o">=</span> <span class="n">batch</span> <span class="o">@</span> <span class="n">weights</span>
-<span class="k">assert</span> <span class="n">row_predictions</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">batch</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],)</span>
-<span class="n">torch</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_close</span><span class="p">(</span><span class="n">row_predictions</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">21.</span><span class="p">,</span> <span class="mf">43.</span><span class="p">]))</span>
-
-<span class="n">larger_batch</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">batch</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">5.</span><span class="p">,</span> <span class="mf">6.</span><span class="p">]])],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">larger_predictions</span> <span class="o">=</span> <span class="n">larger_batch</span> <span class="o">@</span> <span class="n">weights</span>
-<span class="k">assert</span> <span class="n">larger_predictions</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">3</span><span class="p">,)</span>
-<span class="n">torch</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_close</span><span class="p">(</span><span class="n">larger_predictions</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">21.</span><span class="p">,</span> <span class="mf">43.</span><span class="p">,</span> <span class="mf">65.</span><span class="p">]))</span>
-</pre></div>
-<p>The value assertion rejects <code>suspect_predictions</code>. With three examples, <code>larger_batch.T @ weights</code> raises a dimension mismatch: the last axis of the transposed batch has size three, while <code>weights</code> has size two.</p>
-<p><strong>3. Center each feature.</strong> The original subtracts each row's mean. Its rows are <code>[-4.5, 4.5]</code>, <code>[-8.5, 8.5]</code>, and <code>[-12.5, 12.5]</code>: each row has mean zero, but the feature means are <code>[-8.5, 8.5]</code>. Reducing over the batch gives feature means <code>[3, 20]</code> instead.</p>
-<div class="highlight"><pre><span></span><span class="n">feature_centered</span> <span class="o">=</span> <span class="n">measurements</span> <span class="o">-</span> <span class="n">measurements</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">assert</span> <span class="n">feature_centered</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">measurements</span><span class="o">.</span><span class="n">shape</span>
-<span class="n">torch</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_close</span><span class="p">(</span>
-    <span class="n">feature_centered</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="o">-</span><span class="mf">2.</span><span class="p">,</span> <span class="o">-</span><span class="mf">10.</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">]])</span>
-<span class="p">)</span>
-<span class="n">torch</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_close</span><span class="p">(</span>
-    <span class="n">feature_centered</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mi">0</span>
-<span class="p">)</span>
-</pre></div>
-<p>Either value assertion rejects <code>suspect_centered</code>. Both expressions broadcast back to <code>(3, 2)</code>: a <code>(3, 1)</code> row mean and a <code>(1, 2)</code> feature mean are both compatible with that shape.</p>
-</details>
 </div>
 </div>
 </div>
@@ -8705,51 +8597,6 @@ no_grad result requires_grad: False is_leaf: True grad_fn: None
 <span class="c1"># Rebuild from [1., 2.], differentiate, then update under no_grad.</span>
 </pre></div>
 </div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=autograd-detective-solutions">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<details>
-<summary>Autograd detective: diagnoses and repairs</summary>
-<p><strong>1. The gradient passed through <code>hidden</code>.</strong> <code>leaf</code> is a leaf with <code>grad_fn=None</code> and gradient <code>[18, 36]</code>. <code>hidden</code> is a non-leaf with a backward node. Its derivative <code>[6, 12]</code> was needed along the way, but its <code>.grad</code> buffer was not retained. Request retention before backward on a fresh computation.</p>
-<div class="highlight"><pre><span></span><span class="n">leaf</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">hidden</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">leaf</span>
-<span class="n">hidden</span><span class="o">.</span><span class="n">retain_grad</span><span class="p">()</span>
-<span class="n">hidden</span><span class="o">.</span><span class="n">square</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
-<span class="k">assert</span> <span class="n">leaf</span><span class="o">.</span><span class="n">is_leaf</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">hidden</span><span class="o">.</span><span class="n">is_leaf</span>
-<span class="n">torch</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_close</span><span class="p">(</span><span class="n">leaf</span><span class="o">.</span><span class="n">grad</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">18.</span><span class="p">,</span> <span class="mf">36.</span><span class="p">]))</span>
-<span class="n">torch</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_close</span><span class="p">(</span><span class="n">hidden</span><span class="o">.</span><span class="n">grad</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">6.</span><span class="p">,</span> <span class="mf">12.</span><span class="p">]))</span>
-</pre></div>
-<p><strong>2. Backward succeeds on the new leaf.</strong> <code>restart.grad</code> is <code>[6, 12]</code>, while <code>original.grad</code> remains <code>None</code>. Enabling gradients after detaching does not restore the operation that connected them. Keep that operation in the recorded computation.</p>
-<div class="highlight"><pre><span></span><span class="n">original</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">connected</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">original</span>
-<span class="n">connected</span><span class="o">.</span><span class="n">square</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
-<span class="n">torch</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_close</span><span class="p">(</span><span class="n">original</span><span class="o">.</span><span class="n">grad</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">18.</span><span class="p">,</span> <span class="mf">36.</span><span class="p">]))</span>
-</pre></div>
-<p><strong>3. Accumulation is intentional.</strong> The successive buffers contain <code>10/3</code> and <code>28/3</code>. Each microbatch contributes its sum of squared errors divided by the total number of examples. Clearing between calls would discard the first contribution. Dividing each microbatch mean by two instead would give gradient <code>11.5</code>, weighting the single-example microbatch as heavily as the two-example one.</p>
-<div class="highlight"><pre><span></span><span class="n">full_parameter</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">all_values</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">microbatches</span><span class="p">)</span>
-<span class="p">(</span><span class="n">full_parameter</span> <span class="o">*</span> <span class="n">all_values</span><span class="p">)</span><span class="o">.</span><span class="n">square</span><span class="p">()</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
-<span class="n">torch</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_close</span><span class="p">(</span><span class="n">parameter</span><span class="o">.</span><span class="n">grad</span><span class="p">,</span> <span class="n">full_parameter</span><span class="o">.</span><span class="n">grad</span><span class="p">)</span>
-<span class="n">torch</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_close</span><span class="p">(</span><span class="n">parameter</span><span class="o">.</span><span class="n">grad</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">28.</span> <span class="o">/</span> <span class="mf">3.</span><span class="p">))</span>
-</pre></div>
-<p><strong>4. Backward raises an error.</strong> The in-place update changed a value saved for backward. Autograd detects the modification; <code>no_grad</code> only prevents recording the update. Move the update after backward. An in-place change through <code>mutable.detach()</code> would also modify the original storage and cause this example to fail.</p>
-<div class="highlight"><pre><span></span><span class="n">mutable</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">mutable</span><span class="o">.</span><span class="n">square</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
-<span class="n">torch</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_close</span><span class="p">(</span><span class="n">mutable</span><span class="o">.</span><span class="n">grad</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">]))</span>
-<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
-    <span class="n">mutable</span> <span class="o">-=</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">mutable</span><span class="o">.</span><span class="n">grad</span>
-<span class="n">mutable</span><span class="o">.</span><span class="n">grad</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="n">torch</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_close</span><span class="p">(</span><span class="n">mutable</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">]))</span>
-<span class="k">assert</span> <span class="n">mutable</span><span class="o">.</span><span class="n">is_leaf</span> <span class="ow">and</span> <span class="n">mutable</span><span class="o">.</span><span class="n">requires_grad</span>
-</pre></div>
-</details>
 </div>
 </div>
 </div>

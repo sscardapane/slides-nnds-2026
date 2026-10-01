@@ -14,17 +14,24 @@ course-wide policy on agent use.
 - `PT01_Introduction_to_PyTorch.ipynb`: required preparation, with complete
   examples, including a walkthrough of a tensor's autograd attributes.
   Optional tensor-semantics and autograd exercises, array operations and layout
-  material follow the main path. Exercise answers are in a collapsed Markdown
-  section, separate from the student work cells.
+  material follow the main path. Exercise answers are in the instructor notebook.
+- `PT01_Introduction_to_PyTorch_solutions.ipynb`: instructor source with readiness
+  answers, tensor-semantics solutions and autograd diagnoses as executable cells.
 - `PT02_Logistic_regression.ipynb`: student lab with four activities: forward
   computation, loss, training, and investigation, followed by learning-rate
-  and mini-batch experiments. It contains no reference implementations.
+  and mini-batch experiments. An optional per-example-gradient demonstration and
+  a coordinate-to-RGB reader exercise follow the core. It contains no exercise
+  reference implementations.
 - `PT02_Logistic_regression_solutions.ipynb`: instructor copy with the four
-  reference cells and runnable fallbacks.
+  core references and runnable fallbacks, discussion notes for the gradient
+  diagnostic, and a complete coordinate-MLP reference experiment.
 - Matching `.html` files: reading previews; use the notebooks to edit or run
   code.
-- `make_student_notebook.py`: reproducibly rebuilds the student notebook from
-  the solutions notebook while removing the reference cells and fallbacks.
+- `make_student_notebook.py`: reproducibly rebuilds both student notebooks from
+  the instructor sources, removing reference cells, fallbacks and saved outputs.
+  Use `--check` to verify that the generated sources are current. Edit instructor
+  notebooks first; shared code and prose belong there, with instructor-only
+  cells tagged `reference`.
 - `data/penguins.csv`: unscaled Palmer Penguins data, supplied for offline use.
 - `verify_notebooks.py`: reproducible execution and exercise-path checks.
 
@@ -49,7 +56,8 @@ with a clear error when an activity is unfinished. Reference implementations
 and automatic fallbacks exist only in the solutions notebook; they are not
 present in the student `.ipynb` or its HTML preview.
 PT01 closes its required portion with a readiness check on broadcasting,
-gradient accumulation and shapes, with expandable answers.
+gradient accumulation and shapes. Answers and runnable exercise repairs live
+in its instructor notebook. The explanatory worked examples stay in both versions.
 
 The optional tensor-semantics section implements item 25 of the shared additions
 menu: students predict, diagnose and repair a broadcasted regression error, a
@@ -63,7 +71,7 @@ Item 26 extends Sections 3 and 4 with a tensor-level view of autograd:
 the attributes before and after backward. Four optional detective cases ask
 students to explain missing intermediate gradients, a detached new leaf,
 intentional accumulation over unequal microbatches, and an in-place mutation
-before backward. Expandable diagnoses and repairs follow the student cells.
+before backward. Instructor diagnoses and executable repairs follow the exercises.
 The verifier executes those answers and checks the failures, accumulation weights,
 shared storage after detaching, and the distinction between retaining gradients
 and retaining the graph. The prose follows the linked PyTorch documentation and
@@ -75,6 +83,19 @@ PT02 compares three learning rates from identical initial parameters over
 and compares equal epoch counts while explaining the unequal update counts.
 Both notebooks use jaxtyping annotations with torch.Tensor at function boundaries;
 annotations document shapes without enabling runtime checking.
+
+Item 34 is an optional worked diagnostic using the fixed 200-update, learning-rate
+0.1 snapshot and training data only. It compares a transparent `autograd.grad`
+loop with `functional_call`, `grad` and `vmap`, verifies that their mean equals the
+batch gradient, and plots gradient norm and alignment for original and deliberately
+changed labels. No model is retrained or selected using this diagnostic.
+
+Item 36 is a reader exercise for after the MLP lecture. Students receive a small
+generated image, a fixed observed/held-out pixel split and a comparison brief.
+Only the instructor notebook implements the four prescribed raw/Fourier and
+width-16/32 runs, with checkpoints, curves, parameter counts, float32 payload sizes
+including frequency buffers, and dense coordinate queries. The reference runs on
+CPU without a download. It is a teaching comparison, not an image-codec benchmark.
 
 The agent-use paragraph is a proposal: students document a hypothesis and test
 suggestions against observed behavior. It does not establish a course-wide
@@ -99,8 +120,8 @@ code, timing, and this paragraph should be discussed in the next review.
 | Framework syntax and shape annotations | Restored jaxtyping at function boundaries after instructor review, using torch.Tensor rather than the JAX-specific Array alias. Shapes remain in prose/comments too. |
 
 The original informal, direct style informed the prose. Student-facing text was
-reviewed with the humanizer skill in embedded mode. No MLP extension or new
-slide content was implemented.
+reviewed with the humanizer skill in embedded mode. The optional coordinate-MLP
+exercise is separate from the logistic-regression core. No slide content changed.
 
 ## Sources and data
 
@@ -124,7 +145,8 @@ random within-dataset evaluation, not an island/year generalization study.
 
 Run `python verify_notebooks.py` from an environment containing the notebook
 packages plus `nbformat`, `nbclient`, `nbconvert` and `ipykernel`. Add
-`--write-outputs` to refresh saved outputs and HTML previews. The script starts
+`--write-outputs` to refresh instructor outputs, regenerate the unfilled student
+sources and refresh all four HTML previews. The script starts
 temporary local Jupyter kernels using the Python executable that invoked it.
 
 The updated pass was checked on CPU with Python 3.9, PyTorch 2.3.0, jaxtyping 0.2.36, NumPy 1.26.4,
@@ -155,3 +177,13 @@ cells have no saved outputs so students can predict them before execution.
 The subsequent item 26 pass uses the same environment and saves outputs for the
 new guided autograd examples while leaving the detective cells unexecuted in the
 distributed notebook. The full verifier also runs those cells in fresh kernels.
+
+The item 34/36 pass moves PT01 exercise answers into a separate executable
+instructor notebook and generates both student sources without saved outputs.
+The full verifier checks both instructor notebooks, PT01's student path and
+completed PT02 student implementations. It checks loop/transform agreement,
+mean-gradient equivalence, label-change isolation, zero-vector alignment handling,
+fixed Fourier buffers, held-out image metrics and storage accounting. All four
+image configurations improve their training MSE; no particular held-out ranking
+is required to pass. Plot review covers the gradient diagnostic, sparse image
+samples, reconstruction checkpoints, learning curves and dense queries.

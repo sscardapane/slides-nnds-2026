@@ -1,5 +1,9 @@
-"""Build the PT02 student notebook from the solutions notebook."""
+"""Build both student notebooks from their instructor sources.
 
+Use --check to verify that the committed student sources match the generators.
+"""
+
+import argparse
 import json
 from pathlib import Path
 
@@ -17,7 +21,27 @@ def cell_by_id(notebook, cell_id):
     return next(cell for cell in notebook["cells"] if cell.get("id") == cell_id)
 
 
-def main():
+def clear_execution(notebook):
+    for cell in notebook["cells"]:
+        cell["metadata"].pop("execution", None)
+        if cell["cell_type"] == "code":
+            cell["execution_count"] = None
+            cell["outputs"] = []
+    return notebook
+
+
+def build_pt01():
+    notebook = json.loads((ROOT / "PT01_Introduction_to_PyTorch_solutions.ipynb").read_text())
+    notebook["cells"] = [cell for cell in notebook["cells"]
+                         if "reference" not in cell.get("metadata", {}).get("tags", [])]
+    notebook["cells"][0]["source"][0] = "# PT01: Introduction to PyTorch\n"
+    notebook["cells"][0]["source"] += lines(
+        "\nThis is the student notebook. Exercise answers and runnable repairs are "
+        "in the separate instructor notebook; the guided examples are included here.\n")
+    return clear_execution(notebook)
+
+
+def build_pt02():
     notebook = json.loads(SOLUTIONS.read_text())
 
     reference_ids = {
@@ -25,7 +49,11 @@ def main():
         for cell in notebook["cells"]
         if "reference" in cell.get("metadata", {}).get("tags", [])
     }
-    expected_reference_ids = {"d4bcbb0d", "f90a471e", "7b7b80ce", "21fe67f8"}
+    expected_reference_ids = {
+        "d4bcbb0d", "f90a471e", "7b7b80ce", "21fe67f8", "per-example-instructor",
+        "image-reference-intro", "image-reference-model", "image-reference-results",
+        "image-reference-discussion",
+    }
     if reference_ids != expected_reference_ids:
         raise RuntimeError(
             "The set of reference cells changed; review the student export before rebuilding."
@@ -40,6 +68,8 @@ def main():
 Given a few measurements of a penguin, can we predict its species? We will build a linear classifier and follow its training through to evaluation.
 
 Read PT01 before this session. We will use its tensor operations, `backward()`, and parameter updates. The data loading and plotting code are provided. There are four activities: the forward pass, the loss, the training step, and an investigation of a training run. We then compare learning rates and extend training to mini-batches.
+
+Optional material at the end uses per-example gradients to inspect the classifier. A coordinate-to-RGB exercise is left for after the MLP lecture.
 
 This is the student notebook. Complete each activity before continuing; an unfinished activity raises a clear error instead of silently using a reference implementation. Worked solutions are kept in the separate instructor notebook.
 
@@ -126,13 +156,23 @@ for parameter, before, expected_gradient in zip(check_model.parameters(), before
 print("Both updates passed the checks.")'''
     )
 
-    for cell in notebook["cells"]:
-        if cell["cell_type"] == "code":
-            cell["execution_count"] = None
-            cell["outputs"] = []
+    return clear_execution(notebook)
 
-    STUDENT.write_text(json.dumps(notebook, indent=1, ensure_ascii=False) + "\n")
-    print(f"Wrote {STUDENT.name} without {len(reference_ids)} reference cells.")
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--check", action="store_true")
+    args = parser.parse_args()
+    for path, notebook in [(ROOT / "PT01_Introduction_to_PyTorch.ipynb", build_pt01()),
+                           (STUDENT, build_pt02())]:
+        if args.check:
+            existing = clear_execution(json.loads(path.read_text()))
+            if existing != notebook:
+                raise SystemExit(f"Rebuild {path.name}: the student source differs from its instructor source.")
+            print(f"PASS generated source: {path.name}")
+        else:
+            path.write_text(json.dumps(notebook, indent=1, ensure_ascii=False) + "\n")
+            print(f"Wrote {path.name} without instructor answers or outputs.")
 
 
 if __name__ == "__main__":

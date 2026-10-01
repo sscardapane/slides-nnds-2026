@@ -8,13 +8,13 @@ import copy
 import json
 import os
 from pathlib import Path
-import re
 import sys
 import tempfile
 
 import nbformat
 from nbclient import NotebookClient
 from nbconvert import HTMLExporter
+from make_student_notebook import build_pt01, build_pt02, clear_execution
 
 ROOT = Path(__file__).resolve().parent
 
@@ -28,6 +28,12 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--write-outputs", action="store_true")
     args = parser.parse_args()
+    for name, generated in [("PT01_Introduction_to_PyTorch", build_pt01()),
+                            ("PT02_Logistic_regression", build_pt02())]:
+        actual = clear_execution(json.loads((ROOT / f"{name}.ipynb").read_text()))
+        assert actual == generated, f"Rebuild {name} from its instructor source"
+        assert not any("reference" in c.get("metadata", {}).get("tags", []) for c in actual["cells"])
+        print("PASS generated student source:", name, flush=True)
     with tempfile.TemporaryDirectory(prefix="nnds-validation-") as temp:
         root = Path(temp)
         kernel = root / "kernels" / "nnds-validation"
@@ -41,16 +47,47 @@ def main():
         completed = {}
         clean_paths = [
             ROOT / "PT01_Introduction_to_PyTorch.ipynb",
+            ROOT / "PT01_Introduction_to_PyTorch_solutions.ipynb",
             ROOT / "PT02_Logistic_regression_solutions.ipynb",
         ]
         for path in clean_paths:
             nb = nbformat.read(path, as_version=4)
             nbformat.validate(nb)
+            if path.stem == "PT02_Logistic_regression_solutions":
+                nb.cells.append(nbformat.v4.new_code_cell('''
+# Verify the instructor experiment without distributing this test cell.
+assert len(image_runs) == 4
+assert not (image_train_mask & image_heldout_mask).any()
+assert (image_train_mask | image_heldout_mask).all()
+for (encoding, width), (coordinate_model, trace, snapshots) in image_runs.items():
+    assert set(snapshots) == {0, 100, 400}
+    assert trace['update'][0] == 0 and trace['update'][-1] == 400
+    assert trace['train_mse'][-1] < trace['train_mse'][0]
+    assert all(np.isfinite(trace[key]).all() for key in ['train_mse', 'heldout_mse'])
+    assert not coordinate_model.frequencies.requires_grad
+    assert 'frequencies' not in dict(coordinate_model.named_parameters())
+    assert 'frequencies' in coordinate_model.state_dict()
+    if encoding == 'Fourier':
+        expected_frequencies = 1.5 * torch.randn(16, 2, generator=torch.Generator().manual_seed(7))
+        torch.testing.assert_close(coordinate_model.frequencies, expected_frequencies)
+    output = coordinate_model(coordinate_grid(64))
+    assert output.shape == (4096, 3) and torch.isfinite(output).all()
+    assert ((output >= 0) & (output <= 1)).all()
+    with torch.no_grad():
+        heldout_mse = F.mse_loss(coordinate_model(image_coordinates[image_heldout_mask]), image_rgb[image_heldout_mask])
+    np.testing.assert_allclose(heldout_mse.item(), trace['heldout_mse'][-1], rtol=1e-5)
+assert image_summary['float32 payload bytes'].tolist() == [1484, 5004, 3532, 8972]
+assert model is lr_models[selected_lr]
+print('PASS image reference: four fits, held-out metrics, fixed buffers, payloads and dense queries')
+''', id="instructor-verification"))
             executed = execute(nb)
             assert not any(o.output_type == "error" for c in executed.cells
                            for o in c.get("outputs", []))
+            if executed.cells[-1].id == "instructor-verification":
+                executed.cells.pop()
+                print("PASS image reference experiment and storage accounting", flush=True)
             completed[path.stem] = executed
-            if args.write_outputs:
+            if args.write_outputs and path.stem.endswith("_solutions"):
                 # Keep a generic kernel name in the distributed notebooks.
                 executed.metadata.kernelspec = {"name": "python3", "display_name": "Python 3", "language": "python"}
                 nbformat.write(executed, path)
@@ -60,9 +97,8 @@ def main():
 
         # Execute the displayed PT01 answers, then check that their assertions
         # distinguish the intended computations from the runnable mistakes.
-        pt01 = completed["PT01_Introduction_to_PyTorch"]
-        answers = next(c for c in pt01.cells if c.id == "tensor-challenge-solutions")
-        snippets = re.findall(r"```python\n(.*?)```", answers.source, re.DOTALL)
+        pt01 = completed["PT01_Introduction_to_PyTorch_solutions"]
+        snippets = [c.source for c in pt01.cells if c.id.startswith("tensor-challenge-solutions-code-")]
         assert len(snippets) == 3
         setups = [next(c.source for c in pt01.cells
                        if c.id == f"tensor-challenge-{i}-code") for i in range(1, 4)]
@@ -97,8 +133,7 @@ torch.testing.assert_close(single_error, torch.tensor([1.]))
         execute(checks)
         print("PASS PT01 displayed solutions and rejection of all three original bugs", flush=True)
 
-        detective = next(c for c in pt01.cells if c.id == "autograd-detective-solutions")
-        repairs = re.findall(r"```python\n(.*?)```", detective.source, re.DOTALL)
+        repairs = [c.source for c in pt01.cells if c.id.startswith("autograd-detective-solutions-code-")]
         assert len(repairs) == 4
         cases = [next(c.source for c in pt01.cells if c.id == f"autograd-case-{i}")
                  for i in range(1, 5)]
@@ -207,6 +242,23 @@ assert mini_updates == 210
 assert mini_history['train_loss'][-1] < mini_history['train_loss'][0]
 assert selected_lr == min(learning_rates, key=lambda r: lr_histories[r]['val_loss'][-1])
 assert model is lr_models[selected_lr]
+# The optional diagnostic preserves the data and trained classifier.
+torch.testing.assert_close(analysis_y, ytrain)
+for diagnostic_parameter, saved_parameter in zip(analysis_model.parameters(), lr_models[0.1].parameters()):
+    torch.testing.assert_close(diagnostic_parameter, saved_parameter.double())
+assert all(parameter.grad is None for parameter in analysis_model.parameters())
+assert per_example_loop.shape == (len(ytrain), 15)
+torch.testing.assert_close(per_example_loop, per_example_transformed)
+torch.testing.assert_close(per_example_transformed.mean(dim=0), mean_gradient)
+assert torch.isfinite(clean_alignment).all()
+assert clean_alignment.abs().max() <= 1 + 1e-10
+assert torch.isnan(gradient_alignment(torch.zeros_like(per_example_loop[:1]), mean_gradient)).all()
+assert torch.isnan(gradient_alignment(per_example_loop[:1], torch.zeros_like(mean_gradient))).all()
+changed_tree = all_gradients(analysis_state, analysis_X[easy_index:easy_index + 1], changed_label)
+changed_flat = torch.cat([changed_tree[name].reshape(-1) for name in analysis_parameter_names])
+torch.testing.assert_close(changed_flat, changed_gradient)
+assert changed_label.item() != analysis_y[easy_index].item()
+print('PASS per-example gradients, corrupted-label equivalence and zero-vector handling')
 # Full-size DataLoader batch must give the same parameter update.
 a, b = copy.deepcopy(initial_model), copy.deepcopy(initial_model)
 for bx, by in DataLoader(TensorDataset(Xtrain, ytrain), batch_size=len(ytrain)):
@@ -247,12 +299,16 @@ training_step = saved_step
 print('PASS student implementations, split isolation, and incorrect-code rejection')
 '''.replace("FORWARD_CHECKS", repr(forward_checks)).replace("STEP_CHECKS", repr(step_checks))))
         execute(student)
-        print("PASS student notebook has no references and accepts correct implementations", flush=True)
+        print("PASS student implementations, per-example gradients and diagnostic isolation", flush=True)
         if args.write_outputs:
-            # Export the unfilled student source, never the injected verification copy.
-            student_source = nbformat.read(student_path, as_version=4)
-            html, _ = HTMLExporter().from_notebook_node(student_source)
-            student_path.with_suffix(".html").write_text(html)
+            # Execution can update instructor kernel metadata. Regenerate the
+            # unfilled sources from that final state, never from the test copy.
+            for source_path, generated in [(ROOT / "PT01_Introduction_to_PyTorch.ipynb", build_pt01()),
+                                           (student_path, build_pt02())]:
+                source_path.write_text(json.dumps(generated, indent=1, ensure_ascii=False) + "\n")
+                student_source = nbformat.read(source_path, as_version=4)
+                html, _ = HTMLExporter().from_notebook_node(student_source)
+                source_path.with_suffix(".html").write_text(html)
 
 
 if __name__ == "__main__":
