@@ -1,3 +1,8 @@
+> **Moved:** edit and download the current shared notebooks in
+> [teaching-materials/notebooks](https://github.com/sscardapane/teaching-materials/tree/main/notebooks).
+> This dated folder is a frozen compatibility snapshot. The guidance below
+> describes its state before migration.
+
 # PT01 and PT02: shared course notebooks
 
 > [!note] Written by Codex (2026-09-14)
